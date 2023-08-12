@@ -6,6 +6,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+public struct Range
+{
+    public int min;
+    public int max;
+}
+
 public class GenerateRoom : MonoBehaviour
 {
     [SerializeField] GameObject parede;
@@ -80,6 +86,45 @@ public class GenerateRoom : MonoBehaviour
             new Tuple<int, int>(rows - 1, (int)(cols / 2))
         };
 
+        VerifyInputs();
+
+        if (this.minObstacles >= this.maxObstacles)
+        {
+            return;
+        }
+        if (this.minEnemies >= this.maxEnemies)
+        {
+            return;
+        }
+
+        Range enemiesRange = new()
+        {
+            min = this.minEnemies,
+            max = this.maxEnemies
+        };
+        Range obstaclesRange = new()
+        {
+            min = this.minObstacles,
+            max = this.maxObstacles
+        };
+
+        Sala sala = new(rows, cols, doorsPosition, enemiesRange, obstaclesRange);
+
+        int populationSize = 10;
+        GeneticRoomGenerator geneticRoomGenerator = new(sala, populationSize, 0.8f, 0.3f);
+
+        StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator));
+
+        // TODO: diferentes inimigos diferentes pesos, cada inimigo vai ter um peso diferente na dificuldade
+        // TODO: diferentes obstaculos diferentes pesos
+
+        // TODO: algoritmo genetico pra gerar o mapa
+        // TODO: gerar a sala inicial e a sala final na mao, ja que sao vazias, so preciso colocar as portas, sala do boss so tem uma entrada
+        // TODO: aumento de dificuldade chegando mais perto do boss, gerar a sala inicial e a sala do boss diferente das outras e gerar antes
+    }
+
+    void VerifyInputs()
+    {
         if (minObstaclesInput.text.Length > 0
             && int.TryParse(minObstaclesInput.text, out int minObstacles))
         {
@@ -100,32 +145,6 @@ public class GenerateRoom : MonoBehaviour
         {
             this.maxEnemies = maxEnemies;
         }
-
-        if (this.minObstacles >= this.maxObstacles)
-        {
-            return;
-        }
-        if (this.minEnemies >= this.maxEnemies)
-        {
-            return;
-        }
-
-        Range enemiesRange = this.minEnemies..(this.maxEnemies + 1);
-        Range obstaclesRange = this.minObstacles..(this.maxObstacles + 1);
-
-        Sala sala = new(rows, cols, doorsPosition, enemiesRange, obstaclesRange);
-
-        int populationSize = 10;
-        GeneticRoomGenerator geneticRoomGenerator = new(sala, populationSize, 0.8f, 0.3f);
-
-        StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator));
-
-        // TODO: diferentes inimigos diferentes pesos, cada inimigo vai ter um peso diferente na dificuldade
-        // TODO: diferentes obstaculos diferentes pesos
-
-        // TODO: algoritmo genetico pra gerar o mapa
-        // TODO: gerar a sala inicial e a sala final na mao, ja que sao vazias, so preciso colocar as portas, sala do boss so tem uma entrada
-        // TODO: aumento de dificuldade chegando mais perto do boss, gerar a sala inicial e a sala do boss diferente das outras e gerar antes
     }
 
     IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator)

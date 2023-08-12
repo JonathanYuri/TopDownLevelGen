@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public static class EnumExtensions
 {
@@ -31,7 +32,7 @@ public static class Utils
         return count;
     }
 
-    static Tuple<int, int> ChooseLocationFreeFrom(Possibilidades[,] matriz, List<Tuple<int, int>> changeablesPositions, Possibilidades freeFrom, System.Random random)
+    static Tuple<int, int> ChooseLocationFreeFrom(Possibilidades[,] matriz, List<Tuple<int, int>> changeablesPositions, Possibilidades freeFrom)
     {
         List<Tuple<int, int>> positionsFreeFrom = new();
         foreach (Tuple<int, int> position in changeablesPositions)
@@ -46,11 +47,11 @@ public static class Utils
         {
             return new Tuple<int, int>(-1, -1);
         }
-        int idx = random.Next(positionsFreeFrom.Count);
+        int idx = Random.Range(0, positionsFreeFrom.Count);
         return positionsFreeFrom[idx];
     }
 
-    static Tuple<int, int> ChooseLocationThatHas(Possibilidades[,] matriz, List<Tuple<int, int>> changeablesPositions, Possibilidades has, System.Random random)
+    static Tuple<int, int> ChooseLocationThatHas(Possibilidades[,] matriz, List<Tuple<int, int>> changeablesPositions, Possibilidades has)
     {
         List<Tuple<int, int>> positionsHas = new();
         foreach (Tuple<int, int> position in changeablesPositions)
@@ -65,30 +66,30 @@ public static class Utils
         {
             return new Tuple<int, int>(-1, -1);
         }
-        int idx = random.Next(positionsHas.Count);
+        int idx = Random.Range(0, positionsHas.Count);
         return positionsHas[idx];
     }
 
-    public static void AddToMatrix(Sala sala, Possibilidades[,] roomMatrix, Possibilidades add, System.Random random)
+    public static void AddToMatrix(Sala sala, Possibilidades[,] roomMatrix, Possibilidades add)
     {
         // escolher um lugar que nao tem o que eu quero adicionar
-        Tuple<int, int> position = ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, add, random);
+        Tuple<int, int> position = ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, add);
         if (position.Item1 != -1 && position.Item2 != -1)
         {
             roomMatrix[position.Item1, position.Item2] = add;
         }
     }
 
-    public static void RemoveFromMatrix(Sala sala, Possibilidades[,] roomMatrix, Possibilidades remove, System.Random random)
+    public static void RemoveFromMatrix(Sala sala, Possibilidades[,] roomMatrix, Possibilidades remove)
     {
         // escolher um lugar que tem o que eu quero remover
-        Tuple<int, int> position = ChooseLocationThatHas(roomMatrix, sala.changeablesPositions, remove, random);
+        Tuple<int, int> position = ChooseLocationThatHas(roomMatrix, sala.changeablesPositions, remove);
         if (position.Item1 != -1 && position.Item2 != -1)
         {
             // mudar por algo que nao é o que eu removi
             List<Possibilidades> others = RemoveFromList(sala.changeablesPossibilities, remove);
 
-            int rand = random.Next(others.Count);
+            int rand = Random.Range(0, others.Count);
             roomMatrix[position.Item1, position.Item2] = others[rand];
         }
     }
@@ -106,7 +107,7 @@ public static class Utils
         return newList;
     }
 
-    public static int? CountPathsBetweenDoors(Possibilidades[,] roomMatrix, List<Tuple<int, int>> doorsPositions)
+    public static int CountPathsBetweenDoors(Possibilidades[,] roomMatrix, List<Tuple<int, int>> doorsPositions)
     {
         // transformar 
         int[,] matriz = TransformRoomForCountPaths(roomMatrix);
@@ -123,7 +124,7 @@ public static class Utils
                 //Console.WriteLine("QUANTIDADE DE CAMINHOS: " + paths);
                 if (paths == 0)
                 {
-                    return null;
+                    return int.MinValue;
                 }
             }
         }

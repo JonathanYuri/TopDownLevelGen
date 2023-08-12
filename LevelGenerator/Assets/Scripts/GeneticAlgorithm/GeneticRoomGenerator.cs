@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GeneticRoomGenerator
 {
     readonly Sala sala;
     readonly int populationSize;
     List<GeneticRoomIndividual> population;
-    readonly System.Random random;
     readonly float crossoverProbability;
     readonly float mutationProbability;
 
@@ -19,7 +20,6 @@ public class GeneticRoomGenerator
         this.mutationProbability = mutationProbability;
         this.crossoverProbability = crossoverProbability;
         population = new();
-        random = new();
     }
 
     void GeneratePopulation()
@@ -43,12 +43,13 @@ public class GeneticRoomGenerator
     {
         foreach (GeneticRoomIndividual individual in population)
         {
-            if (UnityEngine.Random.value < mutationProbability)
+            if (Random.value < mutationProbability)
             {
                 individual.Mutate(sala);
-                individual.Evaluate(sala);
             }
         }
+
+        EvaluatePopulation();
     }
 
     GeneticRoomIndividual Crossover(GeneticRoomIndividual pai, GeneticRoomIndividual mae)
@@ -85,7 +86,7 @@ public class GeneticRoomGenerator
             // Seleciona aleatoriamente "tournamentSize" indivíduos para o torneio
             for (int j = 0; j < tournamentSize; j++)
             {
-                int randomIndex = UnityEngine.Random.Range(0, population.Count);
+                int randomIndex = Random.Range(0, population.Count);
                 tournament.Add(population[randomIndex]);
             }
 
