@@ -1,12 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
+
+public enum Enemies
+{
+    Inimigo1,
+    Inimigo2,
+    Inimigo3,
+}
+
+public enum Obstacles
+{
+    Obstaculo1,
+    Obstaculo2,
+    Obstaculo3
+}
 
 public enum Possibilidades
 {
     [Mutavel(true)][Ultrapassavel(true)] Chao, // TODO: colocar tudo em ingles
-    [Mutavel(true)][Ultrapassavel(false)] Obstaculo,
-    [Mutavel(true)][Ultrapassavel(true)] Inimigo,
+
+    [Mutavel(true)][Ultrapassavel(false)] Obstaculo1,
+    [Mutavel(true)][Ultrapassavel(false)] Obstaculo2,
+    [Mutavel(true)][Ultrapassavel(false)] Obstaculo3,
+
+    [Mutavel(true)][Ultrapassavel(true)] Inimigo1,
+    [Mutavel(true)][Ultrapassavel(true)] Inimigo2,
+    [Mutavel(true)][Ultrapassavel(true)] Inimigo3,
 
     [Mutavel(false)][Ultrapassavel(true)] Nada,
     [Mutavel(false)][Ultrapassavel(true)] Porta,
@@ -30,39 +51,35 @@ public class UltrapassavelAttribute : Attribute
 public class Sala
 {
     int rows, cols;
-    public Range enemiesRange, obstaclesRange;
 
     public Possibilidades[,] matriz;
 
     public List<Tuple<int, int>> doorsPositions;
-
-    // changeables
     public List<Tuple<int, int>> changeablesPositions;
-    public List<Possibilidades> changeablesPossibilities;
+
+    public List<Enemies> enemies;
+    public List<Obstacles> obstacles;
 
     public int Rows { get => rows; set => rows = value; }
     public int Cols { get => cols; set => cols = value; }
 
-    public Sala(int rows, int cols, List<Tuple<int, int>> doorsPositions, Range enemiesRange, Range obstaclesRange)
+    public Sala(int rows, int cols, List<Tuple<int, int>> doorsPositions, List<Enemies> enemies, List<Obstacles> obstacles)
     {
         this.Rows = rows;
         this.Cols = cols;
 
-        this.enemiesRange = enemiesRange;
-        this.obstaclesRange = obstaclesRange;
-
         this.doorsPositions = doorsPositions;
-
         this.changeablesPositions = new();
-        this.changeablesPossibilities = new();
 
-        matriz = new Possibilidades[rows, cols];
+        this.enemies = enemies;
+        this.obstacles = obstacles;
+
+        this.matriz = new Possibilidades[rows, cols];
 
         PutTheWalls();
         PutTheDoors();
 
         GetTheChangeablesPositions();
-        GetTheChangeablesPossibilities();
     }
 
     public void PutTheWalls()
@@ -129,18 +146,6 @@ public class Sala
                 var valor = matriz[i, j];
 
                 if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Tuple<int, int>(i, j));
-            }
-        }
-    }
-
-    public void GetTheChangeablesPossibilities()
-    {
-        Type enumType = typeof(Possibilidades);
-        foreach (Possibilidades valor in Enum.GetValues(enumType))
-        {
-            if (valor.GetAttribute<MutavelAttribute>().IsMutavel)
-            {
-                changeablesPossibilities.Add(valor);
             }
         }
     }

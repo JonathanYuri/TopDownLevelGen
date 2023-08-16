@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -32,79 +35,120 @@ public class GeneticRoomIndividual
     {
         roomMatrix = (Possibilidades[,])sala.matriz.Clone();
 
-        // Só as partes mutaveis, gerar aleatorio
-        foreach (Tuple<int, int> positions in sala.changeablesPositions)
+        List<Tuple<int, int>> aux = new(sala.changeablesPositions);
+        foreach (Enemies enemie in sala.enemies)
         {
-            int rand = Random.Range(0, sala.changeablesPossibilities.Count);
-            roomMatrix[positions.Item1, positions.Item2] = sala.changeablesPossibilities[rand];
+            // procurar o inimigo na possibilidades
+            var enumValues = Enum.GetValues(typeof(Possibilidades));
+
+            Possibilidades inimigo = Possibilidades.Inimigo1;
+            foreach (Possibilidades value in enumValues)
+            {
+                if (enemie.ToString() == value.ToString())
+                {
+                    inimigo = value;
+                    break;
+                }
+            }
+
+            int rand = Random.Range(0, aux.Count);
+            roomMatrix[aux[rand].Item1, aux[rand].Item2] = inimigo;
+            aux.RemoveAt(rand);
+        }
+
+        aux = new(sala.changeablesPositions);
+        foreach (Obstacles obstacles in sala.obstacles)
+        {
+            // procurar o obstaculo na possibilidades
+            var enumValues = Enum.GetValues(typeof(Obstacles));
+            Possibilidades obstacle = Possibilidades.Obstaculo1;
+            foreach (Possibilidades value in enumValues)
+            {
+                if (obstacles.ToString() == value.ToString())
+                {
+                    obstacle = value;
+                    break;
+                }
+            }
+
+            int rand = Random.Range(0, aux.Count);
+            roomMatrix[aux[rand].Item1, aux[rand].Item2] = obstacle;
+            aux.RemoveAt(rand);
         }
     }
 
-    private void MutateAnyPosition(Sala sala)
+    void ChangePlaceOf(Sala sala, Type changePlace)
     {
-        // escolher uma posicao que seja mutavel
-        int posicaoMutar = Random.Range(0, sala.changeablesPositions.Count);
-        Tuple<int, int> posicaoEscolhida = sala.changeablesPositions[posicaoMutar];
-
-        // escolher por qual ele vai ser mutado
-        int rand = Random.Range(0, sala.changeablesPossibilities.Count);
-        roomMatrix[posicaoEscolhida.Item1, posicaoEscolhida.Item2] = sala.changeablesPossibilities[rand];
+        Tuple<int, int> position = Utils.ChooseLocationThatHas(roomMatrix, sala.changeablesPositions, changePlace);
+        if (position.Item1 != -1 && position.Item2 != -1)
+        {
+            // escolher um lugar que nao tenha o mesmo inimigo
+            Tuple<int, int> positionFreeFrom = Utils.ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, roomMatrix[position.Item1, position.Item2]);
+            if (positionFreeFrom.Item1 != -1 && positionFreeFrom.Item2 != -1)
+            {
+                (roomMatrix[positionFreeFrom.Item1, positionFreeFrom.Item2], roomMatrix[position.Item1, position.Item2])
+                                                                =
+                (roomMatrix[position.Item1, position.Item2], roomMatrix[positionFreeFrom.Item1, positionFreeFrom.Item2]);
+            }
+        }
     }
 
     public void Mutate(Sala sala)
     {
-        int qntInimigos = Utils.CountOccurrences(roomMatrix, Possibilidades.Inimigo);
-        int qntObstaculos = Utils.CountOccurrences(roomMatrix, Possibilidades.Obstaculo);
-
-        // nao preciso ajustar nem os inimigos nem os obstaculos
-        if (qntInimigos >= sala.enemiesRange.min && qntInimigos <= sala.enemiesRange.max
-                                                        &&
-            qntObstaculos >= sala.obstaclesRange.min && qntObstaculos <= sala.obstaclesRange.max)
+        // escolher um inimigo ou um obstaculo para mudar
+        if (Random.value < 0.5f)
         {
-            MutateAnyPosition(sala);
+            ChangePlaceOf(sala, typeof(Enemies));
         }
         else
         {
-            // tratar os inimigos
-            if (qntInimigos < sala.enemiesRange.min) // vou precisar escolher um lugar pra colocar um inimigo
-            {
-                Utils.AddToMatrix(sala, roomMatrix, Possibilidades.Inimigo);
-            }
-            else if (qntInimigos > sala.enemiesRange.max) // vou precisar tirar um inimigo
-            {
-                Utils.RemoveFromMatrix(sala, roomMatrix, Possibilidades.Inimigo);
-            }
-
-            // tratar os obstaculos
-            if (qntObstaculos < sala.obstaclesRange.min) // vou precisar escolher um lugar pra colocar um obstaculo
-            {
-                Utils.AddToMatrix(sala, roomMatrix, Possibilidades.Obstaculo);
-            }
-            else if (qntObstaculos > sala.obstaclesRange.max) // vou precisar tirar um obstaculo
-            {
-                Utils.RemoveFromMatrix(sala, roomMatrix, Possibilidades.Obstaculo);
-            }
+            ChangePlaceOf(sala, typeof(Obstacles));
         }
+    }
+
+    bool IsMonstrousIndividual(Sala sala)
+    {
+        int qntCaminhosEntrePortas = Utils.CountPathsBetweenDoors(roomMatrix, sala.doorsPositions);
+        if (qntCaminhosEntrePortas == int.MinValue)
+        {
+            return true;
+        }
+
+        bool isPath = Utils.IsPathBetweenDoorAndEnemies(roomMatrix, sala.doorsPositions);
+        if (!isPath)
+        {
+            return true;
+        }
+
+        bool hasTheRightAmountOfEnemies = Utils.CountOccurrences(roomMatrix, typeof(Enemies)) == sala.enemies.Count;
+        if (!hasTheRightAmountOfEnemies)
+        {
+            return true;
+        }
+
+        bool hasTheRightAmountOfObstacles = Utils.CountOccurrences(roomMatrix, typeof(Obstacles)) == sala.obstacles.Count;
+        if (!hasTheRightAmountOfObstacles)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public void Evaluate(Sala sala)
     {
-        // quantidade de caminhos de uma porta a outra, se nao tiver 0 caminhos de uma porta, MONSTRO
-        int qntCaminhos = Utils.CountPathsBetweenDoors(roomMatrix, sala.doorsPositions);
-        if (qntCaminhos == int.MinValue)
+        if (IsMonstrousIndividual(sala))
         {
             value = int.MinValue;
             return;
         }
 
-        int qntInimigos = Utils.CountOccurrences(roomMatrix, Possibilidades.Inimigo);
-        int qntObstaculos = Utils.CountOccurrences(roomMatrix, Possibilidades.Obstaculo);
+        List<int> groups = Utils.CountGroups(roomMatrix, typeof(Enemies));
+        float media = Utils.CalculateAverage(groups);
+        //Debug.Log("Total de grupos de Enemies na matriz: " + groups.Count);
+        //Debug.Log("Média do tamanho dos grupos: " + media);
 
-        int distanceToRangeEnemies = Utils.CalculateDistanceToRange(sala.enemiesRange.min, sala.enemiesRange.max, qntInimigos);
-        int distanceToRangeObstacles = Utils.CalculateDistanceToRange(sala.obstaclesRange.min, sala.obstaclesRange.max, qntObstaculos);
-
-        double pesoInimigos = 1.0, pesoObstaculos = 1.0, pesoCaminhos = 1.0;
-
-        value = (int)(distanceToRangeEnemies * pesoInimigos + distanceToRangeObstacles * pesoObstaculos - qntCaminhos * pesoCaminhos);
+        //int qntInimigosProximosDeObstaculos = Utils.CountEnemiesNextToObstacles(roomMatrix);
+        value = - groups.Count - (int)media; // + qntInimigosProximosDeObstaculos;
     }
 }
