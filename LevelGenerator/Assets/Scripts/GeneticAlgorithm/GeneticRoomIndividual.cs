@@ -35,7 +35,7 @@ public class GeneticRoomIndividual
     {
         roomMatrix = (Possibilidades[,])sala.matriz.Clone();
 
-        List<Tuple<int, int>> aux = new(sala.changeablesPositions);
+        List<Position> aux = new(sala.changeablesPositions);
         foreach (Enemies enemie in sala.enemies)
         {
             // procurar o inimigo na possibilidades
@@ -52,7 +52,7 @@ public class GeneticRoomIndividual
             }
 
             int rand = Random.Range(0, aux.Count);
-            roomMatrix[aux[rand].Item1, aux[rand].Item2] = inimigo;
+            roomMatrix[aux[rand].Row, aux[rand].Column] = inimigo;
             aux.RemoveAt(rand);
         }
 
@@ -72,23 +72,23 @@ public class GeneticRoomIndividual
             }
 
             int rand = Random.Range(0, aux.Count);
-            roomMatrix[aux[rand].Item1, aux[rand].Item2] = obstacle;
+            roomMatrix[aux[rand].Row, aux[rand].Column] = obstacle;
             aux.RemoveAt(rand);
         }
     }
 
     void ChangePlaceOf(Sala sala, Type changePlace)
     {
-        Tuple<int, int> position = Utils.ChooseLocationThatHas(roomMatrix, sala.changeablesPositions, changePlace);
-        if (position.Item1 != -1 && position.Item2 != -1)
+        Position position = Utils.ChooseLocationThatHas(roomMatrix, sala.changeablesPositions, changePlace);
+        if (position.Row != -1 && position.Column != -1)
         {
             // escolher um lugar que nao tenha o mesmo inimigo
-            Tuple<int, int> positionFreeFrom = Utils.ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, roomMatrix[position.Item1, position.Item2]);
-            if (positionFreeFrom.Item1 != -1 && positionFreeFrom.Item2 != -1)
+            Position positionFreeFrom = Utils.ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, roomMatrix[position.Row, position.Column]);
+            if (positionFreeFrom.Row != -1 && positionFreeFrom.Column != -1)
             {
-                (roomMatrix[positionFreeFrom.Item1, positionFreeFrom.Item2], roomMatrix[position.Item1, position.Item2])
+                (roomMatrix[positionFreeFrom.Row, positionFreeFrom.Column], roomMatrix[position.Row, position.Column])
                                                                 =
-                (roomMatrix[position.Item1, position.Item2], roomMatrix[positionFreeFrom.Item1, positionFreeFrom.Item2]);
+                (roomMatrix[position.Row, position.Column], roomMatrix[positionFreeFrom.Row, positionFreeFrom.Column]);
             }
         }
     }

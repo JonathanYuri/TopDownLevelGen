@@ -15,33 +15,62 @@ public static class EnumExtensions
     }
 }
 
+public enum Direction
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+
+public class Position
+{
+    public int Row { get; set; }
+    public int Column { get; set; }
+
+    public Position Move(Direction direction)
+    {
+        return direction switch
+        {
+            Direction.Up => new Position { Row = Row - 1, Column = Column },
+            Direction.Down => new Position { Row = Row + 1, Column = Column },
+            Direction.Left => new Position { Row = Row, Column = Column - 1 },
+            Direction.Right => new Position { Row = Row, Column = Column + 1 },
+            Direction _ => throw new ArgumentException("Direção desconhecida: " + direction)
+        };
+    }
+}
+
 public static class Utils
 {
+    public static HashSet<string> GetEnumValueStrings(Type enumType)
+    {
+        return new HashSet<string>(Enum.GetValues(enumType).Cast<Enum>().Select(value => value.ToString()));
+    }
+
+    public static bool IsPositionWithinBounds<T>(T[,] matrix, Position position)
+    {
+        return position.Row >= 0 && position.Row < matrix.GetLength(0) &&
+               position.Column >= 0 && position.Column < matrix.GetLength(1);
+    }
+
     public static int CountEnemiesNextToObstacles(Possibilidades[,] matrix)
     {
-        List<Tuple<int, int>> obstaclesPositions = GetPositionsThatHas(matrix, typeof(Obstacles));
+        List<Position> obstaclesPositions = GetPositionsThatHas(matrix, typeof(Obstacles));
         IEnumerable<Enum> enemiesValues = Enum.GetValues(typeof(Enemies)).Cast<Enum>();
-
-        // acima, abaixo, esquerda, direita
-        int[] directionRow = { -1, 1, 0, 0 };
-        int[] directionColumn = { 0, 0, -1, 1 };
 
         int enemies = 0;
         foreach (var obstaclePosition in obstaclesPositions)
         {
-            for (int i = 0; i < 4; i++)
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
-                int nx = obstaclePosition.Item1 + directionRow[i];
-                int ny = obstaclePosition.Item2 + directionColumn[i];
-
-                if (nx < 0 || ny < 0 || nx >= matrix.GetLength(0) || ny >= matrix.GetLength(1))
+                Position adjacentPosition = obstaclePosition.Move(direction);
+                if (IsPositionWithinBounds(matrix, adjacentPosition))
                 {
-                    continue;
-                }
-
-                if (enemiesValues.Any(value => matrix[nx, ny].ToString() == value.ToString()))
-                {
-                    enemies++;
+                    if (enemiesValues.Any(value => matrix[adjacentPosition.Row, adjacentPosition.Column].ToString() == value.ToString()))
+                    {
+                        enemies++;
+                    }
                 }
             }
         }
@@ -67,16 +96,15 @@ public static class Utils
     {
         bool[,] visitado = new bool[matrix.GetLength(0), matrix.GetLength(1)];
 
-        IEnumerable<Enum> enumValues = Enum.GetValues(enumType).Cast<Enum>();
-
+        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
         List<int> tamanhosGrupos = new();
         for (int row = 0; row < matrix.GetLength(0); row++)
         {
             for (int col = 0; col < matrix.GetLength(1); col++)
             {
-                if (!visitado[row, col] && enumValues.Any(value => matrix[row, col].ToString() == value.ToString()))
+                if (!visitado[row, col] && enumValueStrings.Contains(matrix[row, col].ToString()))
                 {
-                    int tamanhoGrupo = CountGroup(matrix, visitado, enumValues, row, col);
+                    int tamanhoGrupo = CountGroup(matrix, visitado, enumValueStrings, row, col);
                     tamanhosGrupos.Add(tamanhoGrupo);
                 }
             }
@@ -85,34 +113,33 @@ public static class Utils
         return tamanhosGrupos;
     }
 
-    static int CountGroup(Possibilidades[,] matriz, bool[,] visited, IEnumerable<Enum> enumValues, int row, int col)
+    static int CountGroup(Possibilidades[,] matriz, bool[,] visited, HashSet<string> enumValueStrings, int row, int col)
     {
-        if (row < 0 || row >= matriz.GetLength(0) || col < 0 || col >= matriz.GetLength(1) || visited[row, col] || enumValues.All(value => matriz[row, col].ToString() != value.ToString()))
+        if (row < 0 || row >= matriz.GetLength(0) || col < 0 || col >= matriz.GetLength(1) || visited[row, col] || !enumValueStrings.Contains(matriz[row, col].ToString()))
             return 0;
 
         visited[row, col] = true;
 
         int tamanhoAtual = 1;
 
-        tamanhoAtual += CountGroup(matriz, visited, enumValues, row - 1, col);
-        tamanhoAtual += CountGroup(matriz, visited, enumValues, row + 1, col);
-        tamanhoAtual += CountGroup(matriz, visited, enumValues, row, col - 1);
-        tamanhoAtual += CountGroup(matriz, visited, enumValues, row, col + 1);
+        tamanhoAtual += CountGroup(matriz, visited, enumValueStrings, row - 1, col);
+        tamanhoAtual += CountGroup(matriz, visited, enumValueStrings, row + 1, col);
+        tamanhoAtual += CountGroup(matriz, visited, enumValueStrings, row, col - 1);
+        tamanhoAtual += CountGroup(matriz, visited, enumValueStrings, row, col + 1);
 
         return tamanhoAtual;
     }
 
     public static int CountOccurrences(Possibilidades[,] matriz, Type enumType)
     {
-        var enumValues = Enum.GetValues(enumType).Cast<Enum>();
+        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
 
         int count = 0;
-
         for (int i = 0; i < matriz.GetLength(0); i++)
         {
             for (int j = 0; j < matriz.GetLength(1); j++)
             {
-                if (enumValues.Any(value => matriz[i, j].ToString() == value.ToString()))
+                if (enumValueStrings.Contains(matriz[i, j].ToString()))
                 {
                     count++;
                 }
@@ -121,31 +148,31 @@ public static class Utils
         return count;
     }
 
-    static List<Tuple<int, int>> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
+    static List<Position> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
     {
-        List<Tuple<int, int>> positionsHas = new();
+        List<Position> positionsHas = new();
 
-        var enumValues = Enum.GetValues(enumType).Cast<Enum>();
+        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
 
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                if (enumValues.Any(value => matrix[i, j].ToString() == value.ToString()))
+                if (enumValueStrings.Contains(matrix[i, j].ToString()))
                 {
-                    positionsHas.Add(new Tuple<int, int>(i, j));
+                    positionsHas.Add(new Position { Row = i, Column = j } );
                 }
             }
         }
         return positionsHas;
     }
 
-    public static Tuple<int, int> ChooseLocationFreeFrom(Possibilidades[,] matriz, List<Tuple<int, int>> changeablesPositions, Possibilidades freeFrom)
+    public static Position ChooseLocationFreeFrom(Possibilidades[,] matriz, List<Position> changeablesPositions, Possibilidades freeFrom)
     {
-        List<Tuple<int, int>> positionsFreeFrom = new();
-        foreach (Tuple<int, int> position in changeablesPositions)
+        List<Position> positionsFreeFrom = new();
+        foreach (Position position in changeablesPositions)
         {
-            if (!matriz[position.Item1, position.Item2].Equals(freeFrom))
+            if (!matriz[position.Row, position.Column].Equals(freeFrom))
             {
                 positionsFreeFrom.Add(position);
             }
@@ -153,20 +180,20 @@ public static class Utils
 
         if (positionsFreeFrom.Count == 0)
         {
-            return new Tuple<int, int>(-1, -1);
+            return new Position { Row = -1, Column = -1 };
         }
         int idx = Random.Range(0, positionsFreeFrom.Count);
         return positionsFreeFrom[idx];
     }
 
-    public static Tuple<int, int> ChooseLocationThatHas(Possibilidades[,] matriz, List<Tuple<int, int>> changeablesPositions, Type enumType)
+    public static Position ChooseLocationThatHas(Possibilidades[,] matriz, List<Position> changeablesPositions, Type enumType)
     {
-        List<Tuple<int, int>> positionsHas = new();
+        List<Position> positionsHas = new();
 
-        var enumValues = Enum.GetValues(enumType).Cast<Enum>();
-        foreach (Tuple<int, int> position in changeablesPositions)
+        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
+        foreach (Position position in changeablesPositions)
         {
-            if (enumValues.Any(value => matriz[position.Item1, position.Item2].ToString() == value.ToString()))
+            if (enumValueStrings.Contains(matriz[position.Row, position.Column].ToString()))
             {
                 positionsHas.Add(position);
             }
@@ -174,15 +201,15 @@ public static class Utils
 
         if (positionsHas.Count == 0)
         {
-            return new Tuple<int, int>(-1, -1);
+            return new Position{ Row = -1, Column = -1 };
         }
         int idx = Random.Range(0, positionsHas.Count);
         return positionsHas[idx];
     }
 
-    public static bool IsPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, List<Tuple<int, int>> doorsPositions)
+    public static bool IsPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, List<Position> doorsPositions)
     {
-        List<Tuple<int, int>> enemiesPositions = GetPositionsThatHas(roomMatrix, typeof(Enemies));
+        List<Position> enemiesPositions = GetPositionsThatHas(roomMatrix, typeof(Enemies));
         if (enemiesPositions.Count == 0)
         {
             return false;
@@ -192,10 +219,10 @@ public static class Utils
 
         // so preciso ver de uma porta pra todos os inimigos, pq se tiver de uma tem da outra, ja que eu conto os caminhos de uma porta a outra
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
-        foreach (Tuple<int, int> enemiePosition in enemiesPositions)
+        foreach (Position enemiePosition in enemiesPositions)
         {
             int[,] paths = CountPaths(matriz, doorsPositions[0]);
-            if (paths[enemiePosition.Item1, enemiePosition.Item2] == 0)
+            if (paths[enemiePosition.Row, enemiePosition.Column] == 0)
             {
                 return false;
             }
@@ -240,7 +267,7 @@ public static class Utils
         return chosenItems[capacity];
     }
 
-    public static int CountPathsBetweenDoors(Possibilidades[,] roomMatrix, List<Tuple<int, int>> doorsPositions)
+    public static int CountPathsBetweenDoors(Possibilidades[,] roomMatrix, List<Position> doorsPositions)
     {
         // transformar 
         int[,] matriz = TransformRoomForCountPaths(roomMatrix);
@@ -253,11 +280,11 @@ public static class Utils
                 //Console.WriteLine("PORTA: " + i + " x " + j);
                 int[,] paths = CountPaths(matriz, doorsPositions[i]);
 
-                if (paths[doorsPositions[j].Item1, doorsPositions[j].Item2] == 0)
+                if (paths[doorsPositions[j].Row, doorsPositions[j].Column] == 0)
                 {
                     return int.MinValue;
                 }
-                qntCaminhos += paths[doorsPositions[j].Item1, doorsPositions[j].Item2];
+                qntCaminhos += paths[doorsPositions[j].Row, doorsPositions[j].Column];
             }
         }
 
@@ -285,57 +312,40 @@ public static class Utils
         return matriz;
     }
 
-    private static int[,] CountPaths(int[,] matrix, Tuple<int, int> initialPosition)
+    private static int[,] CountPaths(int[,] matrix, Position initialPosition)
     {
         int rows = matrix.GetLength(0);
         int cols = matrix.GetLength(1);
 
         int[,] countPath = new int[rows, cols];
 
-        Queue<(int, int)> queue = new();
+        Queue<Position> queue = new();
 
         // Adicionar o ponto de partida à fila
-        queue.Enqueue((initialPosition.Item1, initialPosition.Item2));
-        countPath[initialPosition.Item1, initialPosition.Item2] = 1;
-
-        // acima, abaixo, esquerda, direita
-        int[] directionRow = { -1, 1, 0, 0 };
-        int[] directionColumn = { 0, 0, -1, 1 };
+        queue.Enqueue(initialPosition);
+        countPath[initialPosition.Row, initialPosition.Column] = 1;
 
         // BFS
         while (queue.Count > 0)
         {
-            var (x, y) = queue.Dequeue();
+            Position position = queue.Dequeue();
 
-            for (int i = 0; i < 4; i++)
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
-                int nx = x + directionRow[i];
-                int ny = y + directionColumn[i];
-
-                // Verificar se a próxima posição está dentro dos limites da matriz e é acessível
-                if (nx >= 0 && ny >= 0 && nx < rows && ny < cols && matrix[nx, ny] == 1)
+                Position adjacentPosition = position.Move(direction);
+                if (IsPositionWithinBounds(matrix, adjacentPosition) && matrix[adjacentPosition.Row, adjacentPosition.Column] == 1)
                 {
                     // Se ainda não foi visitada, adicionar à fila
-                    if (countPath[nx, ny] == 0)
+                    if (countPath[adjacentPosition.Row, adjacentPosition.Column] == 0)
                     {
-                        queue.Enqueue((nx, ny));
+                        queue.Enqueue(adjacentPosition);
                     }
 
-                    countPath[nx, ny] += countPath[x, y];
+                    countPath[adjacentPosition.Row, adjacentPosition.Column] += countPath[position.Row, position.Column];
                 }
             }
         }
 
         return countPath;
-    }
-
-    public static int CalculateDistanceToRange(int min, int max, int number)
-    {
-        int distanceToRange;
-        if (number > max) distanceToRange = max - number;
-        else if (number < min) distanceToRange = number - min;
-        else distanceToRange = 0;
-
-        return distanceToRange;
     }
 }

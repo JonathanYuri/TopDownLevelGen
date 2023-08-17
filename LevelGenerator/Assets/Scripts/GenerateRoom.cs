@@ -109,10 +109,10 @@ public class GenerateRoom : MonoBehaviour
         int rows = 9;
         int cols = 15;
 
-        List<Tuple<int, int>> doorsPosition = new()
+        List<Position> doorsPosition = new()
         {
-            new Tuple<int, int>((int)(rows / 2), 0),
-            new Tuple<int, int>(rows - 1, (int)(cols / 2))
+            new Position{ Row = (int)(rows / 2), Column = 0 },
+            new Position{ Row = rows - 1, Column =(int)(cols / 2) }
         };
 
         Sala sala = new(rows, cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));

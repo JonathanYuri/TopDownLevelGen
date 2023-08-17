@@ -54,8 +54,8 @@ public class Sala
 
     public Possibilidades[,] matriz;
 
-    public List<Tuple<int, int>> doorsPositions;
-    public List<Tuple<int, int>> changeablesPositions;
+    public List<Position> doorsPositions;
+    public List<Position> changeablesPositions;
 
     public List<Enemies> enemies;
     public List<Obstacles> obstacles;
@@ -63,7 +63,7 @@ public class Sala
     public int Rows { get => rows; set => rows = value; }
     public int Cols { get => cols; set => cols = value; }
 
-    public Sala(int rows, int cols, List<Tuple<int, int>> doorsPositions, List<Enemies> enemies, List<Obstacles> obstacles)
+    public Sala(int rows, int cols, List<Position> doorsPositions, List<Enemies> enemies, List<Obstacles> obstacles)
     {
         this.Rows = rows;
         this.Cols = cols;
@@ -98,9 +98,9 @@ public class Sala
 
     public void PutTheDoors()
     {
-        foreach (Tuple<int, int> position in doorsPositions)
+        foreach (Position position in doorsPositions)
         {
-            matriz[position.Item1, position.Item2] = Possibilidades.Porta;
+            matriz[position.Row, position.Column] = Possibilidades.Porta;
 
             // nao pode ter nada na frente da porta
 
@@ -108,31 +108,31 @@ public class Sala
         }
     }
 
-    public void PutTheNothingsBeforeTheDoors(Tuple<int, int> doorPosition)
+    public void PutTheNothingsBeforeTheDoors(Position doorPosition)
     {
         // porta pra esquerda ou pra direita
-        if (doorPosition.Item1 == (int)(Rows / 2))
+        if (doorPosition.Row == (int)(Rows / 2))
         {
-            if (doorPosition.Item2 == Cols - 1) // porta na direita da sala
+            if (doorPosition.Column == Cols - 1) // porta na direita da sala
             {
-                matriz[doorPosition.Item1, doorPosition.Item2 - 1] = Possibilidades.Nada;
+                matriz[doorPosition.Row, doorPosition.Column - 1] = Possibilidades.Nada;
             }
-            else if (doorPosition.Item2 == 0) // porta na esquerda da sala
+            else if (doorPosition.Column == 0) // porta na esquerda da sala
             {
-                matriz[doorPosition.Item1, doorPosition.Item2 + 1] = Possibilidades.Nada;
+                matriz[doorPosition.Row, doorPosition.Column + 1] = Possibilidades.Nada;
             }
         }
 
         // porta pra cima ou pra baixo
-        else if (doorPosition.Item2 == (int)(Cols / 2))
+        else if (doorPosition.Column == (int)(Cols / 2))
         {
-            if (doorPosition.Item1 == Rows - 1) // porta embaixo na sala
+            if (doorPosition.Row == Rows - 1) // porta embaixo na sala
             {
-                matriz[doorPosition.Item1 - 1, doorPosition.Item2] = Possibilidades.Nada;
+                matriz[doorPosition.Row - 1, doorPosition.Column] = Possibilidades.Nada;
             }
-            else if (doorPosition.Item1 == 0) // porta pra cima na sala
+            else if (doorPosition.Row == 0) // porta pra cima na sala
             {
-                matriz[doorPosition.Item1 + 1, doorPosition.Item2] = Possibilidades.Nada;
+                matriz[doorPosition.Row + 1, doorPosition.Column] = Possibilidades.Nada;
             }
         }
     }
@@ -145,7 +145,7 @@ public class Sala
             {
                 var valor = matriz[i, j];
 
-                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Tuple<int, int>(i, j));
+                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position{ Row = i, Column = j });
             }
         }
     }
