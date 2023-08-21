@@ -1,17 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-
-public struct Range
-{
-    public int min;
-    public int max;
-}
 
 public class GenerateRoom : MonoBehaviour
 {
@@ -22,16 +12,17 @@ public class GenerateRoom : MonoBehaviour
     [SerializeField] GameObject chao;
 
     [SerializeField] GameObject room;
-
-    [SerializeField] TMP_Text botaoGerar;
-    string botaoGerarInicial;
     bool isGenerating = false;
+
+    [SerializeField] List<GameObject> portas;
+    [SerializeField] List<GameObject> paredes;
+    [SerializeField] GameObject chaoFinal;
+    [SerializeField] GameObject player;
 
     Dictionary<Possibilidades, GameObject> objects;
 
     private void Awake()
     {
-        botaoGerarInicial = botaoGerar.text;
         objects = new()
         {
             { Possibilidades.Chao, chao },
@@ -47,6 +38,11 @@ public class GenerateRoom : MonoBehaviour
             { Possibilidades.Inimigo2, inimigo },
             { Possibilidades.Inimigo3, inimigo },
         };
+    }
+
+    private void Start()
+    {
+        Generate();
     }
 
     List<Enemies> ResolveKnapsackEnemies(int capacityEnemies)
@@ -133,7 +129,6 @@ public class GenerateRoom : MonoBehaviour
         //room.transform.position = new Vector3(0, 0, 0);
 
         isGenerating = true;
-        botaoGerar.text = "Gerando...";
 
         // esperar ate o proximo frame pra ele atualizar o texto botao
         yield return null;
@@ -147,12 +142,78 @@ public class GenerateRoom : MonoBehaviour
             for (int j = 0; j < sala.Cols; j++)
             {
                 GameObject tile = objects[sala.matriz[i, j]];
-                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(j, -i), Quaternion.identity, room.transform);
+
+                if (sala.matriz[i, j] == Possibilidades.Porta)
+                {
+                    if (i == 0) // porta pra cima
+                    {
+                        tile = portas[0];
+                    }
+                    else if (i == sala.Rows - 1) // porta pra baixo
+                    {
+                        tile = portas[1];
+                    }
+                    else if (j == 0) // porta pra esquerda
+                    {
+                        tile = portas[2];
+                    }
+                    else if (j == sala.Cols - 1) // porta pra direita
+                    {
+                        tile = portas[3];
+                    }
+                }
+
+                else if (sala.matriz[i, j] == Possibilidades.Parede)
+                {
+                    if (i == 0 && j == 0) // quina cima-esq
+                    {
+                        tile = paredes[0];
+                    }
+                    else if (i == 0 && j == sala.Cols - 1) // quina cima-direita
+                    {
+                        tile = paredes[1];
+                    }
+                    else if (i == sala.Rows - 1 && j == 0) // quina baixo-esq
+                    {
+                        tile = paredes[2];
+                    }
+                    else if (i == sala.Rows - 1 && j == sala.Cols - 1) // quina baixo-direita
+                    {
+                        tile = paredes[3];
+                    }
+
+                    // RESTO
+                    else if (i == 0) // cima
+                    {
+                        tile = paredes[4];
+                    }
+                    else if (i == sala.Rows - 1) // baixo
+                    {
+                        tile = paredes[5];
+                    }
+                    else if (j == 0) // esq
+                    {
+                        tile = paredes[6];
+                    }
+                    else if (j == sala.Cols - 1) // direita
+                    {
+                        tile = paredes[7];
+                    }
+                }
+
+                else if (sala.matriz[i, j] == Possibilidades.Chao || sala.matriz[i, j] == Possibilidades.Nada)
+                {
+                    tile = chaoFinal;
+                }
+
+                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(j, -i), tile.transform.rotation, room.transform);
                 //Debug.Log(sala.matriz[i, j].ToString()[..2] + " ");
             }
         }
 
-        botaoGerar.text = botaoGerarInicial;
+        // Spawnar Player
+        Instantiate(player, (Vector2)player.transform.position  + new Vector2((int)(sala.Cols / 2), -(sala.Rows - 2)), Quaternion.identity);
+
         isGenerating = false;
 
         //room.transform.localScale = new Vector3(0.8141508f, 0.8141508f, 1);

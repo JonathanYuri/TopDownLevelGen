@@ -43,7 +43,7 @@ public class Position
 
 public static class Utils
 {
-    public static HashSet<string> GetEnumValueStrings(Type enumType)
+    static HashSet<string> GetEnumValueStrings(Type enumType)
     {
         return new HashSet<string>(Enum.GetValues(enumType).Cast<Enum>().Select(value => value.ToString()));
     }
@@ -291,7 +291,7 @@ public static class Utils
         return qntCaminhos;
     }
 
-    private static int[,] TransformRoomForCountPaths(Possibilidades[,] roomMatrix)
+    static int[,] TransformRoomForCountPaths(Possibilidades[,] roomMatrix)
     {
         int[,] matriz = new int[roomMatrix.GetLength(0), roomMatrix.GetLength(1)];
 
@@ -312,12 +312,9 @@ public static class Utils
         return matriz;
     }
 
-    private static int[,] CountPaths(int[,] matrix, Position initialPosition)
+    static int[,] CountPaths(int[,] matrix, Position initialPosition)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
-
-        int[,] countPath = new int[rows, cols];
+        int[,] countPath = new int[matrix.GetLength(0), matrix.GetLength(1)];
 
         Queue<Position> queue = new();
 
