@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -120,16 +121,67 @@ public class GeneticRoomIndividual
             return true;
         }
 
-        bool hasTheRightAmountOfEnemies = Utils.CountOccurrences(roomMatrix, typeof(Enemies)) == sala.enemies.Count;
+        List<Position> enemiesPositions = Utils.GetPositionsThatHas(roomMatrix, typeof(Enemies));
+        List<Position> obstaclesPositions = Utils.GetPositionsThatHas(roomMatrix, typeof(Obstacles));
+
+        bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.Count;
         if (!hasTheRightAmountOfEnemies)
         {
             return true;
         }
 
-        bool hasTheRightAmountOfObstacles = Utils.CountOccurrences(roomMatrix, typeof(Obstacles)) == sala.obstacles.Count;
+        bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.obstacles.Count;
         if (!hasTheRightAmountOfObstacles)
         {
             return true;
+        }
+
+        // TODO: REFACTOR ENEMIES AND OBSTACLES, melhorar essas paradas do enum, tao ficando complicadas ja
+
+        // hasTheRightEnemies;
+        var enumValues = Enum.GetValues(typeof(Obstacles));
+        List<Enemies> enemies = new();
+        foreach (Position enemyPosition in enemiesPositions)
+        {
+            // pegar o inimigo equivalente no enum de Possibilidades // TODO: separar esse codigo em funcao, usa bastante, na GenerateRoomRandomly ja usa isso
+            foreach (Enemies value in enumValues)
+            {
+                if (roomMatrix[enemyPosition.Row, enemyPosition.Column].ToString() == value.ToString())
+                {
+                    enemies.Add(value);
+                }
+            }
+        }
+        enemies.Sort();
+        List<Enemies> aux = new(sala.enemies);
+        aux.Sort();
+        if (!enemies.SequenceEqual(aux))
+        {
+            return false;
+        }
+
+        /////////////////////////////////////////
+
+        // hasTheRightObstacles
+        var values = Enum.GetValues(typeof(Obstacles));
+        List<Obstacles> obstacles = new();
+        foreach (Position obstaclePosition in obstaclesPositions)
+        {
+            // pegar o inimigo equivalente no enum de Possibilidades // TODO: separar esse codigo em funcao, usa bastante, na GenerateRoomRandomly ja usa isso
+            foreach (Obstacles value in enumValues)
+            {
+                if (roomMatrix[obstaclePosition.Row, obstaclePosition.Column].ToString() == value.ToString())
+                {
+                    obstacles.Add(value);
+                }
+            }
+        }
+        obstacles.Sort();
+        List<Obstacles> aux1 = new(sala.obstacles);
+        aux1.Sort();
+        if (!obstacles.SequenceEqual(aux1))
+        {
+            return false;
         }
 
         return false;

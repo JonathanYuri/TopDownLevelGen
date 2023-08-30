@@ -1,6 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
 using UnityEngine;
 
 public class GenerateRoom : MonoBehaviour
@@ -11,7 +12,9 @@ public class GenerateRoom : MonoBehaviour
     [SerializeField] GameObject obstaculo;
     [SerializeField] GameObject chao;
 
+    [SerializeField] GameObject rooms;
     [SerializeField] GameObject room;
+
     bool isGenerating = false;
 
     [SerializeField] List<GameObject> portas;
@@ -20,6 +23,12 @@ public class GenerateRoom : MonoBehaviour
     [SerializeField] GameObject player;
 
     Dictionary<Possibilidades, GameObject> objects;
+
+    readonly int numSalas = 10;
+    readonly int rows = 9;
+    readonly int cols = 15;
+
+    HashSet<Position> mapa;
 
     private void Awake()
     {
@@ -38,6 +47,8 @@ public class GenerateRoom : MonoBehaviour
             { Possibilidades.Inimigo2, inimigo },
             { Possibilidades.Inimigo3, inimigo },
         };
+
+        mapa = new();
     }
 
     private void Start()
@@ -94,16 +105,63 @@ public class GenerateRoom : MonoBehaviour
             return;
         }
 
-        foreach (Transform child in room.transform)
+        foreach (Transform child in rooms.transform)
         {
             Destroy(child.gameObject);
         }
 
+        GerarMapa();
+
+        Debug.Log("mapa:");
+        foreach (Position position in mapa)
+        {
+            Debug.Log(position.Row + ", " + position.Column + " iguais: " + mapa.Count(p => p.Equals(position)));
+
+            Vector2 p = new(position.Row * cols + position.Row, position.Column * rows + position.Column);
+            GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
+
+            GerarSala(r);
+        }
+    }
+
+    void GerarMapa()
+    {
+        Queue<Position> queue = new();
+        queue.Enqueue(new Position { Row = 0, Column = 0 });
+
+        while (mapa.Count < numSalas)
+        {
+            if (queue.Count == 0)
+            {
+                // adicionar uma posicao aleatoria que tem no mapa na queue
+                int pos = UnityEngine.Random.Range(0, mapa.Count);
+                queue.Enqueue(mapa.GetElementAt(pos));
+            }
+
+            Position position = queue.Dequeue();
+            mapa.Add(position);
+
+            // escolher qualquer posição e tentar destravar
+            Direction[] shuffledArr = (Direction[])Enum.GetValues(typeof(Direction));
+            List<Direction> shuffledList = shuffledArr.ToList();
+
+            // destravar as posições
+            foreach (Direction direction in shuffledList)
+            {
+                Position adjacentPosition = position.Move(direction);
+
+                if (!mapa.Contains(adjacentPosition) && UnityEngine.Random.value < 0.5f)
+                {
+                    queue.Enqueue(adjacentPosition);
+                }
+            }
+        }
+    }
+
+    void GerarSala(GameObject room)
+    {
         // ############# COMECO ##############
         // o (0, 0) é o canto superior esquerdo
-
-        int rows = 9;
-        int cols = 15;
 
         List<Position> doorsPosition = new()
         {
@@ -113,17 +171,18 @@ public class GenerateRoom : MonoBehaviour
 
         Sala sala = new(rows, cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
 
-        int populationSize = 10;
+        int populationSize = 5;
         GeneticRoomGenerator geneticRoomGenerator = new(sala, populationSize, 0.8f, 0.3f);
 
-        StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator));
+        StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
 
-        // TODO: gerar mapa com aquela logica simples de colocar numa pilha
+        // Gerar outra sala no (rows + 1, cols + 1)
+
         // TODO: aumento de dificuldade chegando mais perto do boss
         // TODO: gerar a sala inicial e a sala do boss diferente das outras e gerar antes, a sala inicial e a do boss nao tem nd, a do boss tem o boss claro
     }
 
-    IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator)
+    IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator, GameObject room)
     {
         //room.transform.localScale = new Vector3(1, 1, 1);
         //room.transform.position = new Vector3(0, 0, 0);
@@ -206,13 +265,13 @@ public class GenerateRoom : MonoBehaviour
                     tile = chaoFinal;
                 }
 
-                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(j, -i), tile.transform.rotation, room.transform);
+                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(j, -i) + (Vector2)room.transform.position, tile.transform.rotation, room.transform);
                 //Debug.Log(sala.matriz[i, j].ToString()[..2] + " ");
             }
         }
 
         // Spawnar Player
-        Instantiate(player, (Vector2)player.transform.position  + new Vector2((int)(sala.Cols / 2), -(sala.Rows - 2)), Quaternion.identity);
+        Instantiate(player, (Vector2)player.transform.position + new Vector2((int)(sala.Cols / 2), -(sala.Rows - 2)) + (Vector2)room.transform.position, Quaternion.identity);
 
         isGenerating = false;
 

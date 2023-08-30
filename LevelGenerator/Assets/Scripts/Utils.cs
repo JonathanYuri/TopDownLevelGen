@@ -15,6 +15,38 @@ public static class EnumExtensions
     }
 }
 
+public static class HashSetExtensions
+{
+    public static T GetElementAt<T>(this HashSet<T> set, int index)
+    {
+        if (set == null)
+        {
+            throw new ArgumentNullException(nameof(set));
+        }
+
+        if (index < 0 || index >= set.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range.");
+        }
+
+        return set.ElementAt(index);
+    }
+}
+
+public static class ListExtensions
+{
+    public static void Shuffle<T>(this IList<T> list)
+    {
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = Random.Range(0, n + 1);
+            (list[n], list[k]) = (list[k], list[n]);
+        }
+    }
+}
+
 public enum Direction
 {
     Up,
@@ -38,6 +70,22 @@ public class Position
             Direction.Right => new Position { Row = Row, Column = Column + 1 },
             Direction _ => throw new ArgumentException("Direção desconhecida: " + direction)
         };
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+
+        Position other = (Position)obj;
+        return Row == other.Row && Column == other.Column;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Row, Column);
     }
 }
 
@@ -148,7 +196,7 @@ public static class Utils
         return count;
     }
 
-    static List<Position> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
+    public static List<Position> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
     {
         List<Position> positionsHas = new();
 

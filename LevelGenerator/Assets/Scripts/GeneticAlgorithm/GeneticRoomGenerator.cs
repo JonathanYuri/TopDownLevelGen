@@ -136,7 +136,7 @@ public class GeneticRoomGenerator
 
         GeneticRoomIndividual melhorIndividuo = new(population.OrderByDescending(individuo => individuo.value).First()); // copia
         int numInteracoes = 0;
-        while (numInteracoesSemMelhora < 50)
+        while (numInteracoesSemMelhora < 20)
         {
             int? melhorValorAtual = population.Max(individuo => individuo.value);
             Debug.Log("NUMERO DE INTERACOES: " + numInteracoes + " MELHOR ATUAL: " + melhorValorAtual + " MELHOR: " + melhorIndividuo.value);
