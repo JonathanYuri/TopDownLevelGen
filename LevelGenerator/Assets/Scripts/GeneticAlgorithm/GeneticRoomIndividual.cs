@@ -40,17 +40,7 @@ public class GeneticRoomIndividual
         foreach (Enemies enemie in sala.enemies)
         {
             // procurar o inimigo na possibilidades
-            var enumValues = Enum.GetValues(typeof(Possibilidades));
-
-            Possibilidades inimigo = Possibilidades.Inimigo1;
-            foreach (Possibilidades value in enumValues)
-            {
-                if (enemie.ToString() == value.ToString())
-                {
-                    inimigo = value;
-                    break;
-                }
-            }
+            Possibilidades inimigo = Utils.TransformAElementFromEnumToPossibilidadesEnum(typeof(Possibilidades), enemie);
 
             int rand = Random.Range(0, aux.Count);
             roomMatrix[aux[rand].Row, aux[rand].Column] = inimigo;
@@ -58,33 +48,25 @@ public class GeneticRoomIndividual
         }
 
         aux = new(sala.changeablesPositions);
-        foreach (Obstacles obstacles in sala.obstacles)
+
+        foreach (Obstacles obstacle in sala.obstacles)
         {
             // procurar o obstaculo na possibilidades
-            var enumValues = Enum.GetValues(typeof(Obstacles));
-            Possibilidades obstacle = Possibilidades.Obstaculo1;
-            foreach (Possibilidades value in enumValues)
-            {
-                if (obstacles.ToString() == value.ToString())
-                {
-                    obstacle = value;
-                    break;
-                }
-            }
+            Possibilidades obstaculo = Utils.TransformAElementFromEnumToPossibilidadesEnum(typeof(Possibilidades), obstacle);
 
             int rand = Random.Range(0, aux.Count);
-            roomMatrix[aux[rand].Row, aux[rand].Column] = obstacle;
+            roomMatrix[aux[rand].Row, aux[rand].Column] = obstaculo;
             aux.RemoveAt(rand);
         }
     }
 
     void ChangePlaceOf(Sala sala, Type changePlace)
     {
-        Position position = Utils.ChooseLocationThatHas(roomMatrix, sala.changeablesPositions, changePlace);
+        Position position = RoomOperations.ChooseLocationThatHas(roomMatrix, changePlace);
         if (position.Row != -1 && position.Column != -1)
         {
             // escolher um lugar que nao tenha o mesmo inimigo
-            Position positionFreeFrom = Utils.ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, roomMatrix[position.Row, position.Column]);
+            Position positionFreeFrom = RoomOperations.ChooseLocationFreeFrom(roomMatrix, sala.changeablesPositions, roomMatrix[position.Row, position.Column]);
             if (positionFreeFrom.Row != -1 && positionFreeFrom.Column != -1)
             {
                 (roomMatrix[positionFreeFrom.Row, positionFreeFrom.Column], roomMatrix[position.Row, position.Column])
@@ -121,8 +103,8 @@ public class GeneticRoomIndividual
             return true;
         }
 
-        List<Position> enemiesPositions = Utils.GetPositionsThatHas(roomMatrix, typeof(Enemies));
-        List<Position> obstaclesPositions = Utils.GetPositionsThatHas(roomMatrix, typeof(Obstacles));
+        List<Position> enemiesPositions = RoomOperations.GetPositionsThatHas(roomMatrix, typeof(Enemies));
+        List<Position> obstaclesPositions = RoomOperations.GetPositionsThatHas(roomMatrix, typeof(Obstacles));
 
         bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.Count;
         if (!hasTheRightAmountOfEnemies)
@@ -138,8 +120,10 @@ public class GeneticRoomIndividual
 
         // TODO: REFACTOR ENEMIES AND OBSTACLES, melhorar essas paradas do enum, tao ficando complicadas ja
 
+
         // hasTheRightEnemies;
-        var enumValues = Enum.GetValues(typeof(Obstacles));
+        /*
+        var enumValues = Enum.GetValues(typeof(Enemies));
         List<Enemies> enemies = new();
         foreach (Position enemyPosition in enemiesPositions)
         {
@@ -159,10 +143,24 @@ public class GeneticRoomIndividual
         {
             return false;
         }
+        */
+
+        if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Enemies), enemiesPositions, sala.enemies.Cast<object>().ToList()))
+        {
+            Debug.Log("MONSTRO");
+            return true;
+        }
+
+        if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Obstacles), obstaclesPositions, sala.obstacles.Cast<object>().ToList()))
+        {
+            Debug.Log("MONSTRO2");
+            return true;
+        }
 
         /////////////////////////////////////////
 
         // hasTheRightObstacles
+        /*
         var values = Enum.GetValues(typeof(Obstacles));
         List<Obstacles> obstacles = new();
         foreach (Position obstaclePosition in obstaclesPositions)
@@ -183,6 +181,7 @@ public class GeneticRoomIndividual
         {
             return false;
         }
+        */
 
         return false;
     }

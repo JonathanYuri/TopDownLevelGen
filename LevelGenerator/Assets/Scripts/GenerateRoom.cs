@@ -73,7 +73,7 @@ public class GenerateRoom : MonoBehaviour
         List<Enemies> chosenEnemies = new();
         chosenEnemiesIdx.ForEach(idx => chosenEnemies.Add(keysEnemies[idx]));
 
-        Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
+        //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
         return chosenEnemies;
     }
 
@@ -94,7 +94,7 @@ public class GenerateRoom : MonoBehaviour
         List<Obstacles> chosenObstacles = new();
         chosenObstaclesIdx.ForEach(idx => chosenObstacles.Add(keysObstacles[idx]));
 
-        Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
+        //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
         return chosenObstacles;
     }
 

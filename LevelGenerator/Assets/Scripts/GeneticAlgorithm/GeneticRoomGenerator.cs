@@ -169,9 +169,9 @@ public class GeneticRoomGenerator
         }
         Debug.Log(melhorIndividuo.value);
 
-        Debug.Log("Inimigo: " + Utils.CountOccurrences(melhorIndividuo.roomMatrix, typeof(Enemies)));
-        Debug.Log("Obstaculo: " + Utils.CountOccurrences(melhorIndividuo.roomMatrix, typeof(Obstacles)));
-        Debug.Log("qntInimigosProximosDeObstaculos: " + Utils.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix));
+        Debug.Log("Inimigo: " + RoomOperations.CountOccurrences(melhorIndividuo.roomMatrix, typeof(Enemies)));
+        Debug.Log("Obstaculo: " + RoomOperations.CountOccurrences(melhorIndividuo.roomMatrix, typeof(Obstacles)));
+        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix));
 
         // retornar o melhor
         return melhorIndividuo.roomMatrix;

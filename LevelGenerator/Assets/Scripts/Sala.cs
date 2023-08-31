@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UIElements;
 
 public enum Enemies
 {
@@ -103,7 +101,6 @@ public class Sala
             matriz[position.Row, position.Column] = Possibilidades.Porta;
 
             // nao pode ter nada na frente da porta
-
             PutTheNothingsBeforeTheDoors(position);
         }
     }

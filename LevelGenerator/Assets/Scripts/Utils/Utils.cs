@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -91,7 +92,7 @@ public class Position
 
 public static class Utils
 {
-    static HashSet<string> GetEnumValueStrings(Type enumType)
+    public static HashSet<string> GetEnumValueStrings(Type enumType)
     {
         return new HashSet<string>(Enum.GetValues(enumType).Cast<Enum>().Select(value => value.ToString()));
     }
@@ -100,30 +101,6 @@ public static class Utils
     {
         return position.Row >= 0 && position.Row < matrix.GetLength(0) &&
                position.Column >= 0 && position.Column < matrix.GetLength(1);
-    }
-
-    public static int CountEnemiesNextToObstacles(Possibilidades[,] matrix)
-    {
-        List<Position> obstaclesPositions = GetPositionsThatHas(matrix, typeof(Obstacles));
-        IEnumerable<Enum> enemiesValues = Enum.GetValues(typeof(Enemies)).Cast<Enum>();
-
-        int enemies = 0;
-        foreach (var obstaclePosition in obstaclesPositions)
-        {
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
-            {
-                Position adjacentPosition = obstaclePosition.Move(direction);
-                if (IsPositionWithinBounds(matrix, adjacentPosition))
-                {
-                    if (enemiesValues.Any(value => matrix[adjacentPosition.Row, adjacentPosition.Column].ToString() == value.ToString()))
-                    {
-                        enemies++;
-                    }
-                }
-            }
-        }
-
-        return enemies;
     }
 
     public static float CalculateAverage(List<int> values)
@@ -178,86 +155,9 @@ public static class Utils
         return tamanhoAtual;
     }
 
-    public static int CountOccurrences(Possibilidades[,] matriz, Type enumType)
-    {
-        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
-
-        int count = 0;
-        for (int i = 0; i < matriz.GetLength(0); i++)
-        {
-            for (int j = 0; j < matriz.GetLength(1); j++)
-            {
-                if (enumValueStrings.Contains(matriz[i, j].ToString()))
-                {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-    public static List<Position> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
-    {
-        List<Position> positionsHas = new();
-
-        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
-
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrix.GetLength(1); j++)
-            {
-                if (enumValueStrings.Contains(matrix[i, j].ToString()))
-                {
-                    positionsHas.Add(new Position { Row = i, Column = j } );
-                }
-            }
-        }
-        return positionsHas;
-    }
-
-    public static Position ChooseLocationFreeFrom(Possibilidades[,] matriz, List<Position> changeablesPositions, Possibilidades freeFrom)
-    {
-        List<Position> positionsFreeFrom = new();
-        foreach (Position position in changeablesPositions)
-        {
-            if (!matriz[position.Row, position.Column].Equals(freeFrom))
-            {
-                positionsFreeFrom.Add(position);
-            }
-        }
-
-        if (positionsFreeFrom.Count == 0)
-        {
-            return new Position { Row = -1, Column = -1 };
-        }
-        int idx = Random.Range(0, positionsFreeFrom.Count);
-        return positionsFreeFrom[idx];
-    }
-
-    public static Position ChooseLocationThatHas(Possibilidades[,] matriz, List<Position> changeablesPositions, Type enumType)
-    {
-        List<Position> positionsHas = new();
-
-        HashSet<string> enumValueStrings = GetEnumValueStrings(enumType);
-        foreach (Position position in changeablesPositions)
-        {
-            if (enumValueStrings.Contains(matriz[position.Row, position.Column].ToString()))
-            {
-                positionsHas.Add(position);
-            }
-        }
-
-        if (positionsHas.Count == 0)
-        {
-            return new Position{ Row = -1, Column = -1 };
-        }
-        int idx = Random.Range(0, positionsHas.Count);
-        return positionsHas[idx];
-    }
-
     public static bool IsPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, List<Position> doorsPositions)
     {
-        List<Position> enemiesPositions = GetPositionsThatHas(roomMatrix, typeof(Enemies));
+        List<Position> enemiesPositions = RoomOperations.GetPositionsThatHas(roomMatrix, typeof(Enemies));
         if (enemiesPositions.Count == 0)
         {
             return false;
@@ -392,5 +292,19 @@ public static class Utils
         }
 
         return countPath;
+    }
+
+    public static Possibilidades TransformAElementFromEnumToPossibilidadesEnum<TEnum>(Type enumType, TEnum element)
+    {
+        var enumValues = Enum.GetValues(enumType);
+        foreach (Possibilidades value in enumValues)
+        {
+            if (element.ToString().Equals(value.ToString()))
+            {
+                return value;
+            }
+        }
+
+        throw new Exception("Enum element do not transform to Possibilidades Enum");
     }
 }
