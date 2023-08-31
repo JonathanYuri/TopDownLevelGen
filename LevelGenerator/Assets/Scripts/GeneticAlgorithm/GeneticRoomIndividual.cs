@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -91,15 +88,17 @@ public class GeneticRoomIndividual
 
     bool IsMonstrousIndividual(Sala sala)
     {
-        int qntCaminhosEntrePortas = Utils.CountPathsBetweenDoors(roomMatrix, sala.doorsPositions);
+        int qntCaminhosEntrePortas = PathFinder.CountPathsBetweenDoors(roomMatrix, sala.doorsPositions);
         if (qntCaminhosEntrePortas == int.MinValue)
         {
+            //Debug.Log("Mostro por causa do caminho entre portas");
             return true;
         }
 
-        bool isPath = Utils.IsPathBetweenDoorAndEnemies(roomMatrix, sala.doorsPositions);
+        bool isPath = PathFinder.IsAPathBetweenDoorAndEnemies(roomMatrix, sala.doorsPositions);
         if (!isPath)
         {
+            //Debug.Log("Mostro por causa do caminho ate inimigos");
             return true;
         }
 
@@ -109,79 +108,28 @@ public class GeneticRoomIndividual
         bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.Count;
         if (!hasTheRightAmountOfEnemies)
         {
+            //Debug.Log("Mostro por causa da quantidade de inimigos");
             return true;
         }
 
         bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.obstacles.Count;
         if (!hasTheRightAmountOfObstacles)
         {
+            //Debug.Log("Mostro por causa da quantidade de obstaculos");
             return true;
         }
 
-        // TODO: REFACTOR ENEMIES AND OBSTACLES, melhorar essas paradas do enum, tao ficando complicadas ja
-
-
-        // hasTheRightEnemies;
-        /*
-        var enumValues = Enum.GetValues(typeof(Enemies));
-        List<Enemies> enemies = new();
-        foreach (Position enemyPosition in enemiesPositions)
-        {
-            // pegar o inimigo equivalente no enum de Possibilidades // TODO: separar esse codigo em funcao, usa bastante, na GenerateRoomRandomly ja usa isso
-            foreach (Enemies value in enumValues)
-            {
-                if (roomMatrix[enemyPosition.Row, enemyPosition.Column].ToString() == value.ToString())
-                {
-                    enemies.Add(value);
-                }
-            }
-        }
-        enemies.Sort();
-        List<Enemies> aux = new(sala.enemies);
-        aux.Sort();
-        if (!enemies.SequenceEqual(aux))
-        {
-            return false;
-        }
-        */
-
         if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Enemies), enemiesPositions, sala.enemies.Cast<object>().ToList()))
         {
-            Debug.Log("MONSTRO");
+            //Debug.Log("Mostro por causa dos inimigos");
             return true;
         }
 
         if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Obstacles), obstaclesPositions, sala.obstacles.Cast<object>().ToList()))
         {
-            Debug.Log("MONSTRO2");
+            //Debug.Log("Mostro por causa dos obstaculo");
             return true;
         }
-
-        /////////////////////////////////////////
-
-        // hasTheRightObstacles
-        /*
-        var values = Enum.GetValues(typeof(Obstacles));
-        List<Obstacles> obstacles = new();
-        foreach (Position obstaclePosition in obstaclesPositions)
-        {
-            // pegar o inimigo equivalente no enum de Possibilidades // TODO: separar esse codigo em funcao, usa bastante, na GenerateRoomRandomly ja usa isso
-            foreach (Obstacles value in enumValues)
-            {
-                if (roomMatrix[obstaclePosition.Row, obstaclePosition.Column].ToString() == value.ToString())
-                {
-                    obstacles.Add(value);
-                }
-            }
-        }
-        obstacles.Sort();
-        List<Obstacles> aux1 = new(sala.obstacles);
-        aux1.Sort();
-        if (!obstacles.SequenceEqual(aux1))
-        {
-            return false;
-        }
-        */
 
         return false;
     }
@@ -194,8 +142,9 @@ public class GeneticRoomIndividual
             return;
         }
 
-        List<int> groups = Utils.CountGroups(roomMatrix, typeof(Enemies));
-        float media = Utils.CalculateAverage(groups);
+        List<int> groups = GroupCounter.CountGroups(roomMatrix, typeof(Enemies));
+        double media = groups.Average();
+
         //Debug.Log("Total de grupos de Enemies na matriz: " + groups.Count);
         //Debug.Log("Média do tamanho dos grupos: " + media);
 

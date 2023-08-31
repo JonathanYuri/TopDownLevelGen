@@ -66,7 +66,7 @@ public static class RoomOperations
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = obstaclePosition.Move(direction);
-                if (Utils.IsPositionWithinBounds(matrix, adjacentPosition))
+                if (matrix.IsPositionWithinBounds(adjacentPosition))
                 {
                     if (enumValueStrings.Contains(matrix[adjacentPosition.Row, adjacentPosition.Column].ToString()))
                     {

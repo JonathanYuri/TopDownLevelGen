@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -52,6 +51,10 @@ public class GeneticRoomGenerator
         EvaluatePopulation();
     }
 
+    // TODO: mudar o crossover para algo assim, pega um clone da sala que ja tem as portas os nadas e as paredes, e oq vai fazer:
+    // pega as posicoes dos inimigos / obstaculos do pai e da mae, e faz o seguinte, quando for colocar um tipo de inimigo escolhe entre a posicao daquele inimigo
+    // no pai ou na mae, isso serve pros obstaculos tbm
+    // basicamente: lista de posicoes dos tipos de inimigos, quando for colocar aquele inimigo, escolhe a posicao ou do pai ou da mae
     GeneticRoomIndividual Crossover(GeneticRoomIndividual pai, GeneticRoomIndividual mae)
     {
         GeneticRoomIndividual individual = new(sala.Rows, sala.Cols);
@@ -136,7 +139,7 @@ public class GeneticRoomGenerator
 
         GeneticRoomIndividual melhorIndividuo = new(population.OrderByDescending(individuo => individuo.value).First()); // copia
         int numInteracoes = 0;
-        while (numInteracoesSemMelhora < 20)
+        while (numInteracoesSemMelhora < 20 || melhorIndividuo.value == int.MinValue)
         {
             int? melhorValorAtual = population.Max(individuo => individuo.value);
             Debug.Log("NUMERO DE INTERACOES: " + numInteracoes + " MELHOR ATUAL: " + melhorValorAtual + " MELHOR: " + melhorIndividuo.value);

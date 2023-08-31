@@ -135,7 +135,7 @@ public class GenerateRoom : MonoBehaviour
             {
                 // adicionar uma posicao aleatoria que tem no mapa na queue
                 int pos = UnityEngine.Random.Range(0, mapa.Count);
-                queue.Enqueue(mapa.GetElementAt(pos));
+                queue.Enqueue(mapa.ElementAt(pos));
             }
 
             Position position = queue.Dequeue();
