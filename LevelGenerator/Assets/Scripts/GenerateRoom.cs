@@ -144,6 +144,7 @@ public class GenerateRoom : MonoBehaviour
             // escolher qualquer posição e tentar destravar
             Direction[] shuffledArr = (Direction[])Enum.GetValues(typeof(Direction));
             List<Direction> shuffledList = shuffledArr.ToList();
+            shuffledList.Shuffle();
 
             // destravar as posições
             foreach (Direction direction in shuffledList)
