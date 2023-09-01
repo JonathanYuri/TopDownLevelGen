@@ -2,16 +2,13 @@ using System.Collections.Generic;
 using System;
 using Random = UnityEngine.Random;
 using System.Linq;
-using UnityEngine;
 
 public static class RoomOperations
 {
-    public static Dictionary<Possibilidades, List<Position>> GetPositionsByEnumType(Possibilidades[,] matrix, Type enumType)
+    public static Dictionary<Possibilidades, List<Position>> GetPositionsOf(Possibilidades[,] matrix, HashSet<Position> positionsOf)
     {
-        List<Position> positions = GetPositionsThatHas(matrix, enumType);
-
         Dictionary<Possibilidades, List<Position>> positionsByEnumType = new();
-        foreach (Position p in positions)
+        foreach (Position p in positionsOf)
         {
             Possibilidades type = matrix[p.Row, p.Column];
             if (positionsByEnumType.ContainsKey(type))
@@ -20,70 +17,15 @@ public static class RoomOperations
             }
             else
             {
-                List<Position> aux = new()
-                {
-                    p
-                };
-                positionsByEnumType.Add(type, aux);
+                positionsByEnumType.Add(type, new List<Position> { p });
             }
         }
 
         return positionsByEnumType;
     }
 
-    public static List<Position> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
+    public static int CountEnemiesNextToObstacles(Possibilidades[,] matrix, HashSet<Position> obstaclesPositions)
     {
-        List<Position> positionsHas = new();
-
-        HashSet<string> enumValueStrings = Utils.GetEnumValueStrings(enumType);
-
-        for (int i = 0; i < matrix.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrix.GetLength(1); j++)
-            {
-                if (enumValueStrings.Contains(matrix[i, j].ToString()))
-                {
-                    positionsHas.Add(new Position { Row = i, Column = j });
-                }
-            }
-        }
-        return positionsHas;
-    }
-
-    public static Position ChooseLocationThatHas(Possibilidades[,] matrix, Type enumType)
-    {
-        List<Position> positionsHas = GetPositionsThatHas(matrix, enumType);
-
-        if (positionsHas.Count == 0)
-        {
-            return new Position { Row = -1, Column = -1 };
-        }
-        int idx = Random.Range(0, positionsHas.Count);
-        return positionsHas[idx];
-    }
-
-    public static Position ChooseLocationFreeFrom(Possibilidades[,] matrix, List<Position> changeablesPositions, Possibilidades freeFrom)
-    {
-        List<Position> positionsFreeFrom = new();
-        foreach (Position position in changeablesPositions)
-        {
-            if (!matrix[position.Row, position.Column].Equals(freeFrom))
-            {
-                positionsFreeFrom.Add(position);
-            }
-        }
-
-        if (positionsFreeFrom.Count == 0)
-        {
-            return new Position { Row = -1, Column = -1 };
-        }
-        int idx = Random.Range(0, positionsFreeFrom.Count);
-        return positionsFreeFrom[idx];
-    }
-
-    public static int CountEnemiesNextToObstacles(Possibilidades[,] matrix)
-    {
-        List<Position> obstaclesPositions = GetPositionsThatHas(matrix, typeof(Obstacles));
         HashSet<string> enumValueStrings = Utils.GetEnumValueStrings(typeof(Enemies));
 
         int enemies = 0;
@@ -103,24 +45,6 @@ public static class RoomOperations
         }
 
         return enemies;
-    }
-
-    public static int CountOccurrences(Possibilidades[,] matriz, Type enumType)
-    {
-        HashSet<string> enumValueStrings = Utils.GetEnumValueStrings(enumType);
-
-        int count = 0;
-        for (int i = 0; i < matriz.GetLength(0); i++)
-        {
-            for (int j = 0; j < matriz.GetLength(1); j++)
-            {
-                if (enumValueStrings.Contains(matriz[i, j].ToString()))
-                {
-                    count++;
-                }
-            }
-        }
-        return count;
     }
 
     public static bool HasTheRightObjects(Possibilidades[,] matrix, Type obj, List<Position> objectsPositions, List<object> values)

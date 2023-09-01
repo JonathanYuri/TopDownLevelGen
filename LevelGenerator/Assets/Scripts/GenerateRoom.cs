@@ -24,6 +24,8 @@ public class GenerateRoom : MonoBehaviour
 
     Dictionary<Possibilidades, GameObject> objects;
 
+    float totalCoroutineExecutionTime = 0f;
+
     // constantes
     const int numSalas = 10;
     const int rows = 9;
@@ -111,6 +113,7 @@ public class GenerateRoom : MonoBehaviour
             Destroy(child.gameObject);
         }
 
+        float time = Time.time;
         GerarMapa();
 
         Debug.Log("mapa:");
@@ -173,6 +176,9 @@ public class GenerateRoom : MonoBehaviour
 
         // TODO: modificar as portas pra fazer sentido com o mapa
         // TODO: melhorar a eficiencia do algoritmo
+        /* TODO: pra melhorar a eficiencia do algoritmo eu posso manter uma lista de posicoes que tem inimigos e obstaculos no individuo
+         * pq ai n preciso ficar fazendo o getPositionThatHas tantas vezes
+         */
 
         List<Position> doorsPosition = new()
         {
@@ -200,8 +206,14 @@ public class GenerateRoom : MonoBehaviour
         // esperar ate o proximo frame pra ele atualizar o texto botao
         yield return null;
 
+        float startTime = Time.realtimeSinceStartup;
         // Inicia a Coroutine para executar o algoritmo em segundo plano
         yield return StartCoroutine(GeneticLoopingCoroutine(sala, geneticRoomGenerator));
+        float endTime = Time.realtimeSinceStartup;
+        float executionTime = endTime - startTime;
+        totalCoroutineExecutionTime += executionTime;
+        Debug.LogError("Tempo de execução da corrotina: " + executionTime + " segundos");
+        Debug.LogError("Tempo total de execução ate agora: " + totalCoroutineExecutionTime + " segundos");
 
         // O loop for é executado somente após o retorno da função GeneticLooping()
         for (int i = 0; i < sala.Rows; i++)

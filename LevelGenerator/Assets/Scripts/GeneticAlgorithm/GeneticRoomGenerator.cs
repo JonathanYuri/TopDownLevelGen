@@ -43,7 +43,7 @@ public class GeneticRoomGenerator
         {
             if (individual.itWasModified)
             {
-                individual.Evaluate(sala);
+                individual.Evaluate();
                 individual.itWasModified = false;
             }
         }
@@ -55,7 +55,7 @@ public class GeneticRoomGenerator
         {
             if (Random.value < mutationProbability)
             {
-                individual.Mutate(sala);
+                individual.Mutate();
                 individual.itWasModified = true;
             }
         }
@@ -65,14 +65,58 @@ public class GeneticRoomGenerator
     {
         GeneticRoomIndividual individual = new(sala, false);
 
-        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNoPai = RoomOperations.GetPositionsByEnumType(pai.roomMatrix, typeof(Enemies));
-        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNoPai = RoomOperations.GetPositionsByEnumType(pai.roomMatrix, typeof(Obstacles));
+        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNoPai = RoomOperations.GetPositionsOf(pai.roomMatrix, pai.enemiesPositions);
+        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNoPai = RoomOperations.GetPositionsOf(pai.roomMatrix, pai.obstaclesPositions);
 
-        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNaMae = RoomOperations.GetPositionsByEnumType(mae.roomMatrix, typeof(Enemies));
-        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNaMae = RoomOperations.GetPositionsByEnumType(mae.roomMatrix, typeof(Obstacles));
+        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNaMae = RoomOperations.GetPositionsOf(mae.roomMatrix, mae.enemiesPositions);
+        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNaMae = RoomOperations.GetPositionsOf(mae.roomMatrix, mae.obstaclesPositions);
 
         if (posicaoDosInimigosNaMae.Keys.Count != posicaoDosInimigosNoPai.Keys.Count)
         {
+            Debug.LogError("pai:");
+            for (int i = 0; i < pai.roomMatrix.GetLength(0); i++)
+            {
+                List<Possibilidades> p = new();
+                for (int j = 0; j < pai.roomMatrix.GetLength(1); j++)
+                {
+                    p.Add(pai.roomMatrix[i, j]);
+                }
+                Debug.LogError(string.Join(' ', p));
+            }
+
+            Debug.LogError("inimigos pai:");
+            foreach (var p in posicaoDosInimigosNoPai)
+            {
+                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
+            }
+            Debug.LogError("obstaculos pai:");
+            foreach (var p in posicaoDosObstaculosNoPai)
+            {
+                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
+            }
+
+            Debug.LogError("mae:");
+            for (int i = 0; i < mae.roomMatrix.GetLength(0); i++)
+            {
+                List<Possibilidades> p = new();
+                for (int j = 0; j < mae.roomMatrix.GetLength(1); j++)
+                {
+                    p.Add(mae.roomMatrix[i, j]);
+                }
+                Debug.LogError(string.Join(' ', p));
+            }
+
+            Debug.LogError("inimigos mae:");
+            foreach (var p in posicaoDosInimigosNaMae)
+            {
+                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
+            }
+            Debug.LogError("obstaculos mae:");
+            foreach (var p in posicaoDosObstaculosNaMae)
+            {
+                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
+            }
+
             throw new Exception("Inimigos diferentes no pai e na mae");
         }
 
@@ -89,29 +133,28 @@ public class GeneticRoomGenerator
             HashSet<Position> combinedPositions = new(posicaoDosInimigosNoPai[key]);
             combinedPositions.UnionWith(posicaoDosInimigosNaMae[key]);
 
-            List<Position> chosenPositions = Utils.SelectRandomPositions(combinedPositions, posicaoDosInimigosNaMae[key].Count);
+            List<Position> chosenPositions = combinedPositions.SelectRandomPositions(posicaoDosInimigosNaMae[key].Count);
             foreach (Position pos in chosenPositions)
             {
-                individual.roomMatrix[pos.Row, pos.Column] = key;
+                individual.PutEnemyInPosition(key, pos);
                 possiblePositions.Remove(pos);
             }
         }
 
         foreach (Possibilidades key in posicaoDosObstaculosNoPai.Keys)
         {
-            HashSet<string> enemies = Utils.GetEnumValueStrings(typeof(Enemies));
-
             // pra nao ter repeticao de posicao
             HashSet<Position> combinedPositions = new(posicaoDosObstaculosNoPai[key]);
             combinedPositions.UnionWith(posicaoDosObstaculosNaMae[key]);
 
-            List<Position> chosenPositions = Utils.SelectRandomPositions(combinedPositions, posicaoDosObstaculosNoPai[key].Count);
+            List<Position> chosenPositions = combinedPositions.SelectRandomPositions(posicaoDosObstaculosNoPai[key].Count);
             int colocados = 0;
             foreach (Position pos in chosenPositions)
             {
-                if (!enemies.Contains(individual.roomMatrix[pos.Row, pos.Column].ToString()))
+                // TODO: fazer assim pra pegar verificar posicoes dos inimigos VVVVVV
+                if (!individual.enemiesPositions.Contains(pos))
                 {
-                    individual.roomMatrix[pos.Row, pos.Column] = key;
+                    individual.PutObstacleInPosition(key, pos);
                     possiblePositions.Remove(pos);
                     colocados++;
                 }
@@ -119,10 +162,10 @@ public class GeneticRoomGenerator
 
             // colocar o que falta
             int faltando = chosenPositions.Count - colocados;
-            List<Position> positions = Utils.SelectRandomPositions(new HashSet<Position>(possiblePositions), faltando);
+            List<Position> positions = new HashSet<Position>(possiblePositions).SelectRandomPositions(faltando);
             foreach (Position pos in positions)
             {
-                individual.roomMatrix[pos.Row, pos.Column] = key;
+                individual.PutObstacleInPosition(key, pos);
             }
         }
 
@@ -222,9 +265,9 @@ public class GeneticRoomGenerator
         }
 
         Debug.Log("Melhor individuo: " + melhorIndividuo.value);
-        Debug.Log("Inimigo: " + RoomOperations.CountOccurrences(melhorIndividuo.roomMatrix, typeof(Enemies)));
-        Debug.Log("Obstaculo: " + RoomOperations.CountOccurrences(melhorIndividuo.roomMatrix, typeof(Obstacles)));
-        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix));
+        Debug.Log("Inimigo: " + melhorIndividuo.enemiesPositions.Count);
+        Debug.Log("Obstaculo: " + melhorIndividuo.obstaclesPositions.Count);
+        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix, melhorIndividuo.obstaclesPositions));
 
         // retornar o melhor
         return melhorIndividuo.roomMatrix;

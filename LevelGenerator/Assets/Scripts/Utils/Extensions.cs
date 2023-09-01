@@ -27,6 +27,24 @@ public static class ListExtensions
     }
 }
 
+public static class HashSetExtensions
+{
+    public static List<Position> SelectRandomPositions(this HashSet<Position> allPositions, int numberOfPositionsToSelect)
+    {
+        List<Position> selectedPositions = new();
+
+        List<Position> allPositionsList = new(allPositions);
+        allPositionsList.Shuffle();
+
+        for (int i = 0; i < numberOfPositionsToSelect; i++)
+        {
+            selectedPositions.Add(allPositionsList[i]);
+        }
+
+        return selectedPositions;
+    }
+}
+
 public static class MatrixExtensions
 {
     public static bool IsPositionWithinBounds<T>(this T[,] matrix, Position position)

@@ -27,12 +27,11 @@ public static class PathFinder
         return qntCaminhos;
     }
 
-    public static bool IsAPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, List<Position> doorsPositions)
+    public static bool IsAPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, List<Position> doorsPositions, HashSet<Position> enemiesPositions)
     {
-        List<Position> enemiesPositions = RoomOperations.GetPositionsThatHas(roomMatrix, typeof(Enemies));
         if (enemiesPositions.Count == 0)
         {
-            return false;
+            throw new Exception("Sem inimigos na sala");
         }
 
         int[,] matriz = TransformRoomForCountPaths(roomMatrix);
