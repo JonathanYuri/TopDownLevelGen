@@ -24,9 +24,10 @@ public class GenerateRoom : MonoBehaviour
 
     Dictionary<Possibilidades, GameObject> objects;
 
-    readonly int numSalas = 10;
-    readonly int rows = 9;
-    readonly int cols = 15;
+    // constantes
+    const int numSalas = 10;
+    const int rows = 9;
+    const int cols = 15;
 
     HashSet<Position> mapa;
 
@@ -164,6 +165,9 @@ public class GenerateRoom : MonoBehaviour
         // ############# COMECO ##############
         // o (0, 0) é o canto superior esquerdo
 
+        // TODO: modificar as portas pra fazer sentido com o mapa
+        // TODO: melhorar a eficiencia do algoritmo
+
         List<Position> doorsPosition = new()
         {
             new Position{ Row = (int)(rows / 2), Column = 0 },
@@ -171,16 +175,13 @@ public class GenerateRoom : MonoBehaviour
         };
 
         Sala sala = new(rows, cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
-
-        int populationSize = 5;
-        GeneticRoomGenerator geneticRoomGenerator = new(sala, populationSize, 0.8f, 0.3f);
+        GeneticRoomGenerator geneticRoomGenerator = new(sala, 0.8f, 0.3f);
 
         StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
 
-        // Gerar outra sala no (rows + 1, cols + 1)
-
         // TODO: aumento de dificuldade chegando mais perto do boss
         // TODO: gerar a sala inicial e a sala do boss diferente das outras e gerar antes, a sala inicial e a do boss nao tem nd, a do boss tem o boss claro
+        // TODO? dificuldade depende da quantidade de caminhos entre uma porta e outra sem inimigos, quanto mais caminhos mais facil
     }
 
     IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator, GameObject room)

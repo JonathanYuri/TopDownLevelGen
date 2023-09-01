@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GeneticRoomIndividual
@@ -9,18 +8,15 @@ public class GeneticRoomIndividual
     public Possibilidades[,] roomMatrix;
     public int? value;
 
-    // usado pra cruzamento
-    public GeneticRoomIndividual(int rows, int cols)
+    public GeneticRoomIndividual(Sala sala, bool generateRandomly = true)
     {
         value = null;
-        roomMatrix = new Possibilidades[rows, cols];
-    }
+        roomMatrix = (Possibilidades[,])sala.matriz.Clone();
 
-    // usado pra criar aleatoriamente a sala, quando gera a populacao
-    public GeneticRoomIndividual(Sala sala) : this(sala.Rows, sala.Cols) // chama o construtor
-    {
-        // gerar aleatoriamente a sala
-        GenerateRoomRandomly(sala);
+        if (generateRandomly)
+        {
+            GenerateRoomRandomly(sala);
+        }
     }
 
     public GeneticRoomIndividual(GeneticRoomIndividual individual)
@@ -31,12 +27,9 @@ public class GeneticRoomIndividual
 
     void GenerateRoomRandomly(Sala sala)
     {
-        roomMatrix = (Possibilidades[,])sala.matriz.Clone();
-
         List<Position> aux = new(sala.changeablesPositions);
         foreach (Enemies enemie in sala.enemies)
         {
-            // procurar o inimigo na possibilidades
             Possibilidades inimigo = Utils.TransformAElementFromEnumToPossibilidadesEnum(typeof(Possibilidades), enemie);
 
             int rand = Random.Range(0, aux.Count);
@@ -44,11 +37,8 @@ public class GeneticRoomIndividual
             aux.RemoveAt(rand);
         }
 
-        aux = new(sala.changeablesPositions);
-
         foreach (Obstacles obstacle in sala.obstacles)
         {
-            // procurar o obstaculo na possibilidades
             Possibilidades obstaculo = Utils.TransformAElementFromEnumToPossibilidadesEnum(typeof(Possibilidades), obstacle);
 
             int rand = Random.Range(0, aux.Count);
@@ -119,6 +109,7 @@ public class GeneticRoomIndividual
             return true;
         }
 
+        /*
         if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Enemies), enemiesPositions, sala.enemies.Cast<object>().ToList()))
         {
             //Debug.Log("Mostro por causa dos inimigos");
@@ -130,6 +121,7 @@ public class GeneticRoomIndividual
             //Debug.Log("Mostro por causa dos obstaculo");
             return true;
         }
+        */
 
         return false;
     }

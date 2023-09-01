@@ -2,9 +2,35 @@ using System.Collections.Generic;
 using System;
 using Random = UnityEngine.Random;
 using System.Linq;
+using UnityEngine;
 
 public static class RoomOperations
 {
+    public static Dictionary<Possibilidades, List<Position>> GetPositionsByEnumType(Possibilidades[,] matrix, Type enumType)
+    {
+        List<Position> positions = GetPositionsThatHas(matrix, enumType);
+
+        Dictionary<Possibilidades, List<Position>> positionsByEnumType = new();
+        foreach (Position p in positions)
+        {
+            Possibilidades type = matrix[p.Row, p.Column];
+            if (positionsByEnumType.ContainsKey(type))
+            {
+                positionsByEnumType[type].Add(p);
+            }
+            else
+            {
+                List<Position> aux = new()
+                {
+                    p
+                };
+                positionsByEnumType.Add(type, aux);
+            }
+        }
+
+        return positionsByEnumType;
+    }
+
     public static List<Position> GetPositionsThatHas(Possibilidades[,] matrix, Type enumType)
     {
         List<Position> positionsHas = new();
@@ -104,7 +130,6 @@ public static class RoomOperations
         List<object> objs = new();
         foreach (Position position in objectsPositions)
         {
-            // pegar o inimigo equivalente no enum de Possibilidades // TODO: separar esse codigo em funcao, usa bastante, na GenerateRoomRandomly ja usa isso
             foreach (object value in enumValues)
             {
                 if (matrix[position.Row, position.Column].ToString() == value.ToString())

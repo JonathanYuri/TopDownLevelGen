@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public enum Direction
 {
@@ -99,5 +100,20 @@ public static class Utils
         }
 
         throw new Exception("Enum element do not transform to Possibilidades Enum");
+    }
+
+    public static List<Position> SelectRandomPositions(HashSet<Position> allPositions, int numberOfPositionsToSelect)
+    {
+        List<Position> selectedPositions = new();
+
+        List<Position> allPositionsList = new(allPositions);
+        allPositionsList.Shuffle();
+
+        for (int i = 0; i < numberOfPositionsToSelect; i++)
+        {
+            selectedPositions.Add(allPositionsList[i]);
+        }
+
+        return selectedPositions;
     }
 }
