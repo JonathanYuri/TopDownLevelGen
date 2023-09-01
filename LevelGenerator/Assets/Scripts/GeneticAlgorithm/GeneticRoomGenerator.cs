@@ -39,10 +39,13 @@ public class GeneticRoomGenerator
     void EvaluatePopulation()
     {
         // avaliar o individuo se ele foi modificado
-        foreach (GeneticRoomIndividual individual in population.Where(individual => individual.itWasModified))
+        foreach (GeneticRoomIndividual individual in population)
         {
-            individual.Evaluate(sala);
-            individual.itWasModified = false;
+            if (individual.itWasModified)
+            {
+                individual.Evaluate(sala);
+                individual.itWasModified = false;
+            }
         }
     }
 
