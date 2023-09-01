@@ -7,6 +7,7 @@ public class GeneticRoomIndividual
 {
     public Possibilidades[,] roomMatrix;
     public int? value;
+    public bool itWasModified = true;
 
     public GeneticRoomIndividual(Sala sala, bool generateRandomly = true)
     {

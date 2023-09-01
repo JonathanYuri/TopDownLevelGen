@@ -158,6 +158,12 @@ public class GenerateRoom : MonoBehaviour
                 }
             }
         }
+
+        // Spawnar Player
+        Position initial = mapa.ElementAt(0);
+        Instantiate(player, (Vector2)player.transform.position + new Vector2((int)(cols / 2), -(rows - 2)) + new Vector2(initial.Row, initial.Column), Quaternion.identity);
+
+        isGenerating = false;
     }
 
     void GerarSala(GameObject room)
@@ -271,11 +277,6 @@ public class GenerateRoom : MonoBehaviour
                 //Debug.Log(sala.matriz[i, j].ToString()[..2] + " ");
             }
         }
-
-        // Spawnar Player
-        Instantiate(player, (Vector2)player.transform.position + new Vector2((int)(sala.Cols / 2), -(sala.Rows - 2)) + (Vector2)room.transform.position, Quaternion.identity);
-
-        isGenerating = false;
 
         //room.transform.localScale = new Vector3(0.8141508f, 0.8141508f, 1);
         //room.transform.position = new Vector3(0, -1.32f, 0);

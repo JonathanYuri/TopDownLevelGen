@@ -38,9 +38,11 @@ public class GeneticRoomGenerator
 
     void EvaluatePopulation()
     {
-        foreach (GeneticRoomIndividual individual in population)
+        // avaliar o individuo se ele foi modificado
+        foreach (GeneticRoomIndividual individual in population.Where(individual => individual.itWasModified))
         {
             individual.Evaluate(sala);
+            individual.itWasModified = false;
         }
     }
 
@@ -51,10 +53,9 @@ public class GeneticRoomGenerator
             if (Random.value < mutationProbability)
             {
                 individual.Mutate(sala);
+                individual.itWasModified = true;
             }
         }
-
-        EvaluatePopulation();
     }
 
     GeneticRoomIndividual Crossover(GeneticRoomIndividual pai, GeneticRoomIndividual mae)
