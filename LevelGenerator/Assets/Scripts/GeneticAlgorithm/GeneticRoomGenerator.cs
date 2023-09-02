@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public static class GeneticAlgorithmConstants
 {
     public static int IterationsWithoutImprovement = 20;
-    public static int PopulationSize = 5;
+    public static int PopulationSize = 6;
     public static int TournamentSize = 5;
     public static int NumParentsTournament = 2;
 }
@@ -15,7 +15,7 @@ public static class GeneticAlgorithmConstants
 public class GeneticRoomGenerator
 {
     readonly Sala sala;
-    List<GeneticRoomIndividual> population;
+    GeneticRoomIndividual[] population;
     readonly float crossoverProbability;
     readonly float mutationProbability;
 
@@ -24,7 +24,7 @@ public class GeneticRoomGenerator
         this.sala = sala;
         this.mutationProbability = mutationProbability;
         this.crossoverProbability = crossoverProbability;
-        population = new();
+        population = new GeneticRoomIndividual[GeneticAlgorithmConstants.PopulationSize];
     }
 
     void GeneratePopulation()
@@ -32,7 +32,7 @@ public class GeneticRoomGenerator
         for (int i = 0; i < GeneticAlgorithmConstants.PopulationSize; i++)
         {
             GeneticRoomIndividual individual = new(sala);
-            population.Add(individual);
+            population[i] = individual;
         }
     }
 
@@ -73,50 +73,6 @@ public class GeneticRoomGenerator
 
         if (posicaoDosInimigosNaMae.Keys.Count != posicaoDosInimigosNoPai.Keys.Count)
         {
-            Debug.LogError("pai:");
-            for (int i = 0; i < pai.roomMatrix.GetLength(0); i++)
-            {
-                List<Possibilidades> p = new();
-                for (int j = 0; j < pai.roomMatrix.GetLength(1); j++)
-                {
-                    p.Add(pai.roomMatrix[i, j]);
-                }
-                Debug.LogError(string.Join(' ', p));
-            }
-
-            Debug.LogError("inimigos pai:");
-            foreach (var p in posicaoDosInimigosNoPai)
-            {
-                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
-            }
-            Debug.LogError("obstaculos pai:");
-            foreach (var p in posicaoDosObstaculosNoPai)
-            {
-                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
-            }
-
-            Debug.LogError("mae:");
-            for (int i = 0; i < mae.roomMatrix.GetLength(0); i++)
-            {
-                List<Possibilidades> p = new();
-                for (int j = 0; j < mae.roomMatrix.GetLength(1); j++)
-                {
-                    p.Add(mae.roomMatrix[i, j]);
-                }
-                Debug.LogError(string.Join(' ', p));
-            }
-
-            Debug.LogError("inimigos mae:");
-            foreach (var p in posicaoDosInimigosNaMae)
-            {
-                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
-            }
-            Debug.LogError("obstaculos mae:");
-            foreach (var p in posicaoDosObstaculosNaMae)
-            {
-                Debug.LogError("chave: " + p.Key + ": " + string.Join(' ', p.Value));
-            }
-
             throw new Exception("Inimigos diferentes no pai e na mae");
         }
 
@@ -133,7 +89,7 @@ public class GeneticRoomGenerator
             HashSet<Position> combinedPositions = new(posicaoDosInimigosNoPai[key]);
             combinedPositions.UnionWith(posicaoDosInimigosNaMae[key]);
 
-            List<Position> chosenPositions = combinedPositions.SelectRandomPositions(posicaoDosInimigosNaMae[key].Count);
+            Position[] chosenPositions = combinedPositions.ToList().SelectRandomDistinctElements(posicaoDosInimigosNaMae[key].Count);
             foreach (Position pos in chosenPositions)
             {
                 individual.PutEnemyInPosition(key, pos);
@@ -147,7 +103,7 @@ public class GeneticRoomGenerator
             HashSet<Position> combinedPositions = new(posicaoDosObstaculosNoPai[key]);
             combinedPositions.UnionWith(posicaoDosObstaculosNaMae[key]);
 
-            List<Position> chosenPositions = combinedPositions.SelectRandomPositions(posicaoDosObstaculosNoPai[key].Count);
+            Position[] chosenPositions = combinedPositions.ToList().SelectRandomDistinctElements(posicaoDosObstaculosNoPai[key].Count);
             int colocados = 0;
             foreach (Position pos in chosenPositions)
             {
@@ -161,8 +117,8 @@ public class GeneticRoomGenerator
             }
 
             // colocar o que falta
-            int faltando = chosenPositions.Count - colocados;
-            List<Position> positions = new HashSet<Position>(possiblePositions).SelectRandomPositions(faltando);
+            int faltando = chosenPositions.GetLength(0) - colocados;
+            Position[] positions = new HashSet<Position>(possiblePositions).ToList().SelectRandomDistinctElements(faltando);
             foreach (Position pos in positions)
             {
                 individual.PutObstacleInPosition(key, pos);
@@ -172,20 +128,16 @@ public class GeneticRoomGenerator
         return individual;
     }
 
-    public List<GeneticRoomIndividual> TournamentSelection()
+    public GeneticRoomIndividual[] TournamentSelection()
     {
-        List<GeneticRoomIndividual> parents = new();
+        GeneticRoomIndividual[] parents = new GeneticRoomIndividual[GeneticAlgorithmConstants.NumParentsTournament];
 
         for (int i = 0; i < GeneticAlgorithmConstants.NumParentsTournament; i++)
         {
             List<GeneticRoomIndividual> tournament = new();
 
             // Seleciona aleatoriamente "tournamentSize" indivíduos para o torneio
-            for (int j = 0; j < GeneticAlgorithmConstants.TournamentSize; j++)
-            {
-                int randomIndex = Random.Range(0, population.Count);
-                tournament.Add(population[randomIndex]);
-            }
+            tournament = population.ToList().SelectRandomDistinctElements(GeneticAlgorithmConstants.TournamentSize).ToList();
 
             // Ordena os indivíduos do torneio por fitness (do melhor para o pior)
             tournament.Sort((a, b) =>
@@ -201,7 +153,7 @@ public class GeneticRoomGenerator
             });
 
             // O vencedor do torneio é selecionado para reprodução
-            parents.Add(tournament[0]);
+            parents[i] = tournament[0];
         }
 
         return parents;
@@ -209,17 +161,26 @@ public class GeneticRoomGenerator
 
     void Reproduction()
     {
-        List<GeneticRoomIndividual> newPopulation = new();
+        GeneticRoomIndividual[] newPopulation = new GeneticRoomIndividual[GeneticAlgorithmConstants.PopulationSize];
 
-        while (newPopulation.Count < GeneticAlgorithmConstants.PopulationSize)
+        for (int count = 0; count < GeneticAlgorithmConstants.PopulationSize; count += 2)
         {
-            List<GeneticRoomIndividual> parents = TournamentSelection();
+            GeneticRoomIndividual[] parents = TournamentSelection();
 
-            GeneticRoomIndividual children1 = Crossover(parents[0], parents[1]);
-            GeneticRoomIndividual children2 = Crossover(parents[1], parents[0]);
+            if (Random.value < crossoverProbability)
+            {
+                GeneticRoomIndividual children1 = Crossover(parents[0], parents[1]);
+                GeneticRoomIndividual children2 = Crossover(parents[1], parents[0]);
 
-            newPopulation.Add(children1);
-            newPopulation.Add(children2);
+                newPopulation[count] = children1;
+                newPopulation[count + 1] = children2;
+            }
+            else
+            {
+                // Se nao houver cruzamento, copie os pais diretamente para a nova populacao
+                newPopulation[count] = parents[0];
+                newPopulation[count + 1] = parents[1];
+            }
         }
 
         population = newPopulation;

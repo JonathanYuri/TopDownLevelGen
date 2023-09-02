@@ -52,16 +52,16 @@ public class Sala
 
     public Possibilidades[,] matriz;
 
-    public List<Position> doorsPositions;
+    public readonly Position[] doorsPositions;
     public List<Position> changeablesPositions;
 
-    public List<Enemies> enemies;
-    public List<Obstacles> obstacles;
+    public readonly Enemies[] enemies;
+    public readonly Obstacles[] obstacles;
 
     public int Rows { get => rows; set => rows = value; }
     public int Cols { get => cols; set => cols = value; }
 
-    public Sala(int rows, int cols, List<Position> doorsPositions, List<Enemies> enemies, List<Obstacles> obstacles)
+    public Sala(int rows, int cols, Position[] doorsPositions, Enemies[] enemies, Obstacles[] obstacles)
     {
         this.Rows = rows;
         this.Cols = cols;

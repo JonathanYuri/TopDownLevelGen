@@ -25,23 +25,20 @@ public static class ListExtensions
             (list[n], list[k]) = (list[k], list[n]);
         }
     }
-}
 
-public static class HashSetExtensions
-{
-    public static List<Position> SelectRandomPositions(this HashSet<Position> allPositions, int numberOfPositionsToSelect)
+    public static T[] SelectRandomDistinctElements<T>(this IList<T> allelements, int numberOfPositionsToSelect)
     {
-        List<Position> selectedPositions = new();
+        T[] selectedElements = new T[numberOfPositionsToSelect];
 
-        List<Position> allPositionsList = new(allPositions);
-        allPositionsList.Shuffle();
+        List<T> allElementsList = new(allelements);
+        allElementsList.Shuffle();
 
         for (int i = 0; i < numberOfPositionsToSelect; i++)
         {
-            selectedPositions.Add(allPositionsList[i]);
+            selectedElements[i] = allElementsList[i];
         }
 
-        return selectedPositions;
+        return selectedElements;
     }
 }
 

@@ -17,8 +17,8 @@ public class GenerateRoom : MonoBehaviour
 
     bool isGenerating = false;
 
-    [SerializeField] List<GameObject> portas;
-    [SerializeField] List<GameObject> paredes;
+    [SerializeField] GameObject[] portas;
+    [SerializeField] GameObject[] paredes;
     [SerializeField] GameObject chaoFinal;
     [SerializeField] GameObject player;
 
@@ -59,7 +59,7 @@ public class GenerateRoom : MonoBehaviour
         Generate();
     }
 
-    List<Enemies> ResolveKnapsackEnemies(int capacityEnemies)
+    Enemies[] ResolveKnapsackEnemies(int capacityEnemies)
     {
         Dictionary<Enemies, int> enemiesDifficult = new()
         {
@@ -73,14 +73,18 @@ public class GenerateRoom : MonoBehaviour
 
         List<int> chosenEnemiesIdx = Utils.ResolveKnapsack(valuesEnemies, capacityEnemies);
 
-        List<Enemies> chosenEnemies = new();
-        chosenEnemiesIdx.ForEach(idx => chosenEnemies.Add(keysEnemies[idx]));
+        Enemies[] chosenEnemies = new Enemies[chosenEnemiesIdx.Count];
+        for (int i = 0; i < chosenEnemiesIdx.Count; i++)
+        {
+            int idx = chosenEnemiesIdx[i];
+            chosenEnemies[i] = keysEnemies[idx];
+        }
 
         //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
         return chosenEnemies;
     }
 
-    List<Obstacles> ResolveKnapsackObstacles(int capacityObstacles)
+    Obstacles[] ResolveKnapsackObstacles(int capacityObstacles)
     {
         Dictionary<Obstacles, int> obstaclesDifficult = new()
         {
@@ -94,8 +98,12 @@ public class GenerateRoom : MonoBehaviour
 
         List<int> chosenObstaclesIdx = Utils.ResolveKnapsack(valuesObstacles, capacityObstacles);
 
-        List<Obstacles> chosenObstacles = new();
-        chosenObstaclesIdx.ForEach(idx => chosenObstacles.Add(keysObstacles[idx]));
+        Obstacles[] chosenObstacles = new Obstacles[chosenObstaclesIdx.Count];
+        for (int i = 0; i < chosenObstaclesIdx.Count; i++)
+        {
+            int idx = chosenObstaclesIdx[i];
+            chosenObstacles[i] = keysObstacles[idx];
+        }
 
         //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
         return chosenObstacles;
@@ -176,15 +184,14 @@ public class GenerateRoom : MonoBehaviour
 
         // TODO: modificar as portas pra fazer sentido com o mapa
         // TODO: melhorar a eficiencia do algoritmo
-        /* TODO: pra melhorar a eficiencia do algoritmo eu posso manter uma lista de posicoes que tem inimigos e obstaculos no individuo
-         * pq ai n preciso ficar fazendo o getPositionThatHas tantas vezes
+        /* TODO: trocar os List por Array onde der
+         * Tirar o ToList? O(n)
+         * 
          */
 
-        List<Position> doorsPosition = new()
-        {
-            new Position{ Row = (int)(rows / 2), Column = 0 },
-            new Position{ Row = rows - 1, Column =(int)(cols / 2) }
-        };
+        Position[] doorsPosition = new Position[2];
+        doorsPosition[0] = new Position { Row = (int)(rows / 2), Column = 0 };
+        doorsPosition[1] = new Position { Row = rows - 1, Column = (int)(cols / 2) };
 
         Sala sala = new(rows, cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
         GeneticRoomGenerator geneticRoomGenerator = new(sala, 0.8f, 0.3f);

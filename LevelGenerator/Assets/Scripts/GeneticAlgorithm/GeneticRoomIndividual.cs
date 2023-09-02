@@ -149,14 +149,14 @@ public class GeneticRoomIndividual
             return true;
         }
 
-        bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.Count;
+        bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.GetLength(0);
         if (!hasTheRightAmountOfEnemies)
         {
             //Debug.Log("Mostro por causa da quantidade de inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.obstacles.Count;
+        bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.obstacles.GetLength(0);
         if (!hasTheRightAmountOfObstacles)
         {
             //Debug.Log("Mostro por causa da quantidade de obstaculos");

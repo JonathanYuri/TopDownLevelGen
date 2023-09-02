@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 public static class PathFinder
 {
-    public static int CountPathsBetweenDoors(Possibilidades[,] roomMatrix, List<Position> doorsPositions)
+    public static int CountPathsBetweenDoors(Possibilidades[,] roomMatrix, Position[] doorsPositions)
     {
         // transformar 
         int[,] matrix = TransformRoomForCountPaths(roomMatrix);
 
         int qntCaminhos = 0;
-        for (int i = 0; i < doorsPositions.Count; i++)
+        for (int i = 0; i < doorsPositions.GetLength(0); i++)
         {
-            for (int j = i + 1; j < doorsPositions.Count; j++)
+            for (int j = i + 1; j < doorsPositions.GetLength(0); j++)
             {
                 //Console.WriteLine("PORTA: " + i + " x " + j);
                 int[,] paths = CountPaths(matrix, doorsPositions[i]);
@@ -27,7 +27,7 @@ public static class PathFinder
         return qntCaminhos;
     }
 
-    public static bool IsAPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, List<Position> doorsPositions, HashSet<Position> enemiesPositions)
+    public static bool IsAPathBetweenDoorAndEnemies(Possibilidades[,] roomMatrix, Position[] doorsPositions, HashSet<Position> enemiesPositions)
     {
         if (enemiesPositions.Count == 0)
         {
