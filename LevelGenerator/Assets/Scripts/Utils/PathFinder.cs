@@ -9,9 +9,9 @@ public static class PathFinder
         int[,] matrix = TransformRoomForCountPaths(roomMatrix);
 
         int qntCaminhos = 0;
-        for (int i = 0; i < doorsPositions.GetLength(0); i++)
+        for (int i = 0; i < doorsPositions.Length; i++)
         {
-            for (int j = i + 1; j < doorsPositions.GetLength(0); j++)
+            for (int j = i + 1; j < doorsPositions.Length; j++)
             {
                 //Console.WriteLine("PORTA: " + i + " x " + j);
                 int[,] paths = CountPaths(matrix, doorsPositions[i]);

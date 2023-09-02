@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public enum Enemies
 {
@@ -58,6 +61,9 @@ public class Sala
     public readonly Enemies[] enemies;
     public readonly Obstacles[] obstacles;
 
+    public Dictionary<Enemies, Possibilidades> enemiesToPossibilidades;
+    public Dictionary<Obstacles, Possibilidades> obstaclesToPossibilidades;
+
     public int Rows { get => rows; set => rows = value; }
     public int Cols { get => cols; set => cols = value; }
 
@@ -71,6 +77,8 @@ public class Sala
 
         this.enemies = enemies;
         this.obstacles = obstacles;
+        this.enemiesToPossibilidades = new();
+        this.obstaclesToPossibilidades = new();
 
         this.matriz = new Possibilidades[rows, cols];
 
@@ -78,6 +86,8 @@ public class Sala
         PutTheDoors();
 
         GetTheChangeablesPositions();
+        TransformEnemiesToPossibilidades();
+        TransformObstaclesToPossibilidades();
     }
 
     public void PutTheWalls()
@@ -142,7 +152,29 @@ public class Sala
             {
                 var valor = matriz[i, j];
 
-                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position{ Row = i, Column = j });
+                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position { Row = i, Column = j });
+            }
+        }
+    }
+
+    void TransformEnemiesToPossibilidades()
+    {
+        foreach (Enemies enemy in enemies)
+        {
+            if (Enum.TryParse(enemy.ToString(), out Possibilidades possibility))
+            {
+                enemiesToPossibilidades[enemy] = possibility;
+            }
+        }
+    }
+
+    void TransformObstaclesToPossibilidades()
+    {
+        foreach (Obstacles obstacle in obstacles)
+        {
+            if (Enum.TryParse(obstacle.ToString(), out Possibilidades possibility))
+            {
+                obstaclesToPossibilidades[obstacle] = possibility;
             }
         }
     }

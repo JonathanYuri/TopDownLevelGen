@@ -153,13 +153,11 @@ public class GenerateRoom : MonoBehaviour
             Position position = queue.Dequeue();
             mapa.Add(position);
 
-            // escolher qualquer posição e tentar destravar
-            Direction[] shuffledArr = (Direction[])Enum.GetValues(typeof(Direction));
-            List<Direction> shuffledList = shuffledArr.ToList();
-            shuffledList.Shuffle();
+            // escolher qualquer posição
+            Direction[] shuffledArr = Enum.GetValues(typeof(Direction)).Cast<Direction>().Shuffle();
 
             // destravar as posições
-            foreach (Direction direction in shuffledList)
+            foreach (Direction direction in shuffledArr)
             {
                 Position adjacentPosition = position.Move(direction);
 
@@ -184,8 +182,8 @@ public class GenerateRoom : MonoBehaviour
 
         // TODO: modificar as portas pra fazer sentido com o mapa
         // TODO: melhorar a eficiencia do algoritmo
-        /* TODO: trocar os List por Array onde der
-         * Tirar o ToList? O(n)
+        /* TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
+         * 
          * 
          */
 

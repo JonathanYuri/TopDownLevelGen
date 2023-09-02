@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using Random = UnityEngine.Random;
+using System.Linq;
 
 public static class EnumExtensions
 {
@@ -13,20 +14,24 @@ public static class EnumExtensions
     }
 }
 
-public static class ListExtensions
+public static class IEnumerableExtensions
 {
-    public static void Shuffle<T>(this IList<T> list)
+    public static T[] Shuffle<T>(this IEnumerable<T> collection)
     {
-        int n = list.Count;
+        T[] shuffled = collection.ToArray();
+        int n = shuffled.Length;
+
         while (n > 1)
         {
             n--;
             int k = Random.Range(0, n + 1);
-            (list[n], list[k]) = (list[k], list[n]);
+            (shuffled[n], shuffled[k]) = (shuffled[k], shuffled[n]);
         }
+
+        return shuffled;
     }
 
-    public static T[] SelectRandomDistinctElements<T>(this IList<T> allelements, int numberOfPositionsToSelect)
+    public static T[] SelectRandomDistinctElements<T>(this IEnumerable<T> allelements, int numberOfPositionsToSelect)
     {
         T[] selectedElements = new T[numberOfPositionsToSelect];
 

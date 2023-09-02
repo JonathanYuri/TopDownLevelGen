@@ -65,11 +65,11 @@ public class GeneticRoomGenerator
     {
         GeneticRoomIndividual individual = new(sala, false);
 
-        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNoPai = RoomOperations.GetPositionsOf(pai.roomMatrix, pai.enemiesPositions);
-        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNoPai = RoomOperations.GetPositionsOf(pai.roomMatrix, pai.obstaclesPositions);
+        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNoPai = RoomOperations.GroupPositionsByMatrixValue(pai.roomMatrix, pai.enemiesPositions);
+        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNoPai = RoomOperations.GroupPositionsByMatrixValue(pai.roomMatrix, pai.obstaclesPositions);
 
-        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNaMae = RoomOperations.GetPositionsOf(mae.roomMatrix, mae.enemiesPositions);
-        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNaMae = RoomOperations.GetPositionsOf(mae.roomMatrix, mae.obstaclesPositions);
+        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNaMae = RoomOperations.GroupPositionsByMatrixValue(mae.roomMatrix, mae.enemiesPositions);
+        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNaMae = RoomOperations.GroupPositionsByMatrixValue(mae.roomMatrix, mae.obstaclesPositions);
 
         if (posicaoDosInimigosNaMae.Keys.Count != posicaoDosInimigosNoPai.Keys.Count)
         {
@@ -89,7 +89,7 @@ public class GeneticRoomGenerator
             HashSet<Position> combinedPositions = new(posicaoDosInimigosNoPai[key]);
             combinedPositions.UnionWith(posicaoDosInimigosNaMae[key]);
 
-            Position[] chosenPositions = combinedPositions.ToList().SelectRandomDistinctElements(posicaoDosInimigosNaMae[key].Count);
+            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(posicaoDosInimigosNaMae[key].Count);
             foreach (Position pos in chosenPositions)
             {
                 individual.PutEnemyInPosition(key, pos);
@@ -103,7 +103,7 @@ public class GeneticRoomGenerator
             HashSet<Position> combinedPositions = new(posicaoDosObstaculosNoPai[key]);
             combinedPositions.UnionWith(posicaoDosObstaculosNaMae[key]);
 
-            Position[] chosenPositions = combinedPositions.ToList().SelectRandomDistinctElements(posicaoDosObstaculosNoPai[key].Count);
+            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(posicaoDosObstaculosNoPai[key].Count);
             int colocados = 0;
             foreach (Position pos in chosenPositions)
             {
@@ -117,8 +117,8 @@ public class GeneticRoomGenerator
             }
 
             // colocar o que falta
-            int faltando = chosenPositions.GetLength(0) - colocados;
-            Position[] positions = new HashSet<Position>(possiblePositions).ToList().SelectRandomDistinctElements(faltando);
+            int faltando = chosenPositions.Length - colocados;
+            Position[] positions = new HashSet<Position>(possiblePositions).SelectRandomDistinctElements(faltando);
             foreach (Position pos in positions)
             {
                 individual.PutObstacleInPosition(key, pos);
@@ -137,7 +137,7 @@ public class GeneticRoomGenerator
             List<GeneticRoomIndividual> tournament = new();
 
             // Seleciona aleatoriamente "tournamentSize" indivíduos para o torneio
-            tournament = population.ToList().SelectRandomDistinctElements(GeneticAlgorithmConstants.TournamentSize).ToList();
+            tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TournamentSize).ToList();
 
             // Ordena os indivíduos do torneio por fitness (do melhor para o pior)
             tournament.Sort((a, b) =>
@@ -228,7 +228,7 @@ public class GeneticRoomGenerator
         Debug.Log("Melhor individuo: " + melhorIndividuo.value);
         Debug.Log("Inimigo: " + melhorIndividuo.enemiesPositions.Count);
         Debug.Log("Obstaculo: " + melhorIndividuo.obstaclesPositions.Count);
-        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix, melhorIndividuo.obstaclesPositions));
+        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix, melhorIndividuo.obstaclesPositions, sala.enemiesToPossibilidades));
 
         // retornar o melhor
         return melhorIndividuo.roomMatrix;

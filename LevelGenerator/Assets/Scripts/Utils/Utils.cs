@@ -47,11 +47,6 @@ public class Position
 
 public static class Utils
 {
-    public static HashSet<string> GetEnumValueStrings(Type enumType)
-    {
-        return new HashSet<string>(Enum.GetValues(enumType).Cast<Enum>().Select(value => value.ToString()));
-    }
-
     public static List<int> ResolveKnapsack(List<int> values, int capacity)
     {
         int n = values.Count;
@@ -86,19 +81,5 @@ public static class Utils
         }
 
         return chosenItems[capacity];
-    }
-
-    public static Possibilidades TransformAElementFromEnumToPossibilidadesEnum<TEnum>(Type enumType, TEnum element)
-    {
-        var enumValues = Enum.GetValues(enumType);
-        foreach (Possibilidades value in enumValues)
-        {
-            if (element.ToString().Equals(value.ToString()))
-            {
-                return value;
-            }
-        }
-
-        throw new Exception("Enum element do not transform to Possibilidades Enum");
     }
 }

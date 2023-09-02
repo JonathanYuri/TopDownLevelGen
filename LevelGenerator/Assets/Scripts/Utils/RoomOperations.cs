@@ -5,29 +5,23 @@ using System.Linq;
 
 public static class RoomOperations
 {
-    public static Dictionary<Possibilidades, List<Position>> GetPositionsOf(Possibilidades[,] matrix, HashSet<Position> positionsOf)
+    // TODO: Tirar o nome Possibilidades para MatrixValue eh mais bonito
+    public static Dictionary<Possibilidades, List<Position>> GroupPositionsByMatrixValue(Possibilidades[,] matrix, HashSet<Position> positionsOf)
     {
-        Dictionary<Possibilidades, List<Position>> positionsByEnumType = new();
-        foreach (Position p in positionsOf)
-        {
-            Possibilidades type = matrix[p.Row, p.Column];
-            if (positionsByEnumType.ContainsKey(type))
-            {
-                positionsByEnumType[type].Add(p);
-            }
-            else
-            {
-                positionsByEnumType.Add(type, new List<Position> { p });
-            }
-        }
+        // agrupar as posicoes com base no valor da matrix na posicao
+        IEnumerable<IGrouping<Possibilidades, Position>> groupedPositions = positionsOf.GroupBy(p => matrix[p.Row, p.Column]);
 
-        return positionsByEnumType;
+        // transformar o groupedPositions em dicionario
+        Dictionary<Possibilidades, List<Position>> positionsByPossibilidades = groupedPositions.ToDictionary(group => group.Key, group => group.ToList());
+
+        return positionsByPossibilidades;
     }
 
-    public static int CountEnemiesNextToObstacles(Possibilidades[,] matrix, HashSet<Position> obstaclesPositions)
+    public static int CountEnemiesNextToObstacles(
+        Possibilidades[,] matrix,
+        HashSet<Position> obstaclesPositions,
+        Dictionary<Enemies, Possibilidades> enemiesToPossibilidades)
     {
-        HashSet<string> enumValueStrings = Utils.GetEnumValueStrings(typeof(Enemies));
-
         int enemies = 0;
         foreach (var obstaclePosition in obstaclesPositions)
         {
@@ -36,7 +30,7 @@ public static class RoomOperations
                 Position adjacentPosition = obstaclePosition.Move(direction);
                 if (matrix.IsPositionWithinBounds(adjacentPosition))
                 {
-                    if (enumValueStrings.Contains(matrix[adjacentPosition.Row, adjacentPosition.Column].ToString()))
+                    if (enemiesToPossibilidades.ContainsValue(matrix[adjacentPosition.Row, adjacentPosition.Column]))
                     {
                         enemies++;
                     }
@@ -45,32 +39,5 @@ public static class RoomOperations
         }
 
         return enemies;
-    }
-
-    public static bool HasTheRightObjects(Possibilidades[,] matrix, Type obj, List<Position> objectsPositions, List<object> values)
-    {
-        var enumValues = Enum.GetValues(obj).Cast<object>();
-
-        List<object> objs = new();
-        foreach (Position position in objectsPositions)
-        {
-            foreach (object value in enumValues)
-            {
-                if (matrix[position.Row, position.Column].ToString() == value.ToString())
-                {
-                    objs.Add(value);
-                }
-            }
-        }
-
-        objs.Sort();
-        List<object> aux = new(values);
-        aux.Sort();
-
-        //Debug.Log(obj.ToString());
-        //Debug.Log("era pra ter: " + string.Join(", ", aux));
-        //Debug.Log("tem: " + string.Join(", ", objs));
-
-        return objs.SequenceEqual(aux); // as listas sao iguais?
     }
 }

@@ -13,7 +13,8 @@ public class GeneticRoomIndividual
     public HashSet<Position> enemiesPositions;
     public HashSet<Position> obstaclesPositions;
 
-    Sala sala;
+    // TODO: mudar a sala daq, pq n precisa q todos individuos tenham ela, pode ser uma so pro algoritmo genetico
+    readonly Sala sala;
 
     public GeneticRoomIndividual(Sala sala, bool generateRandomly = true)
     {
@@ -60,46 +61,45 @@ public class GeneticRoomIndividual
         List<Position> aux = new(sala.changeablesPositions);
         foreach (Enemies enemie in sala.enemies)
         {
-            Possibilidades inimigo = Utils.TransformAElementFromEnumToPossibilidadesEnum(typeof(Possibilidades), enemie);
+            Possibilidades enemyPossibility = sala.enemiesToPossibilidades[enemie];
 
             int rand = Random.Range(0, aux.Count);
-            PutEnemyInPosition(inimigo, aux[rand]);
+            PutEnemyInPosition(enemyPossibility, aux[rand]);
             aux.RemoveAt(rand);
         }
 
         foreach (Obstacles obstacle in sala.obstacles)
         {
-            Possibilidades obstaculo = Utils.TransformAElementFromEnumToPossibilidadesEnum(typeof(Possibilidades), obstacle);
+            Possibilidades obstaclePossibility = sala.obstaclesToPossibilidades[obstacle];
 
             int rand = Random.Range(0, aux.Count);
-            PutObstacleInPosition(obstaculo, aux[rand]);
+            PutObstacleInPosition(obstaclePossibility, aux[rand]);
             aux.RemoveAt(rand);
         }
     }
 
     void ChangePlaceOf(HashSet<Position> positionsOf)
     {
-        HashSet<string> enemies = Utils.GetEnumValueStrings(typeof(Enemies));
-        HashSet<string> obstacles = Utils.GetEnumValueStrings(typeof(Obstacles));
-
-        // escolher 
+        // escolher
         int idx1 = Random.Range(0, positionsOf.Count);
         Position position1 = positionsOf.ElementAt(idx1);
 
         int idx2 = Random.Range(0, sala.changeablesPositions.Count);
         Position position2 = sala.changeablesPositions[idx2];
 
+        // switchPositions
+
         Possibilidades wasInPosition1 = roomMatrix[position1.Row, position1.Column];
         Possibilidades wasInPosition2 = roomMatrix[position2.Row, position2.Column];
 
         RemoveFromPosition(positionsOf, position1);
         
-        if (enemies.Contains(roomMatrix[position2.Row, position2.Column].ToString())) // se a posicao 2 for um inimigo
+        if (sala.enemiesToPossibilidades.ContainsValue(roomMatrix[position2.Row, position2.Column])) // se a posicao 2 for um inimigo
         {
             RemoveFromPosition(enemiesPositions, position2);
             PutEnemyInPosition(wasInPosition2, position1); // colocar na posicao 1 o que tinha na 2
         }
-        else if (obstacles.Contains(roomMatrix[position2.Row, position2.Column].ToString())) // se a posicao 2 for um obstaculo
+        else if (sala.obstaclesToPossibilidades.ContainsValue(roomMatrix[position2.Row, position2.Column])) // se a posicao 2 for um obstaculo
         {
             RemoveFromPosition(obstaclesPositions, position2);
             PutObstacleInPosition(wasInPosition2, position1); // colocar na posicao 1 o que tinha na 2
@@ -149,14 +149,14 @@ public class GeneticRoomIndividual
             return true;
         }
 
-        bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.GetLength(0);
+        bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.enemies.Length;
         if (!hasTheRightAmountOfEnemies)
         {
             //Debug.Log("Mostro por causa da quantidade de inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.obstacles.GetLength(0);
+        bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.obstacles.Length;
         if (!hasTheRightAmountOfObstacles)
         {
             //Debug.Log("Mostro por causa da quantidade de obstaculos");
@@ -188,7 +188,7 @@ public class GeneticRoomIndividual
             return;
         }
 
-        List<int> groups = GroupCounter.CountGroups(roomMatrix, typeof(Enemies));
+        List<int> groups = GroupCounter.CountGroups(roomMatrix, sala.enemiesToPossibilidades);
         double media = groups.Average();
 
         //Debug.Log("Total de grupos de Enemies na matriz: " + groups.Count);
