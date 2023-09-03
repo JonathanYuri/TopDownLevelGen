@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public static class GroupCounter
 {
-    public static List<int> CountGroups<T>(Possibilidades[,] matrix, Dictionary<T, Possibilidades> tToPossibilidades)
+    public static List<int> CountGroups<T>(RoomContents[,] matrix, Dictionary<T, RoomContents> tToPossibilidades)
     {
         bool[,] visitado = new bool[matrix.GetLength(0), matrix.GetLength(1)];
 
@@ -23,7 +23,7 @@ public static class GroupCounter
         return tamanhosGrupos;
     }
 
-    static int CountGroup<T>(Possibilidades[,] matriz, bool[,] visited, Dictionary<T, Possibilidades> tToPossibilidades, int row, int col)
+    static int CountGroup<T>(RoomContents[,] matriz, bool[,] visited, Dictionary<T, RoomContents> tToPossibilidades, int row, int col)
     {
         if (row < 0 || row >= matriz.GetLength(0) || col < 0 || col >= matriz.GetLength(1) || visited[row, col] || !tToPossibilidades.ContainsValue(matriz[row, col]))
             return 0;

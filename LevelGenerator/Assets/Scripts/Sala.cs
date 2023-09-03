@@ -18,7 +18,7 @@ public enum Obstacles
     Obstaculo3
 }
 
-public enum Possibilidades
+public enum RoomContents
 {
     [Mutavel(true)][Ultrapassavel(true)] Chao, // TODO: colocar tudo em ingles
 
@@ -53,7 +53,7 @@ public class Sala
 {
     int rows, cols;
 
-    public Possibilidades[,] matriz;
+    public RoomContents[,] matriz;
 
     public readonly Position[] doorsPositions;
     public List<Position> changeablesPositions;
@@ -61,8 +61,8 @@ public class Sala
     public readonly Enemies[] enemies;
     public readonly Obstacles[] obstacles;
 
-    public Dictionary<Enemies, Possibilidades> enemiesToPossibilidades;
-    public Dictionary<Obstacles, Possibilidades> obstaclesToPossibilidades;
+    public Dictionary<Enemies, RoomContents> enemiesToPossibilidades;
+    public Dictionary<Obstacles, RoomContents> obstaclesToPossibilidades;
 
     public int Rows { get => rows; set => rows = value; }
     public int Cols { get => cols; set => cols = value; }
@@ -80,7 +80,7 @@ public class Sala
         this.enemiesToPossibilidades = new();
         this.obstaclesToPossibilidades = new();
 
-        this.matriz = new Possibilidades[rows, cols];
+        this.matriz = new RoomContents[rows, cols];
 
         PutTheWalls();
         PutTheDoors();
@@ -94,13 +94,13 @@ public class Sala
     {
         for (int i = 0; i < Rows; i++)
         {
-            matriz[i, Cols - 1] = Possibilidades.Parede;
-            matriz[i, 0] = Possibilidades.Parede;
+            matriz[i, Cols - 1] = RoomContents.Parede;
+            matriz[i, 0] = RoomContents.Parede;
         }
         for (int j = 0; j < Cols; j++)
         {
-            matriz[Rows - 1, j] = Possibilidades.Parede;
-            matriz[0, j] = Possibilidades.Parede;
+            matriz[Rows - 1, j] = RoomContents.Parede;
+            matriz[0, j] = RoomContents.Parede;
         }
     }
 
@@ -108,7 +108,7 @@ public class Sala
     {
         foreach (Position position in doorsPositions)
         {
-            matriz[position.Row, position.Column] = Possibilidades.Porta;
+            matriz[position.Row, position.Column] = RoomContents.Porta;
 
             // nao pode ter nada na frente da porta
             PutTheNothingsBeforeTheDoors(position);
@@ -122,11 +122,11 @@ public class Sala
         {
             if (doorPosition.Column == Cols - 1) // porta na direita da sala
             {
-                matriz[doorPosition.Row, doorPosition.Column - 1] = Possibilidades.Nada;
+                matriz[doorPosition.Row, doorPosition.Column - 1] = RoomContents.Nada;
             }
             else if (doorPosition.Column == 0) // porta na esquerda da sala
             {
-                matriz[doorPosition.Row, doorPosition.Column + 1] = Possibilidades.Nada;
+                matriz[doorPosition.Row, doorPosition.Column + 1] = RoomContents.Nada;
             }
         }
 
@@ -135,11 +135,11 @@ public class Sala
         {
             if (doorPosition.Row == Rows - 1) // porta embaixo na sala
             {
-                matriz[doorPosition.Row - 1, doorPosition.Column] = Possibilidades.Nada;
+                matriz[doorPosition.Row - 1, doorPosition.Column] = RoomContents.Nada;
             }
             else if (doorPosition.Row == 0) // porta pra cima na sala
             {
-                matriz[doorPosition.Row + 1, doorPosition.Column] = Possibilidades.Nada;
+                matriz[doorPosition.Row + 1, doorPosition.Column] = RoomContents.Nada;
             }
         }
     }
@@ -161,7 +161,7 @@ public class Sala
     {
         foreach (Enemies enemy in enemies)
         {
-            if (Enum.TryParse(enemy.ToString(), out Possibilidades possibility))
+            if (Enum.TryParse(enemy.ToString(), out RoomContents possibility))
             {
                 enemiesToPossibilidades[enemy] = possibility;
             }
@@ -172,7 +172,7 @@ public class Sala
     {
         foreach (Obstacles obstacle in obstacles)
         {
-            if (Enum.TryParse(obstacle.ToString(), out Possibilidades possibility))
+            if (Enum.TryParse(obstacle.ToString(), out RoomContents possibility))
             {
                 obstaclesToPossibilidades[obstacle] = possibility;
             }

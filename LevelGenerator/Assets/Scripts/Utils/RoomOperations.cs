@@ -5,22 +5,22 @@ using System.Linq;
 
 public static class RoomOperations
 {
-    // TODO: Tirar o nome Possibilidades para MatrixValue eh mais bonito
-    public static Dictionary<Possibilidades, List<Position>> GroupPositionsByMatrixValue(Possibilidades[,] matrix, HashSet<Position> positionsOf)
+    // TODO: Tirar o nome matriz para Room
+    public static Dictionary<RoomContents, List<Position>> GroupPositionsByRoomValue(RoomContents[,] matrix, HashSet<Position> positionsOf)
     {
         // agrupar as posicoes com base no valor da matrix na posicao
-        IEnumerable<IGrouping<Possibilidades, Position>> groupedPositions = positionsOf.GroupBy(p => matrix[p.Row, p.Column]);
+        IEnumerable<IGrouping<RoomContents, Position>> groupedPositions = positionsOf.GroupBy(p => matrix[p.Row, p.Column]);
 
         // transformar o groupedPositions em dicionario
-        Dictionary<Possibilidades, List<Position>> positionsByPossibilidades = groupedPositions.ToDictionary(group => group.Key, group => group.ToList());
+        Dictionary<RoomContents, List<Position>> positionsByPossibilidades = groupedPositions.ToDictionary(group => group.Key, group => group.ToList());
 
         return positionsByPossibilidades;
     }
 
     public static int CountEnemiesNextToObstacles(
-        Possibilidades[,] matrix,
+        RoomContents[,] matrix,
         HashSet<Position> obstaclesPositions,
-        Dictionary<Enemies, Possibilidades> enemiesToPossibilidades)
+        Dictionary<Enemies, RoomContents> enemiesToPossibilidades)
     {
         int enemies = 0;
         foreach (var obstaclePosition in obstaclesPositions)

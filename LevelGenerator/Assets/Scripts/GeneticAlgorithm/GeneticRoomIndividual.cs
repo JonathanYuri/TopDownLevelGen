@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class GeneticRoomIndividual
 {
-    public Possibilidades[,] roomMatrix;
+    public RoomContents[,] roomMatrix;
     public int? value;
     public bool itWasModified = true;
 
@@ -20,7 +20,7 @@ public class GeneticRoomIndividual
     {
         this.sala = sala;
         value = null;
-        roomMatrix = (Possibilidades[,])sala.matriz.Clone();
+        roomMatrix = (RoomContents[,])sala.matriz.Clone();
         enemiesPositions = new();
         obstaclesPositions = new();
 
@@ -39,13 +39,13 @@ public class GeneticRoomIndividual
         obstaclesPositions = individual.obstaclesPositions;
     }
 
-    public void PutEnemyInPosition(Possibilidades enemy, Position position)
+    public void PutEnemyInPosition(RoomContents enemy, Position position)
     {
         roomMatrix[position.Row, position.Column] = enemy;
         enemiesPositions.Add(position);
     }
 
-    public void PutObstacleInPosition(Possibilidades obstacle, Position position)
+    public void PutObstacleInPosition(RoomContents obstacle, Position position)
     {
         roomMatrix[position.Row, position.Column] = obstacle;
         obstaclesPositions.Add(position);
@@ -58,23 +58,24 @@ public class GeneticRoomIndividual
 
     void GenerateRoomRandomly()
     {
-        List<Position> aux = new(sala.changeablesPositions);
+        List<Position> avaliablePositions = new(sala.changeablesPositions);
+
         foreach (Enemies enemie in sala.enemies)
         {
-            Possibilidades enemyPossibility = sala.enemiesToPossibilidades[enemie];
+            RoomContents enemyPossibility = sala.enemiesToPossibilidades[enemie];
 
-            int rand = Random.Range(0, aux.Count);
-            PutEnemyInPosition(enemyPossibility, aux[rand]);
-            aux.RemoveAt(rand);
+            int rand = Random.Range(0, avaliablePositions.Count);
+            PutEnemyInPosition(enemyPossibility, avaliablePositions[rand]);
+            avaliablePositions.RemoveAt(rand);
         }
 
         foreach (Obstacles obstacle in sala.obstacles)
         {
-            Possibilidades obstaclePossibility = sala.obstaclesToPossibilidades[obstacle];
+            RoomContents obstaclePossibility = sala.obstaclesToPossibilidades[obstacle];
 
-            int rand = Random.Range(0, aux.Count);
-            PutObstacleInPosition(obstaclePossibility, aux[rand]);
-            aux.RemoveAt(rand);
+            int rand = Random.Range(0, avaliablePositions.Count);
+            PutObstacleInPosition(obstaclePossibility, avaliablePositions[rand]);
+            avaliablePositions.RemoveAt(rand);
         }
     }
 
@@ -89,8 +90,8 @@ public class GeneticRoomIndividual
 
         // switchPositions
 
-        Possibilidades wasInPosition1 = roomMatrix[position1.Row, position1.Column];
-        Possibilidades wasInPosition2 = roomMatrix[position2.Row, position2.Column];
+        RoomContents wasInPosition1 = roomMatrix[position1.Row, position1.Column];
+        RoomContents wasInPosition2 = roomMatrix[position2.Row, position2.Column];
 
         RemoveFromPosition(positionsOf, position1);
         

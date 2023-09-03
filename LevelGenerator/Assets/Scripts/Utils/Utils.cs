@@ -47,6 +47,13 @@ public class Position
 
 public static class Utils
 {
+    public static HashSet<Position> CombinePositions(List<Position> positions1, List<Position> positions2)
+    {
+        HashSet<Position> combinedPositions = new(positions1);
+        combinedPositions.UnionWith(positions2);
+        return combinedPositions;
+    }
+
     public static List<int> ResolveKnapsack(List<int> values, int capacity)
     {
         int n = values.Count;

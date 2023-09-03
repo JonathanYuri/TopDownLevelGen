@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GenerateRoom : MonoBehaviour
+public class GenerateGame : MonoBehaviour
 {
     [SerializeField] GameObject parede;
     [SerializeField] GameObject porta;
@@ -22,7 +22,7 @@ public class GenerateRoom : MonoBehaviour
     [SerializeField] GameObject chaoFinal;
     [SerializeField] GameObject player;
 
-    Dictionary<Possibilidades, GameObject> objects;
+    Dictionary<RoomContents, GameObject> objects;
 
     float totalCoroutineExecutionTime = 0f;
 
@@ -37,18 +37,18 @@ public class GenerateRoom : MonoBehaviour
     {
         objects = new()
         {
-            { Possibilidades.Chao, chao },
-            { Possibilidades.Nada, chao },
-            { Possibilidades.Parede, parede },
-            { Possibilidades.Porta, porta },
+            { RoomContents.Chao, chao },
+            { RoomContents.Nada, chao },
+            { RoomContents.Parede, parede },
+            { RoomContents.Porta, porta },
 
-            { Possibilidades.Obstaculo1, obstaculo },
-            { Possibilidades.Obstaculo2, obstaculo },
-            { Possibilidades.Obstaculo3, obstaculo },
+            { RoomContents.Obstaculo1, obstaculo },
+            { RoomContents.Obstaculo2, obstaculo },
+            { RoomContents.Obstaculo3, obstaculo },
 
-            { Possibilidades.Inimigo1, inimigo },
-            { Possibilidades.Inimigo2, inimigo },
-            { Possibilidades.Inimigo3, inimigo },
+            { RoomContents.Inimigo1, inimigo },
+            { RoomContents.Inimigo2, inimigo },
+            { RoomContents.Inimigo3, inimigo },
         };
 
         mapa = new();
@@ -208,9 +208,6 @@ public class GenerateRoom : MonoBehaviour
 
         isGenerating = true;
 
-        // esperar ate o proximo frame pra ele atualizar o texto botao
-        yield return null;
-
         float startTime = Time.realtimeSinceStartup;
         // Inicia a Coroutine para executar o algoritmo em segundo plano
         yield return StartCoroutine(GeneticLoopingCoroutine(sala, geneticRoomGenerator));
@@ -227,7 +224,7 @@ public class GenerateRoom : MonoBehaviour
             {
                 GameObject tile = objects[sala.matriz[i, j]];
 
-                if (sala.matriz[i, j] == Possibilidades.Porta)
+                if (sala.matriz[i, j] == RoomContents.Porta)
                 {
                     if (i == 0) // porta pra cima
                     {
@@ -247,7 +244,7 @@ public class GenerateRoom : MonoBehaviour
                     }
                 }
 
-                else if (sala.matriz[i, j] == Possibilidades.Parede)
+                else if (sala.matriz[i, j] == RoomContents.Parede)
                 {
                     if (i == 0 && j == 0) // quina cima-esq
                     {
@@ -285,7 +282,7 @@ public class GenerateRoom : MonoBehaviour
                     }
                 }
 
-                else if (sala.matriz[i, j] == Possibilidades.Chao || sala.matriz[i, j] == Possibilidades.Nada)
+                else if (sala.matriz[i, j] == RoomContents.Chao || sala.matriz[i, j] == RoomContents.Nada)
                 {
                     tile = chaoFinal;
                 }

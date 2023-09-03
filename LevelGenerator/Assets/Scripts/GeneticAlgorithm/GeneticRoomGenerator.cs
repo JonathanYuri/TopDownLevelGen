@@ -31,8 +31,7 @@ public class GeneticRoomGenerator
     {
         for (int i = 0; i < GeneticAlgorithmConstants.PopulationSize; i++)
         {
-            GeneticRoomIndividual individual = new(sala);
-            population[i] = individual;
+            population[i] = new(sala);
         }
     }
 
@@ -61,74 +60,87 @@ public class GeneticRoomGenerator
         }
     }
 
+    void PlaceEnemiesInChild(
+        GeneticRoomIndividual child,
+        ICollection<RoomContents> enemies,
+        Dictionary<RoomContents, List<Position>> enemiesPositionsInFather,
+        Dictionary<RoomContents, List<Position>> enemiesPositionsInMother,
+        List<Position> avaliablePositions)
+    {
+        foreach (RoomContents key in enemies)
+        {
+            HashSet<Position> combinedPositions = Utils.CombinePositions(enemiesPositionsInFather[key], enemiesPositionsInMother[key]);
+            combinedPositions.Intersect(avaliablePositions); // pra sempre ser uma posicao valida
+            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(enemiesPositionsInFather[key].Count);
+
+            foreach (Position pos in chosenPositions)
+            {
+                child.PutEnemyInPosition(key, pos);
+                avaliablePositions.Remove(pos);
+            }
+
+            // nao colocou todos, colocar o resto aleatoriamente no que eu tenho
+            int faltando = enemiesPositionsInFather[key].Count - chosenPositions.Length;
+            Position[] positions = avaliablePositions.SelectRandomDistinctElements(faltando);
+            foreach (Position pos in positions)
+            {
+                child.PutEnemyInPosition(key, pos);
+                avaliablePositions.Remove(pos);
+            }
+        }
+    }
+
+    void PlaceObstaclesInChild(
+        GeneticRoomIndividual child,
+        ICollection<RoomContents> obstacles,
+        Dictionary<RoomContents, List<Position>> obstaclesPositionsInFather,
+        Dictionary<RoomContents, List<Position>> obstaclesPositionsInMother,
+        List<Position> avaliablePositions)
+    {
+        foreach (RoomContents key in obstacles)
+        {
+            HashSet<Position> combinedPositions = Utils.CombinePositions(obstaclesPositionsInFather[key], obstaclesPositionsInMother[key]);
+            combinedPositions.Intersect(avaliablePositions); // pra sempre ser uma posicao valida
+            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(obstaclesPositionsInFather[key].Count);
+
+            foreach (Position pos in chosenPositions)
+            {
+                child.PutObstacleInPosition(key, pos);
+                avaliablePositions.Remove(pos);
+            }
+
+            // nao colocou todos, colocar o resto aleatoriamente no que eu tenho
+            int faltando = obstaclesPositionsInFather[key].Count - chosenPositions.Length;
+            Position[] positions = avaliablePositions.SelectRandomDistinctElements(faltando);
+            foreach (Position pos in positions)
+            {
+                child.PutObstacleInPosition(key, pos);
+            }
+        }
+    }
+
     GeneticRoomIndividual Crossover(GeneticRoomIndividual pai, GeneticRoomIndividual mae)
     {
         GeneticRoomIndividual individual = new(sala, false);
 
-        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNoPai = RoomOperations.GroupPositionsByMatrixValue(pai.roomMatrix, pai.enemiesPositions);
-        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNoPai = RoomOperations.GroupPositionsByMatrixValue(pai.roomMatrix, pai.obstaclesPositions);
+        Dictionary<RoomContents, List<Position>> enemiesPositionsInFather = RoomOperations.GroupPositionsByRoomValue(pai.roomMatrix, pai.enemiesPositions);
+        Dictionary<RoomContents, List<Position>> enemiesPositionsInMother = RoomOperations.GroupPositionsByRoomValue(mae.roomMatrix, mae.enemiesPositions);
 
-        Dictionary<Possibilidades, List<Position>> posicaoDosInimigosNaMae = RoomOperations.GroupPositionsByMatrixValue(mae.roomMatrix, mae.enemiesPositions);
-        Dictionary<Possibilidades, List<Position>> posicaoDosObstaculosNaMae = RoomOperations.GroupPositionsByMatrixValue(mae.roomMatrix, mae.obstaclesPositions);
+        Dictionary<RoomContents, List<Position>> obstaclesPositionsInFather = RoomOperations.GroupPositionsByRoomValue(pai.roomMatrix, pai.obstaclesPositions);
+        Dictionary<RoomContents, List<Position>> obstaclesPositionsInMother = RoomOperations.GroupPositionsByRoomValue(mae.roomMatrix, mae.obstaclesPositions);
 
-        if (posicaoDosInimigosNaMae.Keys.Count != posicaoDosInimigosNoPai.Keys.Count)
-        {
-            throw new Exception("Inimigos diferentes no pai e na mae");
-        }
+        if (enemiesPositionsInMother.Keys.Count != enemiesPositionsInFather.Keys.Count) throw new Exception("Inimigos diferentes no pai e na mae");
+        if (obstaclesPositionsInMother.Keys.Count != obstaclesPositionsInFather.Keys.Count) throw new Exception("Obstaculos diferentes no pai e na mae");
 
-        if (posicaoDosObstaculosNaMae.Keys.Count != posicaoDosObstaculosNoPai.Keys.Count)
-        {
-            throw new Exception("Obstaculos diferentes no pai e na mae");
-        }
+        List<Position> avaliablePositions = new(sala.changeablesPositions);
 
-        // fazer a escolha
-        List<Position> possiblePositions = new(sala.changeablesPositions);
-        foreach (Possibilidades key in posicaoDosInimigosNoPai.Keys)
-        {
-            // pra nao ter repeticao de posicao
-            HashSet<Position> combinedPositions = new(posicaoDosInimigosNoPai[key]);
-            combinedPositions.UnionWith(posicaoDosInimigosNaMae[key]);
-
-            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(posicaoDosInimigosNaMae[key].Count);
-            foreach (Position pos in chosenPositions)
-            {
-                individual.PutEnemyInPosition(key, pos);
-                possiblePositions.Remove(pos);
-            }
-        }
-
-        foreach (Possibilidades key in posicaoDosObstaculosNoPai.Keys)
-        {
-            // pra nao ter repeticao de posicao
-            HashSet<Position> combinedPositions = new(posicaoDosObstaculosNoPai[key]);
-            combinedPositions.UnionWith(posicaoDosObstaculosNaMae[key]);
-
-            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(posicaoDosObstaculosNoPai[key].Count);
-            int colocados = 0;
-            foreach (Position pos in chosenPositions)
-            {
-                // TODO: fazer assim pra pegar verificar posicoes dos inimigos VVVVVV
-                if (!individual.enemiesPositions.Contains(pos))
-                {
-                    individual.PutObstacleInPosition(key, pos);
-                    possiblePositions.Remove(pos);
-                    colocados++;
-                }
-            }
-
-            // colocar o que falta
-            int faltando = chosenPositions.Length - colocados;
-            Position[] positions = new HashSet<Position>(possiblePositions).SelectRandomDistinctElements(faltando);
-            foreach (Position pos in positions)
-            {
-                individual.PutObstacleInPosition(key, pos);
-            }
-        }
+        PlaceEnemiesInChild(individual, enemiesPositionsInFather.Keys, enemiesPositionsInFather, enemiesPositionsInMother, avaliablePositions);
+        PlaceObstaclesInChild(individual, obstaclesPositionsInFather.Keys, obstaclesPositionsInFather, obstaclesPositionsInMother, avaliablePositions);
 
         return individual;
     }
 
-    public GeneticRoomIndividual[] TournamentSelection()
+    GeneticRoomIndividual[] TournamentSelection()
     {
         GeneticRoomIndividual[] parents = new GeneticRoomIndividual[GeneticAlgorithmConstants.NumParentsTournament];
 
@@ -186,7 +198,7 @@ public class GeneticRoomGenerator
         population = newPopulation;
     }
 
-    public Possibilidades[,] GeneticLooping()
+    public RoomContents[,] GeneticLooping()
     {
         GeneratePopulation();
         EvaluatePopulation();

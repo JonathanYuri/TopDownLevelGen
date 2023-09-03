@@ -31,16 +31,16 @@ public static class IEnumerableExtensions
         return shuffled;
     }
 
-    public static T[] SelectRandomDistinctElements<T>(this IEnumerable<T> allelements, int numberOfPositionsToSelect)
+    public static T[] SelectRandomDistinctElements<T>(this IEnumerable<T> allElements, int numberToSelect)
     {
-        T[] selectedElements = new T[numberOfPositionsToSelect];
+        List<T> allelements = new(allElements);
+        T[] selectedElements = new T[numberToSelect];
 
-        List<T> allElementsList = new(allelements);
-        allElementsList.Shuffle();
-
-        for (int i = 0; i < numberOfPositionsToSelect; i++)
+        for (int i = 0; i < numberToSelect; i++)
         {
-            selectedElements[i] = allElementsList[i];
+            int k = Random.Range(0, allelements.Count);
+            selectedElements[i] = allelements[k];
+            allelements.RemoveAt(k);
         }
 
         return selectedElements;
