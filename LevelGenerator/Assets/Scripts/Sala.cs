@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public enum Enemies
 {
@@ -58,14 +55,15 @@ public class Sala
     public readonly Position[] doorsPositions;
     public List<Position> changeablesPositions;
 
-    public readonly Enemies[] enemies;
-    public readonly Obstacles[] obstacles;
-
-    public Dictionary<Enemies, RoomContents> enemiesToPossibilidades;
-    public Dictionary<Obstacles, RoomContents> obstaclesToPossibilidades;
+    readonly RoomContents[] enemies;
+    readonly RoomContents[] obstacles;
 
     public int Rows { get => rows; set => rows = value; }
     public int Cols { get => cols; set => cols = value; }
+
+    // Getters e Setters
+    public RoomContents[] Enemies => enemies;
+    public RoomContents[] Obstacles => obstacles;
 
     public Sala(int rows, int cols, Position[] doorsPositions, Enemies[] enemies, Obstacles[] obstacles)
     {
@@ -75,10 +73,8 @@ public class Sala
         this.doorsPositions = doorsPositions;
         this.changeablesPositions = new();
 
-        this.enemies = enemies;
-        this.obstacles = obstacles;
-        this.enemiesToPossibilidades = new();
-        this.obstaclesToPossibilidades = new();
+        this.enemies = new RoomContents[enemies.Length];
+        this.obstacles = new RoomContents[obstacles.Length];
 
         this.matriz = new RoomContents[rows, cols];
 
@@ -86,8 +82,8 @@ public class Sala
         PutTheDoors();
 
         GetTheChangeablesPositions();
-        TransformEnemiesToPossibilidades();
-        TransformObstaclesToPossibilidades();
+        TransformToRoomContents(enemies, this.enemies);
+        TransformToRoomContents(obstacles, this.obstacles);
     }
 
     public void PutTheWalls()
@@ -157,24 +153,13 @@ public class Sala
         }
     }
 
-    void TransformEnemiesToPossibilidades()
+    void TransformToRoomContents<T>(T[] objects, RoomContents[] type)
     {
-        foreach (Enemies enemy in enemies)
+        for (int i = 0; i < objects.Length; i++)
         {
-            if (Enum.TryParse(enemy.ToString(), out RoomContents possibility))
+            if (Enum.TryParse(objects[i].ToString(), out RoomContents content))
             {
-                enemiesToPossibilidades[enemy] = possibility;
-            }
-        }
-    }
-
-    void TransformObstaclesToPossibilidades()
-    {
-        foreach (Obstacles obstacle in obstacles)
-        {
-            if (Enum.TryParse(obstacle.ToString(), out RoomContents possibility))
-            {
-                obstaclesToPossibilidades[obstacle] = possibility;
+                type[i] = content;
             }
         }
     }

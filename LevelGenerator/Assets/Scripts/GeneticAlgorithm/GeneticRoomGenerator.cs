@@ -70,7 +70,7 @@ public class GeneticRoomGenerator
         foreach (RoomContents key in enemies)
         {
             HashSet<Position> combinedPositions = Utils.CombinePositions(enemiesPositionsInFather[key], enemiesPositionsInMother[key]);
-            combinedPositions.Intersect(avaliablePositions); // pra sempre ser uma posicao valida
+            combinedPositions = combinedPositions.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
             Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(enemiesPositionsInFather[key].Count);
 
             foreach (Position pos in chosenPositions)
@@ -100,7 +100,7 @@ public class GeneticRoomGenerator
         foreach (RoomContents key in obstacles)
         {
             HashSet<Position> combinedPositions = Utils.CombinePositions(obstaclesPositionsInFather[key], obstaclesPositionsInMother[key]);
-            combinedPositions.Intersect(avaliablePositions); // pra sempre ser uma posicao valida
+            combinedPositions = combinedPositions.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
             Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(obstaclesPositionsInFather[key].Count);
 
             foreach (Position pos in chosenPositions)
@@ -115,6 +115,7 @@ public class GeneticRoomGenerator
             foreach (Position pos in positions)
             {
                 child.PutObstacleInPosition(key, pos);
+                avaliablePositions.Remove(pos);
             }
         }
     }
@@ -133,9 +134,15 @@ public class GeneticRoomGenerator
         if (obstaclesPositionsInMother.Keys.Count != obstaclesPositionsInFather.Keys.Count) throw new Exception("Obstaculos diferentes no pai e na mae");
 
         List<Position> avaliablePositions = new(sala.changeablesPositions);
-
         PlaceEnemiesInChild(individual, enemiesPositionsInFather.Keys, enemiesPositionsInFather, enemiesPositionsInMother, avaliablePositions);
         PlaceObstaclesInChild(individual, obstaclesPositionsInFather.Keys, obstaclesPositionsInFather, obstaclesPositionsInMother, avaliablePositions);
+
+        if (individual.enemiesPositions.Count != pai.enemiesPositions.Count
+                                        ||
+            individual.obstaclesPositions.Count != pai.obstaclesPositions.Count)
+        {
+            throw new Exception("Gerou individuo monstro");
+        }
 
         return individual;
     }
@@ -240,7 +247,7 @@ public class GeneticRoomGenerator
         Debug.Log("Melhor individuo: " + melhorIndividuo.value);
         Debug.Log("Inimigo: " + melhorIndividuo.enemiesPositions.Count);
         Debug.Log("Obstaculo: " + melhorIndividuo.obstaclesPositions.Count);
-        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix, melhorIndividuo.obstaclesPositions, sala.enemiesToPossibilidades));
+        Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.roomMatrix, melhorIndividuo.enemiesPositions, melhorIndividuo.obstaclesPositions));
 
         // retornar o melhor
         return melhorIndividuo.roomMatrix;

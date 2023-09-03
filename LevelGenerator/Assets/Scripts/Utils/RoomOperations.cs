@@ -19,8 +19,8 @@ public static class RoomOperations
 
     public static int CountEnemiesNextToObstacles(
         RoomContents[,] matrix,
-        HashSet<Position> obstaclesPositions,
-        Dictionary<Enemies, RoomContents> enemiesToPossibilidades)
+        HashSet<Position> enemiesPositions,
+        HashSet<Position> obstaclesPositions)
     {
         int enemies = 0;
         foreach (var obstaclePosition in obstaclesPositions)
@@ -30,7 +30,7 @@ public static class RoomOperations
                 Position adjacentPosition = obstaclePosition.Move(direction);
                 if (matrix.IsPositionWithinBounds(adjacentPosition))
                 {
-                    if (enemiesToPossibilidades.ContainsValue(matrix[adjacentPosition.Row, adjacentPosition.Column]))
+                    if (enemiesPositions.Contains(adjacentPosition))
                     {
                         enemies++;
                     }

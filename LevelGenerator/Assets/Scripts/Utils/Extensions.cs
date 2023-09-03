@@ -33,6 +33,11 @@ public static class IEnumerableExtensions
 
     public static T[] SelectRandomDistinctElements<T>(this IEnumerable<T> allElements, int numberToSelect)
     {
+        if (numberToSelect >= allElements.Count())
+        {
+            return allElements.ToArray();
+        }
+
         List<T> allelements = new(allElements);
         T[] selectedElements = new T[numberToSelect];
 
