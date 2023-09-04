@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class GroupCounter
 {
@@ -25,7 +26,7 @@ public static class GroupCounter
 
     static int CountGroup(RoomContents[,] matriz, bool[,] visited, HashSet<Position> positions, int row, int col)
     {
-        if (row < 0 || row >= matriz.GetLength(0) || col < 0 || col >= matriz.GetLength(1) || visited[row, col] || !positions.Contains(new Position { Row = row, Column = col }))
+        if (!matriz.IsPositionWithinBounds(row, col) || visited[row, col] || !positions.Contains(new Position { Row = row, Column = col }))
             return 0;
 
         visited[row, col] = true;

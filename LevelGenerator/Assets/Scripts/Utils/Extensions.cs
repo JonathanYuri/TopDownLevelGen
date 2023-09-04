@@ -50,13 +50,40 @@ public static class IEnumerableExtensions
 
         return selectedElements;
     }
+
+    public static TSource MaxBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+
+        TSource maxItem = default;
+        TKey maxKey = default;
+
+        bool firstItem = true;
+        foreach (var item in source)
+        {
+            var itemKey = keySelector(item);
+
+            if (firstItem || Comparer<TKey>.Default.Compare(itemKey, maxKey) > 0)
+            {
+                maxItem = item;
+                maxKey = itemKey;
+                firstItem = false;
+            }
+        }
+
+        if (firstItem)
+            throw new InvalidOperationException("A sequencia esta vazia.");
+
+        return maxItem;
+    }
 }
 
 public static class MatrixExtensions
 {
-    public static bool IsPositionWithinBounds<T>(this T[,] matrix, Position position)
+    public static bool IsPositionWithinBounds<T>(this T[,] matrix, int row, int col)
     {
-        return position.Row >= 0 && position.Row < matrix.GetLength(0) &&
-                position.Column >= 0 && position.Column < matrix.GetLength(1);
+        return row >= 0 && row < matrix.GetLength(0) &&
+               col >= 0 && col < matrix.GetLength(1);
     }
 }

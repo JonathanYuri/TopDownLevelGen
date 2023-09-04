@@ -3,33 +3,33 @@ using System.Collections.Generic;
 
 public enum Enemies
 {
-    Inimigo1,
-    Inimigo2,
-    Inimigo3,
+    Enemy1,
+    Enemy2,
+    Enemy3,
 }
 
 public enum Obstacles
 {
-    Obstaculo1,
-    Obstaculo2,
-    Obstaculo3
+    Obstacle1,
+    Obstacle2,
+    Obstacle3
 }
 
 public enum RoomContents
 {
-    [Mutavel(true)][Ultrapassavel(true)] Chao, // TODO: colocar tudo em ingles
+    [Mutavel(true)][Ultrapassavel(true)] Ground, // TODO: colocar tudo em ingles
 
-    [Mutavel(true)][Ultrapassavel(false)] Obstaculo1,
-    [Mutavel(true)][Ultrapassavel(false)] Obstaculo2,
-    [Mutavel(true)][Ultrapassavel(false)] Obstaculo3,
+    [Mutavel(true)][Ultrapassavel(false)] Obstacle1,
+    [Mutavel(true)][Ultrapassavel(false)] Obstacle2,
+    [Mutavel(true)][Ultrapassavel(false)] Obstacle3,
 
-    [Mutavel(true)][Ultrapassavel(true)] Inimigo1,
-    [Mutavel(true)][Ultrapassavel(true)] Inimigo2,
-    [Mutavel(true)][Ultrapassavel(true)] Inimigo3,
+    [Mutavel(true)][Ultrapassavel(true)] Enemy1,
+    [Mutavel(true)][Ultrapassavel(true)] Enemy2,
+    [Mutavel(true)][Ultrapassavel(true)] Enemy3,
 
-    [Mutavel(false)][Ultrapassavel(true)] Nada,
-    [Mutavel(false)][Ultrapassavel(true)] Porta,
-    [Mutavel(false)][Ultrapassavel(false)] Parede,
+    [Mutavel(false)][Ultrapassavel(true)] Nothing,
+    [Mutavel(false)][Ultrapassavel(true)] Door,
+    [Mutavel(false)][Ultrapassavel(false)] Wall,
 }
 
 [AttributeUsage(AttributeTargets.Field)]
@@ -48,55 +48,51 @@ public class UltrapassavelAttribute : Attribute
 
 public class Sala
 {
-    int rows, cols;
-
-    public RoomContents[,] matriz;
+    RoomContents[,] values;
 
     public readonly Position[] doorsPositions;
     public List<Position> changeablesPositions;
 
-    readonly RoomContents[] enemies;
-    readonly RoomContents[] obstacles;
+    public int Rows { get; }
+    public int Cols { get; }
 
-    public int Rows { get => rows; set => rows = value; }
-    public int Cols { get => cols; set => cols = value; }
+    public RoomContents[] Enemies { get; }
+    public RoomContents[] Obstacles { get; }
 
-    // Getters e Setters
-    public RoomContents[] Enemies => enemies;
-    public RoomContents[] Obstacles => obstacles;
+    public RoomContents[,] Values { get => values; set => values = value; }
 
     public Sala(int rows, int cols, Position[] doorsPositions, Enemies[] enemies, Obstacles[] obstacles)
     {
-        this.Rows = rows;
-        this.Cols = cols;
+        Rows = rows;
+        Cols = cols;
 
         this.doorsPositions = doorsPositions;
         this.changeablesPositions = new();
 
-        this.enemies = new RoomContents[enemies.Length];
-        this.obstacles = new RoomContents[obstacles.Length];
+        Enemies = new RoomContents[enemies.Length];
+        Obstacles = new RoomContents[obstacles.Length];
 
-        this.matriz = new RoomContents[rows, cols];
+        Values = new RoomContents[rows, cols];
 
         PutTheWalls();
         PutTheDoors();
 
         GetTheChangeablesPositions();
-        TransformToRoomContents(enemies, this.enemies);
-        TransformToRoomContents(obstacles, this.obstacles);
+        TransformToRoomContents(enemies, Enemies);
+        TransformToRoomContents(obstacles, Obstacles);
     }
 
     public void PutTheWalls()
     {
         for (int i = 0; i < Rows; i++)
         {
-            matriz[i, Cols - 1] = RoomContents.Parede;
-            matriz[i, 0] = RoomContents.Parede;
+            Values[i, Cols - 1] = RoomContents.Wall;
+            Values[i, 0] = RoomContents.Wall;
         }
         for (int j = 0; j < Cols; j++)
         {
-            matriz[Rows - 1, j] = RoomContents.Parede;
-            matriz[0, j] = RoomContents.Parede;
+            Values[Rows - 1, j] = RoomContents.Wall;
+            Values[0, j] = RoomContents.Wall;
         }
     }
 
@@ -104,7 +100,7 @@ public class Sala
     {
         foreach (Position position in doorsPositions)
         {
-            matriz[position.Row, position.Column] = RoomContents.Porta;
+            Values[position.Row, position.Column] = RoomContents.Door;
 
             // nao pode ter nada na frente da porta
             PutTheNothingsBeforeTheDoors(position);
@@ -118,11 +114,11 @@ public class Sala
         {
             if (doorPosition.Column == Cols - 1) // porta na direita da sala
             {
-                matriz[doorPosition.Row, doorPosition.Column - 1] = RoomContents.Nada;
+                Values[doorPosition.Row, doorPosition.Column - 1] = RoomContents.Nothing;
             }
             else if (doorPosition.Column == 0) // porta na esquerda da sala
             {
-                matriz[doorPosition.Row, doorPosition.Column + 1] = RoomContents.Nada;
+                Values[doorPosition.Row, doorPosition.Column + 1] = RoomContents.Nothing;
             }
         }
 
@@ -131,11 +127,11 @@ public class Sala
         {
             if (doorPosition.Row == Rows - 1) // porta embaixo na sala
             {
-                matriz[doorPosition.Row - 1, doorPosition.Column] = RoomContents.Nada;
+                Values[doorPosition.Row - 1, doorPosition.Column] = RoomContents.Nothing;
             }
             else if (doorPosition.Row == 0) // porta pra cima na sala
             {
-                matriz[doorPosition.Row + 1, doorPosition.Column] = RoomContents.Nada;
+                Values[doorPosition.Row + 1, doorPosition.Column] = RoomContents.Nothing;
             }
         }
     }
@@ -146,7 +142,7 @@ public class Sala
         {
             for (int j = 0; j < Cols; j++)
             {
-                var valor = matriz[i, j];
+                var valor = Values[i, j];
 
                 if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position { Row = i, Column = j });
             }

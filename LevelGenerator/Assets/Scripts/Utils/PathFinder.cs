@@ -89,7 +89,7 @@ public static class PathFinder
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = position.Move(direction);
-                if (matrix.IsPositionWithinBounds(adjacentPosition) && matrix[adjacentPosition.Row, adjacentPosition.Column] == 1)
+                if (matrix.IsPositionWithinBounds(adjacentPosition.Row, adjacentPosition.Column) && matrix[adjacentPosition.Row, adjacentPosition.Column] == 1)
                 {
                     // Se ainda não foi visitada, adicionar à fila
                     if (countPath[adjacentPosition.Row, adjacentPosition.Column] == 0)

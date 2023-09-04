@@ -6,23 +6,25 @@ using Random = UnityEngine.Random;
 
 public class GeneticRoomIndividual
 {
-    public RoomContents[,] roomMatrix;
-    public int? value;
-    public bool itWasModified = true;
+    RoomContents[,] roomValues;
+    int? value;
+    bool itWasModified = true;
 
-    public HashSet<Position> enemiesPositions;
-    public HashSet<Position> obstaclesPositions;
+    HashSet<Position> enemiesPositions;
+    HashSet<Position> obstaclesPositions;
 
-    // TODO: mudar a sala daq, pq n precisa q todos individuos tenham ela, pode ser uma so pro algoritmo genetico
-    readonly Sala sala;
+    public RoomContents[,] RoomValues { get => roomValues; set => roomValues = value; }
+    public int? Value { get => value; set => this.value = value; }
+    public bool ItWasModified { get => itWasModified; set => itWasModified = value; }
+    public HashSet<Position> EnemiesPositions { get => enemiesPositions; set => enemiesPositions = value; }
+    public HashSet<Position> ObstaclesPositions { get => obstaclesPositions; set => obstaclesPositions = value; }
 
     public GeneticRoomIndividual(Sala sala, bool generateRandomly = true)
     {
-        this.sala = sala;
-        value = null;
-        roomMatrix = (RoomContents[,])sala.matriz.Clone();
-        enemiesPositions = new();
-        obstaclesPositions = new();
+        Value = null;
+        RoomValues = (RoomContents[,])sala.Values.Clone();
+        EnemiesPositions = new();
+        ObstaclesPositions = new();
 
         if (generateRandomly)
         {
@@ -32,23 +34,22 @@ public class GeneticRoomIndividual
 
     public GeneticRoomIndividual(GeneticRoomIndividual individual)
     {
-        sala = individual.sala;
-        value = individual.value;
-        roomMatrix = individual.roomMatrix;
-        enemiesPositions = individual.enemiesPositions;
-        obstaclesPositions = individual.obstaclesPositions;
+        Value = individual.Value;
+        RoomValues = individual.RoomValues;
+        EnemiesPositions = individual.EnemiesPositions;
+        ObstaclesPositions = individual.ObstaclesPositions;
     }
 
     public void PutEnemyInPosition(RoomContents enemy, Position position)
     {
-        roomMatrix[position.Row, position.Column] = enemy;
-        enemiesPositions.Add(position);
+        RoomValues[position.Row, position.Column] = enemy;
+        EnemiesPositions.Add(position);
     }
 
     public void PutObstacleInPosition(RoomContents obstacle, Position position)
     {
-        roomMatrix[position.Row, position.Column] = obstacle;
-        obstaclesPositions.Add(position);
+        RoomValues[position.Row, position.Column] = obstacle;
+        ObstaclesPositions.Add(position);
     }
 
     public void RemoveFromPosition(HashSet<Position> positions, Position position)
@@ -58,17 +59,18 @@ public class GeneticRoomIndividual
 
     void GenerateRoomRandomly()
     {
-        List<Position> avaliablePositions = new(sala.changeablesPositions);
-        Position[] chosenPositions = avaliablePositions.SelectRandomDistinctElements(sala.Enemies.Length + sala.Obstacles.Length);
+        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.Sala.changeablesPositions);
+        int qntObjects = GeneticAlgorithmConstants.Sala.Enemies.Length + GeneticAlgorithmConstants.Sala.Obstacles.Length;
+        Position[] chosenPositions = avaliablePositions.SelectRandomDistinctElements(qntObjects);
 
         int count = 0;
-        foreach (RoomContents enemy in sala.Enemies)
+        foreach (RoomContents enemy in GeneticAlgorithmConstants.Sala.Enemies)
         {
             PutEnemyInPosition(enemy, chosenPositions[count]);
             count++;
         }
 
-        foreach (RoomContents obstacle in sala.Obstacles)
+        foreach (RoomContents obstacle in GeneticAlgorithmConstants.Sala.Obstacles)
         {
             PutObstacleInPosition(obstacle, chosenPositions[count]);
             count++;
@@ -81,39 +83,37 @@ public class GeneticRoomIndividual
         int idx1 = Random.Range(0, positionsOf.Count);
         Position position1 = positionsOf.ElementAt(idx1);
 
-        int idx2 = Random.Range(0, sala.changeablesPositions.Count);
-        Position position2 = sala.changeablesPositions[idx2];
+        int idx2 = Random.Range(0, GeneticAlgorithmConstants.Sala.changeablesPositions.Count);
+        Position position2 = GeneticAlgorithmConstants.Sala.changeablesPositions[idx2];
 
-        // switchPositions
+        RoomContents content1 = RoomValues[position1.Row, position1.Column];
+        RoomContents content2 = RoomValues[position2.Row, position2.Column];
 
-        RoomContents wasInPosition1 = roomMatrix[position1.Row, position1.Column];
-        RoomContents wasInPosition2 = roomMatrix[position2.Row, position2.Column];
-
-        RemoveFromPosition(positionsOf, position1);
-        
-        if (sala.Enemies.Contains(roomMatrix[position2.Row, position2.Column])) // se a posicao 2 for um inimigo
+        // Colocar na posicao 1 o conteudo da posicao 2
+        if (GeneticAlgorithmConstants.Sala.Enemies.Contains(RoomValues[position2.Row, position2.Column]))
         {
-            RemoveFromPosition(enemiesPositions, position2);
-            PutEnemyInPosition(wasInPosition2, position1); // colocar na posicao 1 o que tinha na 2
+            RemoveFromPosition(EnemiesPositions, position2);
+            PutEnemyInPosition(content2, position1);
         }
-        else if (sala.Obstacles.Contains(roomMatrix[position2.Row, position2.Column])) // se a posicao 2 for um obstaculo
+        else if (GeneticAlgorithmConstants.Sala.Obstacles.Contains(RoomValues[position2.Row, position2.Column]))
         {
-            RemoveFromPosition(obstaclesPositions, position2);
-            PutObstacleInPosition(wasInPosition2, position1); // colocar na posicao 1 o que tinha na 2
+            RemoveFromPosition(ObstaclesPositions, position2);
+            PutObstacleInPosition(content2, position1);
         }
         else
         {
-            roomMatrix[position1.Row, position1.Column] = wasInPosition2;
+            RoomValues[position1.Row, position1.Column] = content2;
         }
 
-        // colocar na posicao 2 o que tinha na 1
-        if (positionsOf.Equals(enemiesPositions))
+        // Colocar na posicao 2 o conteudo da posicao 1
+        RemoveFromPosition(positionsOf, position1);
+        if (positionsOf.Equals(EnemiesPositions))
         {
-            PutEnemyInPosition(wasInPosition1, position2);
+            PutEnemyInPosition(content1, position2);
         }
-        else if (positionsOf.Equals(obstaclesPositions))
+        else if (positionsOf.Equals(ObstaclesPositions))
         {
-            PutObstacleInPosition(wasInPosition1, position2);
+            PutObstacleInPosition(content1, position2);
         }
     }
 
@@ -122,38 +122,38 @@ public class GeneticRoomIndividual
         // escolher um inimigo ou um obstaculo para mudar
         if (Random.value < 0.5f)
         {
-            ChangePlaceOf(enemiesPositions);
+            ChangePlaceOf(EnemiesPositions);
         }
         else
         {
-            ChangePlaceOf(obstaclesPositions);
+            ChangePlaceOf(ObstaclesPositions);
         }
     }
 
-    bool IsMonstrousIndividual()
+    bool IsMonstrous()
     {
-        int qntCaminhosEntrePortas = PathFinder.CountPathsBetweenDoors(roomMatrix, sala.doorsPositions);
+        int qntCaminhosEntrePortas = PathFinder.CountPathsBetweenDoors(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions);
         if (qntCaminhosEntrePortas == int.MinValue)
         {
             //Debug.Log("Mostro por causa do caminho entre portas");
             return true;
         }
 
-        bool isPath = PathFinder.IsAPathBetweenDoorAndEnemies(roomMatrix, sala.doorsPositions, enemiesPositions);
+        bool isPath = PathFinder.IsAPathBetweenDoorAndEnemies(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions);
         if (!isPath)
         {
             //Debug.Log("Mostro por causa do caminho ate inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfEnemies = enemiesPositions.Count == sala.Enemies.Length;
+        bool hasTheRightAmountOfEnemies = EnemiesPositions.Count == GeneticAlgorithmConstants.Sala.Enemies.Length;
         if (!hasTheRightAmountOfEnemies)
         {
             //Debug.Log("Mostro por causa da quantidade de inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfObstacles = obstaclesPositions.Count == sala.Obstacles.Length;
+        bool hasTheRightAmountOfObstacles = ObstaclesPositions.Count == GeneticAlgorithmConstants.Sala.Obstacles.Length;
         if (!hasTheRightAmountOfObstacles)
         {
             //Debug.Log("Mostro por causa da quantidade de obstaculos");
@@ -179,19 +179,19 @@ public class GeneticRoomIndividual
 
     public void Evaluate()
     {
-        if (IsMonstrousIndividual())
+        if (IsMonstrous())
         {
-            value = int.MinValue;
+            Value = int.MinValue;
             return;
         }
 
-        List<int> groups = GroupCounter.CountGroups(roomMatrix, enemiesPositions);
+        List<int> groups = GroupCounter.CountGroups(RoomValues, EnemiesPositions);
         double media = groups.Average();
 
         //Debug.Log("Total de grupos de Enemies na matriz: " + groups.Count);
         //Debug.Log("Média do tamanho dos grupos: " + media);
 
         //int qntInimigosProximosDeObstaculos = Utils.CountEnemiesNextToObstacles(roomMatrix);
-        value = - groups.Count - (int)media; // + qntInimigosProximosDeObstaculos;
+        Value = - groups.Count - (int)media; // + qntInimigosProximosDeObstaculos;
     }
 }

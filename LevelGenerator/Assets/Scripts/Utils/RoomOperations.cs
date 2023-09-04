@@ -5,7 +5,6 @@ using System.Linq;
 
 public static class RoomOperations
 {
-    // TODO: Tirar o nome matriz para Room
     public static Dictionary<RoomContents, List<Position>> GroupPositionsByRoomValue(RoomContents[,] matrix, HashSet<Position> positionsOf)
     {
         // agrupar as posicoes com base no valor da matrix na posicao
@@ -23,12 +22,12 @@ public static class RoomOperations
         HashSet<Position> obstaclesPositions)
     {
         int enemies = 0;
-        foreach (var obstaclePosition in obstaclesPositions)
+        foreach (Position obstaclePosition in obstaclesPositions)
         {
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = obstaclePosition.Move(direction);
-                if (matrix.IsPositionWithinBounds(adjacentPosition))
+                if (matrix.IsPositionWithinBounds(adjacentPosition.Row, adjacentPosition.Column))
                 {
                     if (enemiesPositions.Contains(adjacentPosition))
                     {

@@ -37,18 +37,18 @@ public class GenerateGame : MonoBehaviour
     {
         objects = new()
         {
-            { RoomContents.Chao, chao },
-            { RoomContents.Nada, chao },
-            { RoomContents.Parede, parede },
-            { RoomContents.Porta, porta },
+            { RoomContents.Ground, chao },
+            { RoomContents.Nothing, chao },
+            { RoomContents.Wall, parede },
+            { RoomContents.Door, porta },
 
-            { RoomContents.Obstaculo1, obstaculo },
-            { RoomContents.Obstaculo2, obstaculo },
-            { RoomContents.Obstaculo3, obstaculo },
+            { RoomContents.Obstacle1, obstaculo },
+            { RoomContents.Obstacle2, obstaculo },
+            { RoomContents.Obstacle3, obstaculo },
 
-            { RoomContents.Inimigo1, inimigo },
-            { RoomContents.Inimigo2, inimigo },
-            { RoomContents.Inimigo3, inimigo },
+            { RoomContents.Enemy1, inimigo },
+            { RoomContents.Enemy2, inimigo },
+            { RoomContents.Enemy3, inimigo },
         };
 
         mapa = new();
@@ -63,9 +63,9 @@ public class GenerateGame : MonoBehaviour
     {
         Dictionary<Enemies, int> enemiesDifficult = new()
         {
-            { Enemies.Inimigo1, 1 },
-            { Enemies.Inimigo2, 2 },
-            { Enemies.Inimigo3, 3 }
+            { Enemies.Enemy1, 1 },
+            { Enemies.Enemy2, 2 },
+            { Enemies.Enemy3, 3 }
         };
 
         List<int> valuesEnemies = new(enemiesDifficult.Values);
@@ -88,9 +88,9 @@ public class GenerateGame : MonoBehaviour
     {
         Dictionary<Obstacles, int> obstaclesDifficult = new()
         {
-            { Obstacles.Obstaculo1, 1 },
-            { Obstacles.Obstaculo2, 2 },
-            { Obstacles.Obstaculo3, 3 }
+            { Obstacles.Obstacle1, 1 },
+            { Obstacles.Obstacle2, 2 },
+            { Obstacles.Obstacle3, 3 }
         };
 
         List<int> valuesObstacles = new(obstaclesDifficult.Values);
@@ -124,11 +124,8 @@ public class GenerateGame : MonoBehaviour
         float time = Time.time;
         GerarMapa();
 
-        Debug.Log("mapa:");
         foreach (Position position in mapa)
         {
-            Debug.Log(position.Row + ", " + position.Column + " iguais: " + mapa.Count(p => p.Equals(position)));
-
             Vector2 p = new(position.Row * cols + position.Row, position.Column * rows + position.Column);
             GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
 
@@ -183,8 +180,6 @@ public class GenerateGame : MonoBehaviour
         // TODO: modificar as portas pra fazer sentido com o mapa
         // TODO: melhorar a eficiencia do algoritmo
         /* TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
-         * 
-         * 
          */
 
         Position[] doorsPosition = new Position[2];
@@ -222,9 +217,9 @@ public class GenerateGame : MonoBehaviour
         {
             for (int j = 0; j < sala.Cols; j++)
             {
-                GameObject tile = objects[sala.matriz[i, j]];
+                GameObject tile = objects[sala.Values[i, j]];
 
-                if (sala.matriz[i, j] == RoomContents.Porta)
+                if (sala.Values[i, j] == RoomContents.Door)
                 {
                     if (i == 0) // porta pra cima
                     {
@@ -244,7 +239,7 @@ public class GenerateGame : MonoBehaviour
                     }
                 }
 
-                else if (sala.matriz[i, j] == RoomContents.Parede)
+                else if (sala.Values[i, j] == RoomContents.Wall)
                 {
                     if (i == 0 && j == 0) // quina cima-esq
                     {
@@ -282,7 +277,7 @@ public class GenerateGame : MonoBehaviour
                     }
                 }
 
-                else if (sala.matriz[i, j] == RoomContents.Chao || sala.matriz[i, j] == RoomContents.Nada)
+                else if (sala.Values[i, j] == RoomContents.Ground || sala.Values[i, j] == RoomContents.Nothing)
                 {
                     tile = chaoFinal;
                 }
@@ -298,7 +293,7 @@ public class GenerateGame : MonoBehaviour
 
     IEnumerator GeneticLoopingCoroutine(Sala sala, GeneticRoomGenerator geneticRoomGenerator)
     {
-        sala.matriz = geneticRoomGenerator.GeneticLooping();
+        sala.Values = geneticRoomGenerator.GeneticLooping();
         yield return null;
     }
 }
