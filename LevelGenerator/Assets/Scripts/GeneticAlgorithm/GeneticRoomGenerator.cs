@@ -7,10 +7,11 @@ using Random = UnityEngine.Random;
 public static class GeneticAlgorithmConstants
 {
     // TODO: mudar a probabilidade de crossover e mutacao durante a execucao?
+    // a diversidade da populacao seria baseado na distancia do min pro max de cada variavel do fitness
 
     public static int IterationsWithoutImprovement = 20;
     public static float CrossoverProbability = 0.8f; // 0 a 1
-    public static float MutationProbability = 0.3f; // 0 a 1
+    public static float MutationProbability = 0.8f; // 0 a 1
     public static float Difficult = 0f; // 0 a 1
     public static int PopulationSize = 6;
     public static int TournamentSize = 5;
