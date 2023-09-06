@@ -11,7 +11,7 @@ public static class GeneticAlgorithmConstants
     public static int IterationsWithoutImprovement = 20;
     public static float CrossoverProbability = 0.8f; // 0 a 1
     public static float MutationProbability = 0.3f; // 0 a 1
-    public static float Difficult = 1f; // 0 a 1
+    public static float Difficult = 0f; // 0 a 1
     public static int PopulationSize = 6;
     public static int TournamentSize = 5;
     public static int NumParentsTournament = 2;
@@ -29,13 +29,15 @@ public static class GeneticAlgorithmConstants
 
 public class GeneticRoomGenerator
 {
-    GeneticRoomIndividual[] population;
+    RoomIndividual[] population;
+    List<Range> boundsOfFitnessVars; // pra normalizar as variaveis da fitness do individuo
 
     public GeneticRoomGenerator(Sala sala)
     {
+        boundsOfFitnessVars = new();
         GeneticAlgorithmConstants.Sala = sala;
         GeneticAlgorithmConstants.LimitVariables();
-        population = new GeneticRoomIndividual[GeneticAlgorithmConstants.PopulationSize];
+        population = new RoomIndividual[GeneticAlgorithmConstants.PopulationSize];
     }
 
     void GeneratePopulation()
@@ -46,22 +48,76 @@ public class GeneticRoomGenerator
         }
     }
 
+    Dictionary<int, List<int>> CalculeAllFitnessVars()
+    {
+        Dictionary<int, List<int>> allFitness = new();
+
+        for (int i = 0; i < population.Length; i++)
+        {
+            // 
+            List<int> groups = GroupCounter.CountGroups(population[i].RoomValues, population[i].EnemiesPositions);
+            double media = groups.Average();
+
+            //
+            double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Sala.doorsPositions, population[i].EnemiesPositions);
+            float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
+            float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
+            float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.Difficult);
+
+            //
+            int var1 = -groups.Count; // minimizar a quantidade de grupos
+            int var2 = -(int)media; // minimizar a media de inimigos por grupos
+            int var3 = (int)value; // maximizar o value
+
+            allFitness.Add(i, new List<int>{ var1, var2, var3 });
+        }
+        return allFitness;
+    }
+
+    void DetermineFitnessVarBounds(Dictionary<int, List<int>> allFitness)
+    {
+        for (int i = 0; i < allFitness[0].Count; i++)
+        {
+            int max = allFitness.Max(fitness => fitness.Value[i]);
+            int min = allFitness.Min(fitness => fitness.Value[i]);
+
+            if (i < boundsOfFitnessVars.Count) // tentar trocar
+            {
+                if (max > boundsOfFitnessVars[i].max)
+                {
+                    boundsOfFitnessVars[i].max = max;
+                }
+                if (min < boundsOfFitnessVars[i].min)
+                {
+                    boundsOfFitnessVars[i].min = min;
+                }
+            }
+            else
+            {
+                boundsOfFitnessVars.Add(new Range { max = max, min = min });
+            }
+        }
+    }
+
     void EvaluatePopulation()
     {
+        Dictionary<int, List<int>> allFitness = CalculeAllFitnessVars();
+        DetermineFitnessVarBounds(allFitness);
+
         // avaliar o individuo se ele foi modificado
-        foreach (GeneticRoomIndividual individual in population)
+        for (int i = 0; i < population.Length; i++)
         {
-            if (individual.ItWasModified)
+            if (population[i].ItWasModified)
             {
-                individual.Evaluate();
-                individual.ItWasModified = false;
+                population[i].Evaluate(allFitness[i], boundsOfFitnessVars);
+                population[i].ItWasModified = false;
             }
         }
     }
 
     void MutatePopulation()
     {
-        foreach (GeneticRoomIndividual individual in population)
+        foreach (RoomIndividual individual in population)
         {
             if (Random.value < GeneticAlgorithmConstants.MutationProbability)
             {
@@ -72,7 +128,7 @@ public class GeneticRoomGenerator
     }
 
     void PlaceEnemiesInChild(
-        GeneticRoomIndividual child,
+        RoomIndividual child,
         Dictionary<RoomContents, List<Position>> enemiesPositionsInFather,
         Dictionary<RoomContents, List<Position>> enemiesPositionsInMother,
         List<Position> avaliablePositions)
@@ -103,7 +159,7 @@ public class GeneticRoomGenerator
     }
 
     void PlaceObstaclesInChild(
-        GeneticRoomIndividual child,
+        RoomIndividual child,
         Dictionary<RoomContents, List<Position>> obstaclesPositionsInFather,
         Dictionary<RoomContents, List<Position>> obstaclesPositionsInMother,
         List<Position> avaliablePositions)
@@ -133,9 +189,9 @@ public class GeneticRoomGenerator
         }
     }
 
-    GeneticRoomIndividual Crossover(GeneticRoomIndividual pai, GeneticRoomIndividual mae)
+    RoomIndividual Crossover(RoomIndividual pai, RoomIndividual mae)
     {
-        GeneticRoomIndividual child = new(GeneticAlgorithmConstants.Sala, false);
+        RoomIndividual child = new(GeneticAlgorithmConstants.Sala, false);
 
         Dictionary<RoomContents, List<Position>> enemiesPositionsInFather = RoomOperations.GroupPositionsByRoomValue(pai.RoomValues, pai.EnemiesPositions);
         Dictionary<RoomContents, List<Position>> enemiesPositionsInMother = RoomOperations.GroupPositionsByRoomValue(mae.RoomValues, mae.EnemiesPositions);
@@ -162,13 +218,13 @@ public class GeneticRoomGenerator
         return child;
     }
 
-    GeneticRoomIndividual[] TournamentSelection()
+    RoomIndividual[] TournamentSelection()
     {
-        GeneticRoomIndividual[] parents = new GeneticRoomIndividual[GeneticAlgorithmConstants.NumParentsTournament];
+        RoomIndividual[] parents = new RoomIndividual[GeneticAlgorithmConstants.NumParentsTournament];
 
         for (int i = 0; i < GeneticAlgorithmConstants.NumParentsTournament; i++)
         {
-            List<GeneticRoomIndividual> tournament = new();
+            List<RoomIndividual> tournament = new();
 
             // Seleciona aleatoriamente "tournamentSize" indivíduos para o torneio
             tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TournamentSize).ToList();
@@ -188,16 +244,16 @@ public class GeneticRoomGenerator
 
     void Reproduction()
     {
-        GeneticRoomIndividual[] newPopulation = new GeneticRoomIndividual[GeneticAlgorithmConstants.PopulationSize];
+        RoomIndividual[] newPopulation = new RoomIndividual[GeneticAlgorithmConstants.PopulationSize];
 
         for (int count = 0; count < GeneticAlgorithmConstants.PopulationSize; count += 2)
         {
-            GeneticRoomIndividual[] parents = TournamentSelection();
+            RoomIndividual[] parents = TournamentSelection();
 
             if (Random.value < GeneticAlgorithmConstants.CrossoverProbability)
             {
-                GeneticRoomIndividual children1 = Crossover(parents[0], parents[1]);
-                GeneticRoomIndividual children2 = Crossover(parents[1], parents[0]);
+                RoomIndividual children1 = Crossover(parents[0], parents[1]);
+                RoomIndividual children2 = Crossover(parents[1], parents[0]);
 
                 newPopulation[count] = children1;
                 newPopulation[count + 1] = children2;
@@ -218,13 +274,13 @@ public class GeneticRoomGenerator
         GeneratePopulation();
         EvaluatePopulation();
 
-        GeneticRoomIndividual melhorIndividuo = new(population.MaxBy(individuo => individuo.Value));
+        RoomIndividual melhorIndividuo = new(population.MaxBy(individuo => individuo.Value));
 
         int iterationsWithoutImprovement = 0;
         int numInteracoes = 0;
         while (iterationsWithoutImprovement < GeneticAlgorithmConstants.IterationsWithoutImprovement || melhorIndividuo.Value == int.MinValue)
         {
-            GeneticRoomIndividual bestInGeneration = population.MaxBy(individuo => individuo.Value);
+            RoomIndividual bestInGeneration = population.MaxBy(individuo => individuo.Value);
             
             Debug.Log("NUMERO DE INTERACOES: " + numInteracoes + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + melhorIndividuo.Value);
             if (bestInGeneration.Value > melhorIndividuo.Value)
@@ -244,7 +300,7 @@ public class GeneticRoomGenerator
             numInteracoes++;
         }
 
-        GeneticRoomIndividual bestInGenerationFinal = population.MaxBy(individuo => individuo.Value);
+        RoomIndividual bestInGenerationFinal = population.MaxBy(individuo => individuo.Value);
         if (bestInGenerationFinal.Value > melhorIndividuo.Value)
         {
             melhorIndividuo = new(bestInGenerationFinal);

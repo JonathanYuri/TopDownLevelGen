@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class GeneticRoomIndividual
+public class RoomIndividual
 {
     RoomContents[,] roomValues;
     int value;
@@ -21,7 +19,7 @@ public class GeneticRoomIndividual
     public HashSet<Position> EnemiesPositions { get => enemiesPositions; set => enemiesPositions = value; }
     public HashSet<Position> ObstaclesPositions { get => obstaclesPositions; set => obstaclesPositions = value; }
 
-    public GeneticRoomIndividual(Sala sala, bool generateRandomly = true)
+    public RoomIndividual(Sala sala, bool generateRandomly = true)
     {
         Value = default;
         RoomValues = (RoomContents[,])sala.Values.Clone();
@@ -34,7 +32,7 @@ public class GeneticRoomIndividual
         }
     }
 
-    public GeneticRoomIndividual(GeneticRoomIndividual individual)
+    public RoomIndividual(RoomIndividual individual)
     {
         Value = individual.Value;
         RoomValues = individual.RoomValues;
@@ -176,7 +174,7 @@ public class GeneticRoomIndividual
         return false;
     }
 
-    public void Evaluate()
+    public void Evaluate(List<int> vars, List<Range> bounds)
     {
         if (IsMonstrous())
         {
@@ -184,20 +182,21 @@ public class GeneticRoomIndividual
             return;
         }
 
-        List<int> groups = GroupCounter.CountGroups(RoomValues, EnemiesPositions);
-        double media = groups.Average();
-
         //Debug.Log("Total de grupos de Enemies na matriz: " + groups.Count);
         //Debug.Log("Média do tamanho dos grupos: " + media);
 
         //int qntInimigosProximosDeObstaculos = Utils.CountEnemiesNextToObstacles(roomMatrix);
-        //Value = - groups.Count - (int)media + (int)AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions); // + qntInimigosProximosDeObstaculos;
-        double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions);
 
-        float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies;
-        float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies;
-        float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.Difficult);
+        Value = 0;
+        for (int i = 0; i < vars.Count; i++)
+        {
+            double normalizedValue = Utils.MinMaxNormalization(vars[i], bounds[i].min, bounds[i].max);
+            Value += (int)normalizedValue;
 
-        Value = (int)value;
+            //Debug.Log("Var: " + i);
+            //Debug.Log("NormalizedValue: " + normalizedValue + " var: " + vars[i] + " bounds: " + bounds[i].min + " x " + bounds[i].max);
+        }
+
+        //Value = - groups.Count - (int)media + (int)value; // + qntInimigosProximosDeObstaculos;
     }
 }

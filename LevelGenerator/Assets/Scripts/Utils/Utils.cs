@@ -11,6 +11,12 @@ public enum Direction
     Right
 }
 
+public class Range
+{
+    public int min;
+    public int max;
+}
+
 public class Position
 {
     public int Row { get; set; }
@@ -47,6 +53,18 @@ public class Position
 
 public static class Utils
 {
+    public static double MinMaxNormalization(double value, double min, double max)
+    {
+        if (max == min)
+        {
+            return 0.0;
+        }
+        else
+        {
+            return (value - min) / (max - min) * 100.0f;
+        }
+    }
+
     public static HashSet<Position> CombinePositions(List<Position> positions1, List<Position> positions2)
     {
         HashSet<Position> combinedPositions = new(positions1);
