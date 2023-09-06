@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GeneticRoomIndividual
 {
     RoomContents[,] roomValues;
-    int? value;
+    int value;
     bool itWasModified = true;
 
     HashSet<Position> enemiesPositions;
     HashSet<Position> obstaclesPositions;
 
     public RoomContents[,] RoomValues { get => roomValues; set => roomValues = value; }
-    public int? Value { get => value; set => this.value = value; }
+    public int Value { get => value; set => this.value = value; }
     public bool ItWasModified { get => itWasModified; set => itWasModified = value; }
     public HashSet<Position> EnemiesPositions { get => enemiesPositions; set => enemiesPositions = value; }
     public HashSet<Position> ObstaclesPositions { get => obstaclesPositions; set => obstaclesPositions = value; }
 
     public GeneticRoomIndividual(Sala sala, bool generateRandomly = true)
     {
-        Value = null;
+        Value = default;
         RoomValues = (RoomContents[,])sala.Values.Clone();
         EnemiesPositions = new();
         ObstaclesPositions = new();
@@ -132,15 +134,12 @@ public class GeneticRoomIndividual
 
     bool IsMonstrous()
     {
-        int qntCaminhosEntrePortas = PathFinder.CountPathsBetweenDoors(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions);
-        if (qntCaminhosEntrePortas == int.MinValue)
+        if (!PathFinder.IsAPathBetweenDoors(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions))
         {
-            //Debug.Log("Mostro por causa do caminho entre portas");
             return true;
         }
 
-        bool isPath = PathFinder.IsAPathBetweenDoorAndEnemies(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions);
-        if (!isPath)
+        if (!PathFinder.IsAPathBetweenDoorAndEnemies(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions))
         {
             //Debug.Log("Mostro por causa do caminho ate inimigos");
             return true;
@@ -192,6 +191,13 @@ public class GeneticRoomIndividual
         //Debug.Log("Média do tamanho dos grupos: " + media);
 
         //int qntInimigosProximosDeObstaculos = Utils.CountEnemiesNextToObstacles(roomMatrix);
-        Value = - groups.Count - (int)media; // + qntInimigosProximosDeObstaculos;
+        //Value = - groups.Count - (int)media + (int)AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions); // + qntInimigosProximosDeObstaculos;
+        double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions);
+
+        float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies;
+        float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies;
+        float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.Difficult);
+
+        Value = (int)value;
     }
 }

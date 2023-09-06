@@ -6,26 +6,35 @@ using Random = UnityEngine.Random;
 
 public static class GeneticAlgorithmConstants
 {
+    // TODO: mudar a probabilidade de crossover e mutacao durante a execucao?
+
     public static int IterationsWithoutImprovement = 20;
+    public static float CrossoverProbability = 0.8f; // 0 a 1
+    public static float MutationProbability = 0.3f; // 0 a 1
+    public static float Difficult = 1f; // 0 a 1
     public static int PopulationSize = 6;
     public static int TournamentSize = 5;
     public static int NumParentsTournament = 2;
     static Sala sala;
 
     public static Sala Sala { get => sala; set => sala = value; }
+
+    public static void LimitVariables()
+    {
+        CrossoverProbability = Mathf.Clamp(CrossoverProbability, 0f, 1f);
+        MutationProbability = Mathf.Clamp(MutationProbability, 0f, 1f);
+        Difficult = Mathf.Clamp(Difficult, 0f, 1f);
+    }
 }
 
 public class GeneticRoomGenerator
 {
     GeneticRoomIndividual[] population;
-    readonly float crossoverProbability;
-    readonly float mutationProbability;
 
-    public GeneticRoomGenerator(Sala sala, float crossoverProbability, float mutationProbability)
+    public GeneticRoomGenerator(Sala sala)
     {
         GeneticAlgorithmConstants.Sala = sala;
-        this.mutationProbability = mutationProbability;
-        this.crossoverProbability = crossoverProbability;
+        GeneticAlgorithmConstants.LimitVariables();
         population = new GeneticRoomIndividual[GeneticAlgorithmConstants.PopulationSize];
     }
 
@@ -54,7 +63,7 @@ public class GeneticRoomGenerator
     {
         foreach (GeneticRoomIndividual individual in population)
         {
-            if (Random.value < mutationProbability)
+            if (Random.value < GeneticAlgorithmConstants.MutationProbability)
             {
                 individual.Mutate();
                 individual.ItWasModified = true;
@@ -167,14 +176,7 @@ public class GeneticRoomGenerator
             // Ordena os indivíduos do torneio por fitness (do melhor para o pior)
             tournament.Sort((a, b) =>
             {
-                if (a.Value.HasValue && b.Value.HasValue)
-                    return b.Value.Value.CompareTo(a.Value.Value);
-                else if (a.Value.HasValue)
-                    return -1; // Coloca os valores não nulos antes dos valores nulos
-                else if (b.Value.HasValue)
-                    return 1; // Coloca os valores não nulos antes dos valores nulos
-                else
-                    return 0; // Ambos são nulos, mantém a ordem atual
+                return b.Value.CompareTo(a.Value);
             });
 
             // O vencedor do torneio é selecionado para reprodução
@@ -192,7 +194,7 @@ public class GeneticRoomGenerator
         {
             GeneticRoomIndividual[] parents = TournamentSelection();
 
-            if (Random.value < crossoverProbability)
+            if (Random.value < GeneticAlgorithmConstants.CrossoverProbability)
             {
                 GeneticRoomIndividual children1 = Crossover(parents[0], parents[1]);
                 GeneticRoomIndividual children2 = Crossover(parents[1], parents[0]);
@@ -252,7 +254,6 @@ public class GeneticRoomGenerator
         Debug.Log("Inimigo: " + melhorIndividuo.EnemiesPositions.Count);
         Debug.Log("Obstaculo: " + melhorIndividuo.ObstaclesPositions.Count);
         Debug.Log("qntInimigosProximosDeObstaculos: " + RoomOperations.CountEnemiesNextToObstacles(melhorIndividuo.RoomValues, melhorIndividuo.EnemiesPositions, melhorIndividuo.ObstaclesPositions));
-
         // retornar o melhor
         return melhorIndividuo.RoomValues;
     }

@@ -54,6 +54,11 @@ public static class Utils
         return combinedPositions;
     }
 
+    public static int ManhattanDistance(Position position1, Position position2)
+    {
+        return Math.Abs(position1.Row - position2.Column) + Math.Abs(position1.Row - position2.Column);
+    }
+
     public static List<int> ResolveKnapsack(List<int> values, int capacity)
     {
         int n = values.Count;

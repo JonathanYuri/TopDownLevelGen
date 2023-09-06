@@ -39,4 +39,33 @@ public static class RoomOperations
 
         return enemies;
     }
+
+    public static double AverageDistanceFromDoorsToEnemies(Position[] doorsPositions, HashSet<Position> enemiesPositions)
+    {
+        List<double> averagesDistances = new();
+        foreach (Position doorPosition in doorsPositions)
+        {
+            List<int> averagesDistancesFromDoorPosition = new();
+            foreach (Position enemyPosition in enemiesPositions)
+            {
+                averagesDistancesFromDoorPosition.Add(Utils.ManhattanDistance(doorPosition, enemyPosition));
+            }
+            averagesDistances.Add(averagesDistancesFromDoorPosition.Average());
+        }
+        return averagesDistances.Average();
+    }
+
+    public static int MinimumDistanceBetweenDoorsAndEnemies(Position[] doorsPositions, HashSet<Position> enemiesPositions)
+    {
+        int minDistance = int.MaxValue;
+        foreach (Position doorPosition in doorsPositions)
+        {
+            int currentMinDistance = enemiesPositions.Min(enemyPosition => Utils.ManhattanDistance(doorPosition, enemyPosition));
+            if (currentMinDistance < minDistance)
+            {
+                minDistance = currentMinDistance;
+            }
+        }
+        return minDistance;
+    }
 }

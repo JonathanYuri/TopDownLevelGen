@@ -1,30 +1,59 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Networking.Match;
 
 public static class PathFinder
 {
-    public static int CountPathsBetweenDoors(RoomContents[,] roomMatrix, Position[] doorsPositions)
+    static bool HasPath(int[,] matrix, Position startPosition, Position endPosition)
     {
-        // transformar 
+        bool[,] visited = new bool[matrix.GetLength(0), matrix.GetLength(1)];
+        return DFS(matrix, startPosition, endPosition, visited);
+    }
+
+    static bool IsValidMove(Position position, int[,] matrix, bool[,] visited)
+    {
+        return matrix.IsPositionWithinBounds(position.Row, position.Column)
+            && matrix[position.Row, position.Column] == 1
+            && !visited[position.Row, position.Column];
+    }
+
+    static bool DFS(int[,] matrix, Position currentPosition, Position endPosition, bool[,] visited)
+    {
+        if (currentPosition.Equals(endPosition))
+        {
+            return true;
+        }
+
+        visited[currentPosition.Row, currentPosition.Column] = true;
+
+        foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+        {
+            Position adjacentPosition = currentPosition.Move(direction);
+            if (IsValidMove(adjacentPosition, matrix, visited) && DFS(matrix, adjacentPosition, endPosition, visited))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool IsAPathBetweenDoors(RoomContents[,] roomMatrix, Position[] doorsPositions)
+    {
         int[,] matrix = TransformRoomForCountPaths(roomMatrix);
 
-        int qntCaminhos = 0;
         for (int i = 0; i < doorsPositions.Length; i++)
         {
             for (int j = i + 1; j < doorsPositions.Length; j++)
             {
-                //Console.WriteLine("PORTA: " + i + " x " + j);
-                int[,] paths = CountPaths(matrix, doorsPositions[i]);
-
-                if (paths[doorsPositions[j].Row, doorsPositions[j].Column] == 0)
+                if (!HasPath(matrix, doorsPositions[i], doorsPositions[j]))
                 {
-                    return int.MinValue;
+                    return false;
                 }
-                qntCaminhos += paths[doorsPositions[j].Row, doorsPositions[j].Column];
             }
         }
 
-        return qntCaminhos;
+        return true;
     }
 
     public static bool IsAPathBetweenDoorAndEnemies(RoomContents[,] roomMatrix, Position[] doorsPositions, HashSet<Position> enemiesPositions)
@@ -40,8 +69,7 @@ public static class PathFinder
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
         foreach (Position enemiePosition in enemiesPositions)
         {
-            int[,] paths = CountPaths(matriz, doorsPositions[0]);
-            if (paths[enemiePosition.Row, enemiePosition.Column] == 0)
+            if (!HasPath(matriz, doorsPositions[0], enemiePosition))
             {
                 return false;
             }
@@ -69,39 +97,5 @@ public static class PathFinder
             }
         }
         return matrix;
-    }
-
-    static int[,] CountPaths(int[,] matrix, Position initialPosition)
-    {
-        int[,] countPath = new int[matrix.GetLength(0), matrix.GetLength(1)];
-
-        Queue<Position> queue = new();
-
-        // Adicionar o ponto de partida à fila
-        queue.Enqueue(initialPosition);
-        countPath[initialPosition.Row, initialPosition.Column] = 1;
-
-        // BFS
-        while (queue.Count > 0)
-        {
-            Position position = queue.Dequeue();
-
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
-            {
-                Position adjacentPosition = position.Move(direction);
-                if (matrix.IsPositionWithinBounds(adjacentPosition.Row, adjacentPosition.Column) && matrix[adjacentPosition.Row, adjacentPosition.Column] == 1)
-                {
-                    // Se ainda não foi visitada, adicionar à fila
-                    if (countPath[adjacentPosition.Row, adjacentPosition.Column] == 0)
-                    {
-                        queue.Enqueue(adjacentPosition);
-                    }
-
-                    countPath[adjacentPosition.Row, adjacentPosition.Column] += countPath[position.Row, position.Column];
-                }
-            }
-        }
-
-        return countPath;
     }
 }

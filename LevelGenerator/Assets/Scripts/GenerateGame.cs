@@ -187,7 +187,7 @@ public class GenerateGame : MonoBehaviour
         doorsPosition[1] = new Position { Row = rows - 1, Column = (int)(cols / 2) };
 
         Sala sala = new(rows, cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
-        GeneticRoomGenerator geneticRoomGenerator = new(sala, 0.8f, 0.3f);
+        GeneticRoomGenerator geneticRoomGenerator = new(sala);
 
         StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
 
