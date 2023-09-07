@@ -32,10 +32,12 @@ public class GeneticRoomGenerator
 {
     RoomIndividual[] population;
     List<Range> boundsOfFitnessVars; // pra normalizar as variaveis da fitness do individuo
+    Dictionary<int, List<int>> allFitness;
 
     public GeneticRoomGenerator(Sala sala)
     {
         boundsOfFitnessVars = new();
+        allFitness = new();
         GeneticAlgorithmConstants.Sala = sala;
         GeneticAlgorithmConstants.LimitVariables();
         population = new RoomIndividual[GeneticAlgorithmConstants.PopulationSize];
@@ -49,12 +51,14 @@ public class GeneticRoomGenerator
         }
     }
 
-    Dictionary<int, List<int>> CalculeAllFitnessVars()
+    void CalculeAllFitnessVars()
     {
-        Dictionary<int, List<int>> allFitness = new();
-
         for (int i = 0; i < population.Length; i++)
         {
+            if (!population[i].ItWasModified) // so recalcular os fitness de quem foi modificado
+            {
+                continue;
+            }
             // 
             List<int> groups = GroupCounter.CountGroups(population[i].RoomValues, population[i].EnemiesPositions);
             double media = groups.Average();
@@ -70,12 +74,11 @@ public class GeneticRoomGenerator
             int var2 = -(int)media; // minimizar a media de inimigos por grupos
             int var3 = (int)value; // maximizar o value
 
-            allFitness.Add(i, new List<int>{ var1, var2, var3 });
+            allFitness[i] = new List<int> { var1, var2, var3 };
         }
-        return allFitness;
     }
 
-    void DetermineFitnessVarBounds(Dictionary<int, List<int>> allFitness)
+    void DetermineFitnessVarBounds()
     {
         for (int i = 0; i < allFitness[0].Count; i++)
         {
@@ -102,8 +105,8 @@ public class GeneticRoomGenerator
 
     void EvaluatePopulation()
     {
-        Dictionary<int, List<int>> allFitness = CalculeAllFitnessVars();
-        DetermineFitnessVarBounds(allFitness);
+        CalculeAllFitnessVars();
+        DetermineFitnessVarBounds();
 
         // avaliar o individuo se ele foi modificado
         for (int i = 0; i < population.Length; i++)
