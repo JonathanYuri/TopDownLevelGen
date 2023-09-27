@@ -27,8 +27,8 @@ public class Position
     {
         return direction switch
         {
-            Direction.Up => new Position { Row = Row - 1, Column = Column },
-            Direction.Down => new Position { Row = Row + 1, Column = Column },
+            Direction.Up => new Position { Row = Row + 1, Column = Column },
+            Direction.Down => new Position { Row = Row - 1, Column = Column },
             Direction.Left => new Position { Row = Row, Column = Column - 1 },
             Direction.Right => new Position { Row = Row, Column = Column + 1 },
             Direction _ => throw new ArgumentException("Direção desconhecida: " + direction)

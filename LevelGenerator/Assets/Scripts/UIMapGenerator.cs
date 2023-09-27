@@ -9,12 +9,20 @@ public class UIMapGenerator : MonoBehaviour
     [Header("UI")]
     [SerializeField] GameObject mapHolder;
     [SerializeField] GameObject roomPanelPrefab;
-    [SerializeField] GameObject blankSpacePrefab;
+    Image roomPanelImage;
     [SerializeField] GameObject playerInRoomPanel;
+    Image playerInRoomImage;
+    [SerializeField] GameObject blankSpacePrefab;
 
     PlayerLocation playerLocation;
 
-    Dictionary<Position, GameObject> uiMap;
+    Dictionary<Position, Image> uiMap;
+
+    private void Awake()
+    {
+        roomPanelImage = roomPanelPrefab.GetComponent<Image>();
+        playerInRoomImage = playerInRoomPanel.GetComponent<Image>();
+    }
 
     public void CreateUIMap(HashSet<Position> map, PlayerLocation playerLocation)
     {
@@ -34,15 +42,9 @@ public class UIMapGenerator : MonoBehaviour
         int maxSize = Mathf.Max(mapWidth + 1, mapHeight + 1);
         float roomSize = mapHolderRect.rect.size.x / (float)maxSize;
 
-        Debug.LogError("SIZE MAPHOLDER: " + mapHolderRect.rect.size);
-        Debug.LogError("ROOM SIZE: " + roomSize);
-        Debug.LogError("Quantas salas?: " + maxSize);
-
-        Debug.LogError("mapa: ");
-        foreach (Position pos in map)
-        {
-            Debug.LogError($"x: {pos.Row}, y: {pos.Column}");
-        }
+        //Debug.LogError("SIZE MAPHOLDER: " + mapHolderRect.rect.size);
+        //Debug.LogError("ROOM SIZE: " + roomSize);
+        //Debug.LogError("Quantas salas?: " + maxSize);
 
         float initialPosition = -mapHolderRect.rect.size.x / 2 + roomSize / 2;
 
@@ -72,13 +74,13 @@ public class UIMapGenerator : MonoBehaviour
                     roomPanel = Instantiate(blankSpacePrefab, mapHolder.transform);
                 }
 
-                uiMap.Add(position, roomPanel);
+                uiMap.Add(position, roomPanel.GetComponent<Image>());
 
                 RectTransform roomRectTransform = roomPanel.GetComponent<RectTransform>();
                 roomPanel.transform.localScale = new Vector3(roomSize / mapHolderRect.rect.size.x, roomSize / mapHolderRect.rect.size.x, 1);
                 roomPanel.transform.localPosition = new Vector3(horizontalRoomPosition, verticalRoomPosition);
 
-                Debug.LogError($"i {i} e j {j}, horizontal: {horizontalRoomPosition} vertical {verticalRoomPosition}");
+                //Debug.LogError($"i {i} e j {j}, horizontal: {horizontalRoomPosition} vertical {verticalRoomPosition}");
                 horizontalRoomPosition += roomSize;
             }
             horizontalRoomPosition = initialPosition;
@@ -88,7 +90,7 @@ public class UIMapGenerator : MonoBehaviour
 
     public void UpdateUIMap(Position playerOldPosition, Position playerNewPosition)
     {
-        uiMap[playerOldPosition].GetComponent<Image>().color = roomPanelPrefab.GetComponent<Image>().color;
-        uiMap[playerNewPosition].GetComponent<Image>().color = playerInRoomPanel.GetComponent<Image>().color;
+        uiMap[playerOldPosition].color = roomPanelImage.color;
+        uiMap[playerNewPosition].color = playerInRoomImage.color;
     }
 }

@@ -22,12 +22,8 @@ public class GameManager : MonoBehaviour
         generateGame.Generate();
         SpawnPlayer();
 
-        playerLocation = new()
-        {
-            player = player,
-            playerPrefab = playerPrefab
-        };
-        playerLocation.SetPlayerToRoom(generateGame.mapa.ElementAt(0));
+        playerLocation = new(player, playerPrefab);
+        playerLocation.SetPlayerToRoom(generateGame.mapa.ElementAt(0), new Vector2((int)(GameConstants.Cols / 2), -(int)(GameConstants.Rows / 2))); // spawnar no meio
         uiMapGenerator.CreateUIMap(generateGame.mapa, playerLocation);
     }
 

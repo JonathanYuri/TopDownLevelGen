@@ -27,6 +27,9 @@ public class GenerateGame : MonoBehaviour
 
     public HashSet<Position> mapa;
 
+    // constante
+    Dictionary<Direction, Position> neighboorDirectionToDoorPosition;
+
     private void Awake()
     {
         objects = new()
@@ -46,6 +49,14 @@ public class GenerateGame : MonoBehaviour
         };
 
         mapa = new();
+
+        neighboorDirectionToDoorPosition = new()
+        {
+            { Direction.Up, new Position { Row = 0, Column = (int)(GameConstants.Cols / 2) } },
+            { Direction.Down, new Position { Row = GameConstants.Rows - 1, Column = (int)(GameConstants.Cols / 2) } },
+            { Direction.Left, new Position { Row = (int)(GameConstants.Rows / 2), Column = 0 } },
+            { Direction.Right, new Position { Row = (int)(GameConstants.Rows / 2), Column = GameConstants.Cols - 1 } }
+        };
     }
 
     RoomContents[] ResolveKnapsackEnemies(int capacityEnemies)
@@ -120,7 +131,16 @@ public class GenerateGame : MonoBehaviour
             Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
             GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
 
-            GerarSala(r);
+            List<Direction> neighboorsDirection = new();
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)).Cast<Direction>())
+            {
+                Position adjacentPosition = position.Move(direction);
+                if (mapa.Contains(adjacentPosition))
+                {
+                    neighboorsDirection.Add(direction);
+                }
+            }
+            GerarSala(r, neighboorsDirection);
         }
     }
 
@@ -159,30 +179,32 @@ public class GenerateGame : MonoBehaviour
         isGenerating = false;
     }
 
-    void GerarSala(GameObject room)
+    void GerarSala(GameObject room, List<Direction> neighboorsDirection)
     {
         // ############# COMECO ##############
         // o (0, 0) é o canto superior esquerdo
 
-        // TODO: modificar as portas pra fazer sentido com o mapa
+        // TODO: mudar as coordenadas, nesse codigo ta tendo as coordenadas de uma forma e na unity tem outra
+        // isso pq to considerando o (0, 0) como canto superior esquerdo, sendo que pra fazer sentido teria que ser o inferior esq
+        // pq o x cresce pro lado dir e o y pra cima
+
         // TODO: melhorar a eficiencia do algoritmo
         /* TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
          */
 
-        Position[] doorsPosition = new Position[4];
-        doorsPosition[0] = new Position { Row = (int)(GameConstants.Rows / 2), Column = 0 };
-        doorsPosition[1] = new Position { Row = GameConstants.Rows - 1, Column = (int)(GameConstants.Cols / 2) };
-        doorsPosition[2] = new Position { Row = (int)(GameConstants.Rows / 2), Column = GameConstants.Cols - 1 };
-        doorsPosition[3] = new Position { Row = 0, Column = (int)(GameConstants.Cols / 2) };
+        List<Position> doorPositions = new();
+        foreach (Direction direction in neighboorsDirection)
+        {
+            doorPositions.Add(neighboorDirectionToDoorPosition[direction]);
+        }
 
-        Sala sala = new(GameConstants.Rows, GameConstants.Cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
+        Sala sala = new(GameConstants.Rows, GameConstants.Cols, doorPositions.ToArray(), ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
         GeneticRoomGenerator geneticRoomGenerator = new(sala);
 
         StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
 
         // TODO: aumento de dificuldade chegando mais perto do boss
         // TODO: gerar a sala inicial e a sala do boss diferente das outras e gerar antes, a sala inicial e a do boss nao tem nd, a do boss tem o boss claro
-        // TODO? dificuldade depende da quantidade de caminhos entre uma porta e outra sem inimigos, quanto mais caminhos mais facil
     }
 
     IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator, GameObject room)
