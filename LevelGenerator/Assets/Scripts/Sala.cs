@@ -1,20 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public enum Enemies
-{
-    Enemy1,
-    Enemy2,
-    Enemy3,
-}
-
-public enum Obstacles
-{
-    Obstacle1,
-    Obstacle2,
-    Obstacle3
-}
-
 public enum RoomContents
 {
     [Mutavel(true)][Ultrapassavel(true)] Ground, // TODO: colocar tudo em ingles
@@ -61,7 +47,7 @@ public class Sala
 
     public RoomContents[,] Values { get => values; set => values = value; }
 
-    public Sala(int rows, int cols, Position[] doorsPositions, Enemies[] enemies, Obstacles[] obstacles)
+    public Sala(int rows, int cols, Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
     {
         Rows = rows;
         Cols = cols;
@@ -69,8 +55,8 @@ public class Sala
         this.doorsPositions = doorsPositions;
         this.changeablesPositions = new();
 
-        Enemies = new RoomContents[enemies.Length];
-        Obstacles = new RoomContents[obstacles.Length];
+        Enemies = enemies;
+        Obstacles = obstacles;
 
         Values = new RoomContents[rows, cols];
 
@@ -78,8 +64,6 @@ public class Sala
         PutTheDoors();
 
         GetTheChangeablesPositions();
-        TransformToRoomContents(enemies, Enemies);
-        TransformToRoomContents(obstacles, Obstacles);
     }
 
     public void PutTheWalls()
@@ -145,17 +129,6 @@ public class Sala
                 var valor = Values[i, j];
 
                 if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position { Row = i, Column = j });
-            }
-        }
-    }
-
-    void TransformToRoomContents<T>(T[] objects, RoomContents[] type)
-    {
-        for (int i = 0; i < objects.Length; i++)
-        {
-            if (Enum.TryParse(objects[i].ToString(), out RoomContents content))
-            {
-                type[i] = content;
             }
         }
     }

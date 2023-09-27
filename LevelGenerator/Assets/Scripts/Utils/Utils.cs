@@ -17,6 +17,7 @@ public class Range
     public int max;
 }
 
+// TODO: fazer essa classe ser uma extensao de vector2, como tem no extensions, talvez n pq no vector2 pode ser float
 public class Position
 {
     public int Row { get; set; }
@@ -53,6 +54,11 @@ public class Position
 
 public static class Utils
 {
+    public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
+    {
+        return new Vector2(mapPosition.Column * GameConstants.Cols + mapPosition.Column, mapPosition.Row * GameConstants.Rows + mapPosition.Row);
+    }
+
     public static double MinMaxNormalization(double value, double min, double max)
     {
         if (max == min)

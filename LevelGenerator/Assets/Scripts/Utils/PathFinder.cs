@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+// TODO: adicionar comentarios ao codigo / refatorar pra entender melhor
 public static class PathFinder
 {
     static bool HasPath(int[,] matrix, Position startPosition, Position endPosition)

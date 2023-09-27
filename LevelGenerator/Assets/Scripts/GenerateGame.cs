@@ -20,18 +20,12 @@ public class GenerateGame : MonoBehaviour
     [SerializeField] GameObject[] portas;
     [SerializeField] GameObject[] paredes;
     [SerializeField] GameObject chaoFinal;
-    [SerializeField] GameObject player;
 
     Dictionary<RoomContents, GameObject> objects;
 
     float totalCoroutineExecutionTime = 0f;
 
-    // constantes
-    const int numSalas = 10;
-    const int rows = 9;
-    const int cols = 15;
-
-    HashSet<Position> mapa;
+    public HashSet<Position> mapa;
 
     private void Awake()
     {
@@ -54,26 +48,21 @@ public class GenerateGame : MonoBehaviour
         mapa = new();
     }
 
-    private void Start()
+    RoomContents[] ResolveKnapsackEnemies(int capacityEnemies)
     {
-        Generate();
-    }
-
-    Enemies[] ResolveKnapsackEnemies(int capacityEnemies)
-    {
-        Dictionary<Enemies, int> enemiesDifficult = new()
+        Dictionary<RoomContents, int> enemiesDifficult = new()
         {
-            { Enemies.Enemy1, 1 },
-            { Enemies.Enemy2, 2 },
-            { Enemies.Enemy3, 3 }
+            { RoomContents.Enemy1, 1 },
+            { RoomContents.Enemy2, 2 },
+            { RoomContents.Enemy3, 3 }
         };
 
         List<int> valuesEnemies = new(enemiesDifficult.Values);
-        List<Enemies> keysEnemies = new(enemiesDifficult.Keys);
+        List<RoomContents> keysEnemies = new(enemiesDifficult.Keys);
 
         List<int> chosenEnemiesIdx = Utils.ResolveKnapsack(valuesEnemies, capacityEnemies);
 
-        Enemies[] chosenEnemies = new Enemies[chosenEnemiesIdx.Count];
+        RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
         for (int i = 0; i < chosenEnemiesIdx.Count; i++)
         {
             int idx = chosenEnemiesIdx[i];
@@ -84,21 +73,21 @@ public class GenerateGame : MonoBehaviour
         return chosenEnemies;
     }
 
-    Obstacles[] ResolveKnapsackObstacles(int capacityObstacles)
+    RoomContents[] ResolveKnapsackObstacles(int capacityObstacles)
     {
-        Dictionary<Obstacles, int> obstaclesDifficult = new()
+        Dictionary<RoomContents, int> obstaclesDifficult = new()
         {
-            { Obstacles.Obstacle1, 1 },
-            { Obstacles.Obstacle2, 2 },
-            { Obstacles.Obstacle3, 3 }
+            { RoomContents.Obstacle1, 1 },
+            { RoomContents.Obstacle2, 2 },
+            { RoomContents.Obstacle3, 3 }
         };
 
         List<int> valuesObstacles = new(obstaclesDifficult.Values);
-        List<Obstacles> keysObstacles = new(obstaclesDifficult.Keys);
+        List<RoomContents> keysObstacles = new(obstaclesDifficult.Keys);
 
         List<int> chosenObstaclesIdx = Utils.ResolveKnapsack(valuesObstacles, capacityObstacles);
 
-        Obstacles[] chosenObstacles = new Obstacles[chosenObstaclesIdx.Count];
+        RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
         for (int i = 0; i < chosenObstaclesIdx.Count; i++)
         {
             int idx = chosenObstaclesIdx[i];
@@ -126,7 +115,9 @@ public class GenerateGame : MonoBehaviour
 
         foreach (Position position in mapa)
         {
-            Vector2 p = new(position.Row * cols + position.Row, position.Column * rows + position.Column);
+            //Debug.LogWarning("Position No Mapa: " + position.Row + " x " + position.Column);
+            // TODO: aq ja da pra gerar o esqueleto da sala, as portas e as paredes, so se quiser mais eficiencia
+            Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
             GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
 
             GerarSala(r);
@@ -138,7 +129,7 @@ public class GenerateGame : MonoBehaviour
         Queue<Position> queue = new();
         queue.Enqueue(new Position { Row = 0, Column = 0 });
 
-        while (mapa.Count < numSalas)
+        while (mapa.Count < GameConstants.NumberOfRooms)
         {
             if (queue.Count == 0)
             {
@@ -165,10 +156,6 @@ public class GenerateGame : MonoBehaviour
             }
         }
 
-        // Spawnar Player
-        Position initial = mapa.ElementAt(0);
-        Instantiate(player, (Vector2)player.transform.position + new Vector2((int)(cols / 2), -(rows - 2)) + new Vector2(initial.Row, initial.Column), Quaternion.identity);
-
         isGenerating = false;
     }
 
@@ -182,11 +169,13 @@ public class GenerateGame : MonoBehaviour
         /* TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
          */
 
-        Position[] doorsPosition = new Position[2];
-        doorsPosition[0] = new Position { Row = (int)(rows / 2), Column = 0 };
-        doorsPosition[1] = new Position { Row = rows - 1, Column = (int)(cols / 2) };
+        Position[] doorsPosition = new Position[4];
+        doorsPosition[0] = new Position { Row = (int)(GameConstants.Rows / 2), Column = 0 };
+        doorsPosition[1] = new Position { Row = GameConstants.Rows - 1, Column = (int)(GameConstants.Cols / 2) };
+        doorsPosition[2] = new Position { Row = (int)(GameConstants.Rows / 2), Column = GameConstants.Cols - 1 };
+        doorsPosition[3] = new Position { Row = 0, Column = (int)(GameConstants.Cols / 2) };
 
-        Sala sala = new(rows, cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
+        Sala sala = new(GameConstants.Rows, GameConstants.Cols, doorsPosition, ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
         GeneticRoomGenerator geneticRoomGenerator = new(sala);
 
         StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
