@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayerLocation
 {
     PlayerController player;
-    GameObject playerPrefab;
     public Position atRoom;
 
     Dictionary<Vector3, Vector2> directionToPositionInRoomMatrix;
@@ -12,14 +11,13 @@ public class PlayerLocation
     public PlayerLocation(PlayerController player, GameObject playerPrefab)
     {
         this.player = player;
-        this.playerPrefab = playerPrefab;
         directionToPositionInRoomMatrix = new()
         {
             // se estou indo pra baixo spawno o jogador na parte de cima da sala
-            { Vector3.down, new Vector2(0, (int)(GameConstants.Height / 2) - 1) }, // cima meio, to vindo de cima
-            { Vector3.left, new Vector2((int)(GameConstants.Width / 2) - 1, 0) }, // direita meio, to vindo da direita
-            { Vector3.right, new Vector2(-(int)(GameConstants.Width / 2) + 1, 0)}, // esq meio, to vindo da esq
-            { Vector3.up, new Vector2(0, -(int)(GameConstants.Height / 2) + 1) }, // baixo meio, to vindo de baixo
+            { Vector3.down, new Vector2(0, GameConstants.RoomMiddle.Y - 1) }, // cima meio, to vindo de cima
+            { Vector3.left, new Vector2(GameConstants.RoomMiddle.X - 1, 0) }, // direita meio, to vindo da direita
+            { Vector3.right, new Vector2(-GameConstants.RoomMiddle.X + 1, 0)}, // esq meio, to vindo da esq
+            { Vector3.up, new Vector2(0, -GameConstants.RoomMiddle.Y + 1) }, // baixo meio, to vindo de baixo
         };
     }
 

@@ -33,3 +33,5 @@ O "GeneticSharp" é uma biblioteca de algoritmo genético de código aberto que 
 Para começar, você precisa adicionar o pacote "GeneticSharp" ao seu projeto C#. Você pode fazer isso usando o NuGet Package Manager no Visual Studio ou adicionando a referência manualmente.
 
 Aqui está um exemplo simples de como criar um algoritmo genético usando o "GeneticSharp" para resolver um problema de encontrar uma sequência de caracteres que corresponda a uma string alvo:
+
+TESTES UNITARIOS

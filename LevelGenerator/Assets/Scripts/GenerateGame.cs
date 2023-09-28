@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class GenerateGame : MonoBehaviour
 {
+    #region Object Settings
+
     [SerializeField] GameObject parede;
     [SerializeField] GameObject porta;
     [SerializeField] GameObject inimigo;
@@ -16,19 +18,61 @@ public class GenerateGame : MonoBehaviour
 
     [SerializeField] GameObject[] portas;
     [SerializeField] GameObject[] paredes;
+
     [SerializeField] GameObject chao;
 
+    #endregion
+
+    #region Object Indexes
+
+    enum CornerIndex
+    {
+        TopLeftCorner = 0,
+        TopRightCorner = 1,
+        BottomLeftCorner = 2,
+        BottomRightCorner = 3,
+    }
+
+    enum WallIndex
+    {
+        Left = 6,
+        Right = 7,
+        Bottom = 5,
+        Top = 4
+    }
+
+    enum DoorIndex
+    {
+        Up = 0,
+        Down = 1,
+        Left = 2,
+        Right = 3,
+    }
+
+    #endregion
+
+    #region Object Dictionaries
+
     Dictionary<RoomContents, GameObject> objects;
+
+    Dictionary<Direction, Position> neighboorDirectionToDoorPosition;
+
+    Dictionary<Direction, GameObject> directionOfDoorsToGameObject;
+
+    Dictionary<Position, GameObject> cornerPositionToGameObject;
+
+    #endregion
 
     float totalCoroutineExecutionTime = 0f;
 
     public HashSet<Position> mapa;
 
-    // TODO: colocar isso numa constante, pq no player location tbm usa na variavel directionToPositionInRoomMatrix
-    Dictionary<Direction, Position> neighboorDirectionToDoorPosition;
-
     private void Awake()
     {
+        mapa = new();
+
+        #region Object Dictionaries Initialization
+
         objects = new()
         {
             { RoomContents.Ground, chao },
@@ -43,67 +87,34 @@ public class GenerateGame : MonoBehaviour
             { RoomContents.Enemy3, inimigo },
         };
 
-        mapa = new();
-
         neighboorDirectionToDoorPosition = new()
         {
-            { Direction.Up, new Position { X = (int)(GameConstants.Width / 2), Y = GameConstants.Height - 1 } },
-            { Direction.Down, new Position { X = (int)(GameConstants.Width / 2), Y = 0 } },
-            { Direction.Left, new Position { X = 0, Y = (int)(GameConstants.Height / 2) } },
-            { Direction.Right, new Position { X = GameConstants.Width - 1, Y = (int)(GameConstants.Height / 2) } }
-        };
-    }
-
-    RoomContents[] ResolveKnapsackEnemies(int capacityEnemies)
-    {
-        Dictionary<RoomContents, int> enemiesDifficult = new()
-        {
-            { RoomContents.Enemy1, 1 },
-            { RoomContents.Enemy2, 2 },
-            { RoomContents.Enemy3, 3 }
+            { Direction.Up, new Position { X = GameConstants.RoomMiddle.X, Y = GameConstants.Height - 1 } },
+            { Direction.Down, new Position { X = GameConstants.RoomMiddle.X, Y = 0 } },
+            { Direction.Left, new Position { X = 0, Y = GameConstants.RoomMiddle.Y } },
+            { Direction.Right, new Position { X = GameConstants.Width - 1, Y = GameConstants.RoomMiddle.Y } }
         };
 
-        List<int> valuesEnemies = new(enemiesDifficult.Values);
-        List<RoomContents> keysEnemies = new(enemiesDifficult.Keys);
-
-        List<int> chosenEnemiesIdx = Utils.ResolveKnapsack(valuesEnemies, capacityEnemies);
-
-        RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
-        for (int i = 0; i < chosenEnemiesIdx.Count; i++)
+        directionOfDoorsToGameObject = new()
         {
-            int idx = chosenEnemiesIdx[i];
-            chosenEnemies[i] = keysEnemies[idx];
-        }
-
-        //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
-        return chosenEnemies;
-    }
-
-    RoomContents[] ResolveKnapsackObstacles(int capacityObstacles)
-    {
-        Dictionary<RoomContents, int> obstaclesDifficult = new()
-        {
-            { RoomContents.Obstacle1, 1 },
-            { RoomContents.Obstacle2, 2 },
-            { RoomContents.Obstacle3, 3 }
+            { Direction.Up, portas[(int)DoorIndex.Up] },
+            { Direction.Down, portas[(int)DoorIndex.Down] },
+            { Direction.Left, portas[(int)DoorIndex.Left] },
+            { Direction.Right, portas[(int)DoorIndex.Right] },
         };
 
-        List<int> valuesObstacles = new(obstaclesDifficult.Values);
-        List<RoomContents> keysObstacles = new(obstaclesDifficult.Keys);
-
-        List<int> chosenObstaclesIdx = Utils.ResolveKnapsack(valuesObstacles, capacityObstacles);
-
-        RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
-        for (int i = 0; i < chosenObstaclesIdx.Count; i++)
+        cornerPositionToGameObject = new()
         {
-            int idx = chosenObstaclesIdx[i];
-            chosenObstacles[i] = keysObstacles[idx];
-        }
+            { new Position { X = 0, Y = GameConstants.Height - 1 }, paredes[(int)CornerIndex.TopLeftCorner] },
+            { new Position { X = GameConstants.Width - 1, Y = GameConstants.Height - 1 }, paredes[(int)CornerIndex.TopRightCorner] },
+            { new Position { X = 0, Y = 0 }, paredes[(int)CornerIndex.BottomLeftCorner] },
+            { new Position { X = GameConstants.Width - 1, Y = 0 }, paredes[(int)CornerIndex.BottomRightCorner] },
+        };
 
-        //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
-        return chosenObstacles;
+        #endregion
     }
 
+    #region Generation
     public HashSet<Position> Generate()
     {
         foreach (Transform child in rooms.transform)
@@ -111,7 +122,7 @@ public class GenerateGame : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        GerarMapa();
+        GenerateMap();
 
         foreach (Position position in mapa)
         {
@@ -129,13 +140,13 @@ public class GenerateGame : MonoBehaviour
                     neighboorsDirection.Add(direction);
                 }
             }
-            GerarSala(r, neighboorsDirection);
+            GenerateRoom(r, neighboorsDirection);
         }
 
         return mapa;
     }
 
-    void GerarMapa()
+    void GenerateMap()
     {
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
@@ -168,11 +179,8 @@ public class GenerateGame : MonoBehaviour
         }
     }
 
-    void GerarSala(GameObject room, List<Direction> neighboorsDirection)
+    void GenerateRoom(GameObject room, List<Direction> neighboorsDirection)
     {
-        // ############# COMECO ##############
-        // o (0, 0) é o canto superior esquerdo
-
         // TODO: melhorar a eficiencia do algoritmo
         // TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
 
@@ -182,7 +190,8 @@ public class GenerateGame : MonoBehaviour
             doorPositions.Add(neighboorDirectionToDoorPosition[direction]);
         }
 
-        Sala sala = new(GameConstants.Height, GameConstants.Width, doorPositions.ToArray(), ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
+        Sala sala = new(GameConstants.Height, GameConstants.Width, doorPositions.ToArray(),
+            Utils.ResolveKnapsackEnemies(GameConstants.EnemiesCapacity), Utils.ResolveKnapsackObstacles(GameConstants.ObstaclesCapacity));
         GeneticRoomGenerator geneticRoomGenerator = new(sala);
 
         StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
@@ -193,9 +202,6 @@ public class GenerateGame : MonoBehaviour
 
     IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator, GameObject room)
     {
-        //room.transform.localScale = new Vector3(1, 1, 1);
-        //room.transform.position = new Vector3(0, 0, 0);
-
         float startTime = Time.realtimeSinceStartup;
         // Inicia a Coroutine para executar o algoritmo em segundo plano
         yield return StartCoroutine(GeneticLoopingCoroutine(sala, geneticRoomGenerator));
@@ -211,92 +217,82 @@ public class GenerateGame : MonoBehaviour
             for (int j = 0; j < sala.Height; j++)
             {
                 //Debug.LogWarning($"i: {i}, j: {j}: {sala.Values[i, j]}");
-                GameObject tile = chao;
-                if (objects.ContainsKey(sala.Values[i, j]))
-                {
-                    tile = objects[sala.Values[i, j]];
-                }
-                else if (sala.Values[i, j] == RoomContents.Door)
-                {
-                    tile = SelectTheRightDoor(sala, i, j);
-                }
-                else if (sala.Values[i, j] == RoomContents.Wall)
-                {
-                    GameObject corner = SelectTheRightCorner(sala, i, j);
-                    tile = corner switch
-                    {
-                        null => SelectTheRightWall(sala, i, j),
-                        _ => corner,
-                    };
-                }
+                Position position = new() { X = i, Y = j };
+                GameObject tile = SelectTheRightObjectsToSpawnInPosition(sala, position);
 
                 Instantiate(tile, (Vector2)tile.transform.position + new Vector2(i, j) + (Vector2)room.transform.position, tile.transform.rotation, room.transform);
             }
         }
     }
+    #endregion
 
-    GameObject SelectTheRightDoor(Sala sala, int i, int j)
+    #region ObjectSelection
+    GameObject SelectTheRightObjectsToSpawnInPosition(Sala sala, Position position)
     {
-        if (i == 0) // porta pra esquerda
+        GameObject tile = chao;
+        if (objects.TryGetValue(sala.Values[position.X, position.Y], out GameObject gameObject))
         {
-            return portas[2];
+            tile = gameObject;
         }
-        else if (i == sala.Width - 1) // porta pra direita
+        else if (sala.Values[position.X, position.Y] == RoomContents.Door)
         {
-            return portas[3];
+            tile = SelectTheRightPositionDoor(position);
         }
-        else if (j == 0) // porta pra baixo
+        else if (sala.Values[position.X, position.Y] == RoomContents.Wall)
         {
-            return portas[1];
+            GameObject corner = SelectTheRightPositionCorner(position);
+            tile = corner switch
+            {
+                null => SelectTheRightPositionWall(position),
+                _ => corner,
+            };
         }
-        else if (j == sala.Height - 1) // porta pra cima
+        return tile;
+    }
+
+    GameObject SelectTheRightPositionDoor(Position position)
+    {
+        // pegar todas as posicoes das portas e ver se eh igual a que estou agora
+        foreach (var kvp in neighboorDirectionToDoorPosition)
         {
-            return portas[0];
+            if (kvp.Value.Equals(position))
+            {
+                return directionOfDoorsToGameObject[kvp.Key];
+            }
         }
         return null;
     }
 
-    GameObject SelectTheRightCorner(Sala sala, int i, int j)
+    GameObject SelectTheRightPositionCorner(Position position)
     {
-        if (i == 0 && j == 0) // quina baixo-esq
+        if (cornerPositionToGameObject.TryGetValue(position, out GameObject corner))
         {
-            return paredes[2];
-        }
-        else if (i == 0 && j == sala.Height - 1) // quina cima-esq
-        {
-            return paredes[0];
-        }
-        else if (i == sala.Width - 1 && j == 0) // quina baixo-direita
-        {
-            return paredes[3];
-        }
-        else if (i == sala.Width - 1 && j == sala.Height - 1) // quina cima-direita
-        {
-            return paredes[1];
+            return corner;
         }
         return null;
     }
 
-    GameObject SelectTheRightWall(Sala sala, int i, int j)
+    GameObject SelectTheRightPositionWall(Position position)
     {
-        if (i == 0) // esq
+        if (position.X == 0)
         {
-            return paredes[6];
+            return paredes[(int)WallIndex.Left];
         }
-        else if (i == sala.Width - 1) // direita
+        else if (position.X == GameConstants.Width - 1)
         {
-            return paredes[7];
+            return paredes[(int)WallIndex.Right];
         }
-        else if (j == 0) // baixo
+        else if (position.Y == 0)
         {
-            return paredes[5];
+            return paredes[(int)WallIndex.Bottom];
         }
-        else if (j == sala.Height - 1) // cima
+        else if (position.Y == GameConstants.Height - 1)
         {
-            return paredes[4];
+            return paredes[(int)WallIndex.Top];
         }
         return null;
     }
+    #endregion
 
     IEnumerator GeneticLoopingCoroutine(Sala sala, GeneticRoomGenerator geneticRoomGenerator)
     {

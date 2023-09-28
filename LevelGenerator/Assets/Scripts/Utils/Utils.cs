@@ -54,34 +54,55 @@ public class Position
 
 public static class Utils
 {
-    // pra spawnar as salas
-    public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
+    #region KnapsackProblem
+    public static RoomContents[] ResolveKnapsackEnemies(int capacityEnemies)
     {
-        return new Vector2(mapPosition.X * GameConstants.Width + mapPosition.X, mapPosition.Y * GameConstants.Height + mapPosition.Y);
-    }
-
-    public static double MinMaxNormalization(double value, double min, double max)
-    {
-        if (max == min)
+        Dictionary<RoomContents, int> enemiesDifficult = new()
         {
-            return 0.0;
-        }
-        else
+            { RoomContents.Enemy1, 1 },
+            { RoomContents.Enemy2, 2 },
+            { RoomContents.Enemy3, 3 }
+        };
+
+        List<int> valuesEnemies = new(enemiesDifficult.Values);
+        List<RoomContents> keysEnemies = new(enemiesDifficult.Keys);
+
+        List<int> chosenEnemiesIdx = Utils.ResolveKnapsack(valuesEnemies, capacityEnemies);
+
+        RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
+        for (int i = 0; i < chosenEnemiesIdx.Count; i++)
         {
-            return (value - min) / (max - min) * 100.0f;
+            int idx = chosenEnemiesIdx[i];
+            chosenEnemies[i] = keysEnemies[idx];
         }
+
+        //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
+        return chosenEnemies;
     }
 
-    public static HashSet<Position> CombinePositions(List<Position> positions1, List<Position> positions2)
+    public static RoomContents[] ResolveKnapsackObstacles(int capacityObstacles)
     {
-        HashSet<Position> combinedPositions = new(positions1);
-        combinedPositions.UnionWith(positions2);
-        return combinedPositions;
-    }
+        Dictionary<RoomContents, int> obstaclesDifficult = new()
+        {
+            { RoomContents.Obstacle1, 1 },
+            { RoomContents.Obstacle2, 2 },
+            { RoomContents.Obstacle3, 3 }
+        };
 
-    public static int ManhattanDistance(Position position1, Position position2)
-    {
-        return Math.Abs(position1.X - position2.Y) + Math.Abs(position1.X - position2.Y);
+        List<int> valuesObstacles = new(obstaclesDifficult.Values);
+        List<RoomContents> keysObstacles = new(obstaclesDifficult.Keys);
+
+        List<int> chosenObstaclesIdx = Utils.ResolveKnapsack(valuesObstacles, capacityObstacles);
+
+        RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
+        for (int i = 0; i < chosenObstaclesIdx.Count; i++)
+        {
+            int idx = chosenObstaclesIdx[i];
+            chosenObstacles[i] = keysObstacles[idx];
+        }
+
+        //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
+        return chosenObstacles;
     }
 
     public static List<int> ResolveKnapsack(List<int> values, int capacity)
@@ -118,5 +139,36 @@ public static class Utils
         }
 
         return chosenItems[capacity];
+    }
+    #endregion
+
+    // pra spawnar as salas
+    public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
+    {
+        return new Vector2(mapPosition.X * GameConstants.Width + mapPosition.X, mapPosition.Y * GameConstants.Height + mapPosition.Y);
+    }
+
+    public static double MinMaxNormalization(double value, double min, double max)
+    {
+        if (max == min)
+        {
+            return 0.0;
+        }
+        else
+        {
+            return (value - min) / (max - min) * 100.0f;
+        }
+    }
+
+    public static HashSet<Position> CombinePositions(List<Position> positions1, List<Position> positions2)
+    {
+        HashSet<Position> combinedPositions = new(positions1);
+        combinedPositions.UnionWith(positions2);
+        return combinedPositions;
+    }
+
+    public static int ManhattanDistance(Position position1, Position position2)
+    {
+        return Math.Abs(position1.X - position2.Y) + Math.Abs(position1.X - position2.Y);
     }
 }

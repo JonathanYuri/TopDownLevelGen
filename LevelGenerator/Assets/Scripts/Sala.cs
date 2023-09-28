@@ -93,29 +93,29 @@ public class Sala
 
     public void PutTheNothingsBeforeTheDoors(Position doorPosition)
     {
-        // porta pra cima ou pra baixo
-        if (doorPosition.X == (int)(Height / 2))
-        {
-            if (doorPosition.Y == Width - 1) // porta na direita da sala
-            {
-                Values[doorPosition.X, doorPosition.Y - 1] = RoomContents.Nothing;
-            }
-            else if (doorPosition.Y == 0) // porta na esquerda da sala
-            {
-                Values[doorPosition.X, doorPosition.Y + 1] = RoomContents.Nothing;
-            }
-        }
-
         // porta pra esquerda ou pra direita
-        else if (doorPosition.Y == (int)(Width / 2))
+        if (doorPosition.Y == GameConstants.RoomMiddle.Y)
         {
-            if (doorPosition.X == Height - 1) // porta embaixo na sala
+            if (doorPosition.X == Width - 1) // porta na direita da sala
             {
                 Values[doorPosition.X - 1, doorPosition.Y] = RoomContents.Nothing;
             }
-            else if (doorPosition.X == 0) // porta pra cima na sala
+            else if (doorPosition.X == 0) // porta na esquerda da sala
             {
                 Values[doorPosition.X + 1, doorPosition.Y] = RoomContents.Nothing;
+            }
+        }
+
+        // porta pra cima ou pra baixo
+        else if (doorPosition.X == GameConstants.RoomMiddle.X)
+        {
+            if (doorPosition.Y == Height - 1) // porta pra cima na sala
+            {
+                Values[doorPosition.X, doorPosition.Y - 1] = RoomContents.Nothing;
+            }
+            else if (doorPosition.Y == 0) // porta pra baixo na sala
+            {
+                Values[doorPosition.X, doorPosition.Y + 1] = RoomContents.Nothing;
             }
         }
     }

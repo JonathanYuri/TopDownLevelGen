@@ -271,7 +271,6 @@ MonoBehaviour:
   porta: {fileID: 6056213582785261799, guid: 8cae172060d82024b800fa06c1763f4e, type: 3}
   inimigo: {fileID: 6056213582785261799, guid: 522e4dd0b395aad46bce46fc67a00757, type: 3}
   obstaculo: {fileID: 6056213582785261799, guid: 5466bd5675fffc24dab69ae0db3c36e4, type: 3}
-  chao: {fileID: 6056213582785261799, guid: 3703c50f83313994caff0fba18cb4b1b, type: 3}
   rooms: {fileID: 1186078642}
   room: {fileID: 6991287572130058452, guid: 6d2ed8babcd3d2b4191b38568ad1a99e, type: 3}
   portas:
@@ -288,7 +287,7 @@ MonoBehaviour:
   - {fileID: 5219087857634170261, guid: 2dee29aab95ca3d41975a91d2b089aaa, type: 3}
   - {fileID: 1574884110865691756, guid: a1eb403aca262894e882ba1d83529c1b, type: 3}
   - {fileID: 534313402385343721, guid: 5737d7b845b6cb2428af047b53e18f7d, type: 3}
-  chaoFinal: {fileID: 4518443509631710534, guid: 816b3aca2a9fd164daf8cd55a4e8f5a4, type: 3}
+  chao: {fileID: 4518443509631710534, guid: 816b3aca2a9fd164daf8cd55a4e8f5a4, type: 3}
 --- !u!4 &1613456225
 Transform:
   m_ObjectHideFlags: 0
@@ -609,5 +608,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapHolder: {fileID: 1626703165}
   roomPanelPrefab: {fileID: 2696002759004637187, guid: b4bdd381a41a8e240a1d313f3c975990, type: 3}
-  blankSpacePrefab: {fileID: 2696002759004637187, guid: 7ea186aa2de37b542a4cae15e0a6f055, type: 3}
   playerInRoomPanel: {fileID: 2696002759004637187, guid: 210ecaa32d5e20c409361a1e7f72f3f9, type: 3}
+  blankSpacePrefab: {fileID: 2696002759004637187, guid: 7ea186aa2de37b542a4cae15e0a6f055, type: 3}

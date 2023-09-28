@@ -79,12 +79,8 @@ public class RoomIndividual
         }
     }
 
-    void ChangePlaceOf(HashSet<Position> positionsOf)
+    void ChangePlaceOf(HashSet<Position> positionsOf, Position position1)
     {
-        // escolher
-        int idx1 = Random.Range(0, positionsOf.Count);
-        Position position1 = positionsOf.ElementAt(idx1);
-
         int idx2 = Random.Range(0, GeneticAlgorithmConstants.Sala.changeablesPositions.Count);
         Position position2 = GeneticAlgorithmConstants.Sala.changeablesPositions[idx2];
 
@@ -121,14 +117,22 @@ public class RoomIndividual
 
     public void Mutate()
     {
-        // escolher um inimigo ou um obstaculo para mudar
+        // escolher inimigos ou obstaculos para mudar
         if (Random.value < 0.5f)
         {
-            ChangePlaceOf(EnemiesPositions);
+            Position[] positionsToChange = EnemiesPositions.SelectRandomDistinctElements(Random.Range(0, EnemiesPositions.Count));
+            foreach (Position position in positionsToChange)
+            {
+                ChangePlaceOf(EnemiesPositions, position);
+            }
         }
         else
         {
-            ChangePlaceOf(ObstaclesPositions);
+            Position[] positionsToChange = ObstaclesPositions.SelectRandomDistinctElements(Random.Range(0, ObstaclesPositions.Count));
+            foreach (Position position in positionsToChange)
+            {
+                ChangePlaceOf(ObstaclesPositions, position);
+            }
         }
     }
 
@@ -195,6 +199,12 @@ public class RoomIndividual
             double normalizedValue = Utils.MinMaxNormalization(vars[i], bounds[i].min, bounds[i].max);
             Value += (int)normalizedValue;
 
+            /*
+            if (i == 2)
+            {
+                Debug.Log("DISTANCIA: " + vars[i] + " valor: " + normalizedValue);
+            }
+            */
             //Debug.Log("Var: " + i);
             //Debug.Log("NormalizedValue: " + normalizedValue + " var: " + vars[i] + " bounds: " + bounds[i].min + " x " + bounds[i].max);
         }
