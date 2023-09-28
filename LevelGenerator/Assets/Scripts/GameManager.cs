@@ -17,9 +17,10 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        GameConstants.InitializeDictionary();
         sceneCamera = FindFirstObjectByType<Camera>();
         uiMapGenerator = FindFirstObjectByType<UIMapGenerator>();
-        map = FindFirstObjectByType<GenerateGame>().Generate();
+        map = FindFirstObjectByType<GameGenerator>().Generate();
         SpawnPlayer();
 
         playerLocation = new(player, playerPrefab);

@@ -54,7 +54,6 @@ public class Position
 
 public static class Utils
 {
-    #region KnapsackProblem
     public static RoomContents[] ResolveKnapsackEnemies(int capacityEnemies)
     {
         Dictionary<RoomContents, int> enemiesDifficult = new()
@@ -140,7 +139,6 @@ public static class Utils
 
         return chosenItems[capacity];
     }
-    #endregion
 
     // pra spawnar as salas
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)

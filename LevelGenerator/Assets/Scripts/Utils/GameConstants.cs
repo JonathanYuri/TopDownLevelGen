@@ -1,4 +1,6 @@
-public struct GameConstants
+using System.Collections.Generic;
+
+public static class GameConstants
 {
     public static int NumberOfRooms = 10;
     public static int Height = 9;
@@ -7,4 +9,17 @@ public struct GameConstants
     public static int ObstaclesCapacity = 30;
 
     public static Position RoomMiddle = new () { X = (int)(Width / 2), Y = (int)(Height / 2) };
+
+    public static Dictionary<Direction, Position> NeighboorDirectionToDoorPosition;
+
+    public static void InitializeDictionary()
+    {
+        NeighboorDirectionToDoorPosition = new()
+        {
+            { Direction.Up, new Position { X = GameConstants.RoomMiddle.X, Y = GameConstants.Height - 1 } },
+            { Direction.Down, new Position { X = GameConstants.RoomMiddle.X, Y = 0 } },
+            { Direction.Left, new Position { X = 0, Y = GameConstants.RoomMiddle.Y } },
+            { Direction.Right, new Position { X = GameConstants.Width - 1, Y = GameConstants.RoomMiddle.Y } }
+        };
+    }
 }
