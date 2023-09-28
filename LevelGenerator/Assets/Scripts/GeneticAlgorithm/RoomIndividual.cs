@@ -42,13 +42,13 @@ public class RoomIndividual
 
     public void PutEnemyInPosition(RoomContents enemy, Position position)
     {
-        RoomValues[position.Row, position.Column] = enemy;
+        RoomValues[position.X, position.Y] = enemy;
         EnemiesPositions.Add(position);
     }
 
     public void PutObstacleInPosition(RoomContents obstacle, Position position)
     {
-        RoomValues[position.Row, position.Column] = obstacle;
+        RoomValues[position.X, position.Y] = obstacle;
         ObstaclesPositions.Add(position);
     }
 
@@ -86,23 +86,23 @@ public class RoomIndividual
         int idx2 = Random.Range(0, GeneticAlgorithmConstants.Sala.changeablesPositions.Count);
         Position position2 = GeneticAlgorithmConstants.Sala.changeablesPositions[idx2];
 
-        RoomContents content1 = RoomValues[position1.Row, position1.Column];
-        RoomContents content2 = RoomValues[position2.Row, position2.Column];
+        RoomContents content1 = RoomValues[position1.X, position1.Y];
+        RoomContents content2 = RoomValues[position2.X, position2.Y];
 
         // Colocar na posicao 1 o conteudo da posicao 2
-        if (GeneticAlgorithmConstants.Sala.Enemies.Contains(RoomValues[position2.Row, position2.Column]))
+        if (GeneticAlgorithmConstants.Sala.Enemies.Contains(RoomValues[position2.X, position2.Y]))
         {
             RemoveFromPosition(EnemiesPositions, position2);
             PutEnemyInPosition(content2, position1);
         }
-        else if (GeneticAlgorithmConstants.Sala.Obstacles.Contains(RoomValues[position2.Row, position2.Column]))
+        else if (GeneticAlgorithmConstants.Sala.Obstacles.Contains(RoomValues[position2.X, position2.Y]))
         {
             RemoveFromPosition(ObstaclesPositions, position2);
             PutObstacleInPosition(content2, position1);
         }
         else
         {
-            RoomValues[position1.Row, position1.Column] = content2;
+            RoomValues[position1.X, position1.Y] = content2;
         }
 
         // Colocar na posicao 2 o conteudo da posicao 1

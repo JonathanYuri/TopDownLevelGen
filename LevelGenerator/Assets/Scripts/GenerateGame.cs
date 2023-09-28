@@ -27,7 +27,7 @@ public class GenerateGame : MonoBehaviour
 
     public HashSet<Position> mapa;
 
-    // constante
+    // TODO: colocar isso numa constante, pq no player location tbm usa na variavel directionToPositionInRoomMatrix
     Dictionary<Direction, Position> neighboorDirectionToDoorPosition;
 
     private void Awake()
@@ -52,10 +52,10 @@ public class GenerateGame : MonoBehaviour
 
         neighboorDirectionToDoorPosition = new()
         {
-            { Direction.Up, new Position { Row = 0, Column = (int)(GameConstants.Cols / 2) } },
-            { Direction.Down, new Position { Row = GameConstants.Rows - 1, Column = (int)(GameConstants.Cols / 2) } },
-            { Direction.Left, new Position { Row = (int)(GameConstants.Rows / 2), Column = 0 } },
-            { Direction.Right, new Position { Row = (int)(GameConstants.Rows / 2), Column = GameConstants.Cols - 1 } }
+            { Direction.Up, new Position { X = (int)(GameConstants.Width / 2), Y = GameConstants.Height - 1 } },
+            { Direction.Down, new Position { X = (int)(GameConstants.Width / 2), Y = 0 } },
+            { Direction.Left, new Position { X = 0, Y = (int)(GameConstants.Height / 2) } },
+            { Direction.Right, new Position { X = GameConstants.Width - 1, Y = (int)(GameConstants.Height / 2) } }
         };
     }
 
@@ -126,7 +126,7 @@ public class GenerateGame : MonoBehaviour
 
         foreach (Position position in mapa)
         {
-            //Debug.LogWarning("Position No Mapa: " + position.Row + " x " + position.Column);
+            Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
             // TODO: aq ja da pra gerar o esqueleto da sala, as portas e as paredes, so se quiser mais eficiencia
             Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
             GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
@@ -147,7 +147,7 @@ public class GenerateGame : MonoBehaviour
     void GerarMapa()
     {
         Queue<Position> queue = new();
-        queue.Enqueue(new Position { Row = 0, Column = 0 });
+        queue.Enqueue(new Position { X = 0, Y = 0 });
 
         while (mapa.Count < GameConstants.NumberOfRooms)
         {
@@ -184,13 +184,8 @@ public class GenerateGame : MonoBehaviour
         // ############# COMECO ##############
         // o (0, 0) é o canto superior esquerdo
 
-        // TODO: mudar as coordenadas, nesse codigo ta tendo as coordenadas de uma forma e na unity tem outra
-        // isso pq to considerando o (0, 0) como canto superior esquerdo, sendo que pra fazer sentido teria que ser o inferior esq
-        // pq o x cresce pro lado dir e o y pra cima
-
         // TODO: melhorar a eficiencia do algoritmo
-        /* TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
-         */
+        // TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
 
         List<Position> doorPositions = new();
         foreach (Direction direction in neighboorsDirection)
@@ -198,7 +193,7 @@ public class GenerateGame : MonoBehaviour
             doorPositions.Add(neighboorDirectionToDoorPosition[direction]);
         }
 
-        Sala sala = new(GameConstants.Rows, GameConstants.Cols, doorPositions.ToArray(), ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
+        Sala sala = new(GameConstants.Height, GameConstants.Width, doorPositions.ToArray(), ResolveKnapsackEnemies(30), ResolveKnapsackObstacles(30));
         GeneticRoomGenerator geneticRoomGenerator = new(sala);
 
         StartCoroutine(GenerateRoomsInBackground(sala, geneticRoomGenerator, room));
@@ -224,67 +219,68 @@ public class GenerateGame : MonoBehaviour
         Debug.LogError("Tempo total de execução ate agora: " + totalCoroutineExecutionTime + " segundos");
 
         // O loop for é executado somente após o retorno da função GeneticLooping()
-        for (int i = 0; i < sala.Rows; i++)
+        for (int i = 0; i < sala.Width; i++)
         {
-            for (int j = 0; j < sala.Cols; j++)
+            for (int j = 0; j < sala.Height; j++)
             {
+                //Debug.LogWarning($"i: {i}, j: {j}: {sala.Values[i, j]}");
                 GameObject tile = objects[sala.Values[i, j]];
 
                 if (sala.Values[i, j] == RoomContents.Door)
                 {
-                    if (i == 0) // porta pra cima
-                    {
-                        tile = portas[0];
-                    }
-                    else if (i == sala.Rows - 1) // porta pra baixo
-                    {
-                        tile = portas[1];
-                    }
-                    else if (j == 0) // porta pra esquerda
+                    if (i == 0) // porta pra esquerda
                     {
                         tile = portas[2];
                     }
-                    else if (j == sala.Cols - 1) // porta pra direita
+                    else if (i == sala.Width - 1) // porta pra direita
                     {
                         tile = portas[3];
+                    }
+                    else if (j == 0) // porta pra baixo
+                    {
+                        tile = portas[1];
+                    }
+                    else if (j == sala.Height - 1) // porta pra cima
+                    {
+                        tile = portas[0];
                     }
                 }
 
                 else if (sala.Values[i, j] == RoomContents.Wall)
                 {
-                    if (i == 0 && j == 0) // quina cima-esq
-                    {
-                        tile = paredes[0];
-                    }
-                    else if (i == 0 && j == sala.Cols - 1) // quina cima-direita
-                    {
-                        tile = paredes[1];
-                    }
-                    else if (i == sala.Rows - 1 && j == 0) // quina baixo-esq
+                    if (i == 0 && j == 0) // quina baixo-esq
                     {
                         tile = paredes[2];
                     }
-                    else if (i == sala.Rows - 1 && j == sala.Cols - 1) // quina baixo-direita
+                    else if (i == 0 && j == sala.Height - 1) // quina cima-esq
+                    {
+                        tile = paredes[0];
+                    }
+                    else if (i == sala.Width - 1 && j == 0) // quina baixo-direita
                     {
                         tile = paredes[3];
                     }
+                    else if (i == sala.Width - 1 && j == sala.Height - 1) // quina cima-direita
+                    {
+                        tile = paredes[1];
+                    }
 
                     // RESTO
-                    else if (i == 0) // cima
-                    {
-                        tile = paredes[4];
-                    }
-                    else if (i == sala.Rows - 1) // baixo
-                    {
-                        tile = paredes[5];
-                    }
-                    else if (j == 0) // esq
+                    else if (i == 0) // esq
                     {
                         tile = paredes[6];
                     }
-                    else if (j == sala.Cols - 1) // direita
+                    else if (i == sala.Width - 1) // direita
                     {
                         tile = paredes[7];
+                    }
+                    else if (j == 0) // baixo
+                    {
+                        tile = paredes[5];
+                    }
+                    else if (j == sala.Height - 1) // cima
+                    {
+                        tile = paredes[4];
                     }
                 }
 
@@ -293,7 +289,7 @@ public class GenerateGame : MonoBehaviour
                     tile = chaoFinal;
                 }
 
-                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(j, -i) + (Vector2)room.transform.position, tile.transform.rotation, room.transform);
+                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(i, j) + (Vector2)room.transform.position, tile.transform.rotation, room.transform);
                 //Debug.Log(sala.matriz[i, j].ToString()[..2] + " ");
             }
         }

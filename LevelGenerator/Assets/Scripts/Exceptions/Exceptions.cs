@@ -48,7 +48,7 @@ public class ReproductionException : Exception
 
         foreach (Position position in positions)
         {
-            string formattedPosition = $"{position.Row} x {position.Column}";
+            string formattedPosition = $"{position.X} x {position.Y}";
             messageBuilder.AppendLine(formattedPosition);
         }
 

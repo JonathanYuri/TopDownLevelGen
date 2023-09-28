@@ -39,18 +39,18 @@ public class Sala
     public readonly Position[] doorsPositions;
     public List<Position> changeablesPositions;
 
-    public int Rows { get; }
-    public int Cols { get; }
+    public int Height { get; }
+    public int Width { get; }
 
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
 
     public RoomContents[,] Values { get => values; set => values = value; }
 
-    public Sala(int rows, int cols, Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
+    public Sala(int height, int width, Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
     {
-        Rows = rows;
-        Cols = cols;
+        Height = height;
+        Width = width;
 
         this.doorsPositions = doorsPositions;
         this.changeablesPositions = new();
@@ -58,7 +58,7 @@ public class Sala
         Enemies = enemies;
         Obstacles = obstacles;
 
-        Values = new RoomContents[rows, cols];
+        Values = new RoomContents[width, height];
 
         PutTheWalls();
         PutTheDoors();
@@ -68,15 +68,15 @@ public class Sala
 
     public void PutTheWalls()
     {
-        for (int i = 0; i < Rows; i++)
+        for (int j = 0; j < Height; j++)
         {
-            Values[i, Cols - 1] = RoomContents.Wall;
-            Values[i, 0] = RoomContents.Wall;
-        }
-        for (int j = 0; j < Cols; j++)
-        {
-            Values[Rows - 1, j] = RoomContents.Wall;
+            Values[Width - 1, j] = RoomContents.Wall;
             Values[0, j] = RoomContents.Wall;
+        }
+        for (int i = 0; i < Width; i++)
+        {
+            Values[i, Height - 1] = RoomContents.Wall;
+            Values[i, 0] = RoomContents.Wall;
         }
     }
 
@@ -84,7 +84,7 @@ public class Sala
     {
         foreach (Position position in doorsPositions)
         {
-            Values[position.Row, position.Column] = RoomContents.Door;
+            Values[position.X, position.Y] = RoomContents.Door;
 
             // nao pode ter nada na frente da porta
             PutTheNothingsBeforeTheDoors(position);
@@ -93,42 +93,42 @@ public class Sala
 
     public void PutTheNothingsBeforeTheDoors(Position doorPosition)
     {
-        // porta pra esquerda ou pra direita
-        if (doorPosition.Row == (int)(Rows / 2))
+        // porta pra cima ou pra baixo
+        if (doorPosition.X == (int)(Height / 2))
         {
-            if (doorPosition.Column == Cols - 1) // porta na direita da sala
+            if (doorPosition.Y == Width - 1) // porta na direita da sala
             {
-                Values[doorPosition.Row, doorPosition.Column - 1] = RoomContents.Nothing;
+                Values[doorPosition.X, doorPosition.Y - 1] = RoomContents.Nothing;
             }
-            else if (doorPosition.Column == 0) // porta na esquerda da sala
+            else if (doorPosition.Y == 0) // porta na esquerda da sala
             {
-                Values[doorPosition.Row, doorPosition.Column + 1] = RoomContents.Nothing;
+                Values[doorPosition.X, doorPosition.Y + 1] = RoomContents.Nothing;
             }
         }
 
-        // porta pra cima ou pra baixo
-        else if (doorPosition.Column == (int)(Cols / 2))
+        // porta pra esquerda ou pra direita
+        else if (doorPosition.Y == (int)(Width / 2))
         {
-            if (doorPosition.Row == Rows - 1) // porta embaixo na sala
+            if (doorPosition.X == Height - 1) // porta embaixo na sala
             {
-                Values[doorPosition.Row - 1, doorPosition.Column] = RoomContents.Nothing;
+                Values[doorPosition.X - 1, doorPosition.Y] = RoomContents.Nothing;
             }
-            else if (doorPosition.Row == 0) // porta pra cima na sala
+            else if (doorPosition.X == 0) // porta pra cima na sala
             {
-                Values[doorPosition.Row + 1, doorPosition.Column] = RoomContents.Nothing;
+                Values[doorPosition.X + 1, doorPosition.Y] = RoomContents.Nothing;
             }
         }
     }
 
     public void GetTheChangeablesPositions()
     {
-        for (int i = 0; i < Rows; i++)
+        for (int i = 0; i < Width; i++)
         {
-            for (int j = 0; j < Cols; j++)
+            for (int j = 0; j < Height; j++)
             {
                 var valor = Values[i, j];
 
-                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position { Row = i, Column = j });
+                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position { X = i, Y = j });
             }
         }
     }

@@ -12,9 +12,9 @@ public static class PathFinder
 
     static bool IsValidMove(Position position, int[,] matrix, bool[,] visited)
     {
-        return matrix.IsPositionWithinBounds(position.Row, position.Column)
-            && matrix[position.Row, position.Column] == 1
-            && !visited[position.Row, position.Column];
+        return matrix.IsPositionWithinBounds(position.X, position.Y)
+            && matrix[position.X, position.Y] == 1
+            && !visited[position.X, position.Y];
     }
 
     static bool DFS(int[,] matrix, Position currentPosition, Position endPosition, bool[,] visited)
@@ -24,7 +24,7 @@ public static class PathFinder
             return true;
         }
 
-        visited[currentPosition.Row, currentPosition.Column] = true;
+        visited[currentPosition.X, currentPosition.Y] = true;
 
         foreach (Direction direction in Enum.GetValues(typeof(Direction)))
         {

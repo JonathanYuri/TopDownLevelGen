@@ -8,7 +8,7 @@ public static class RoomOperations
     public static Dictionary<RoomContents, List<Position>> GroupPositionsByRoomValue(RoomContents[,] matrix, HashSet<Position> positionsOf)
     {
         // agrupar as posicoes com base no valor da matrix na posicao
-        IEnumerable<IGrouping<RoomContents, Position>> groupedPositions = positionsOf.GroupBy(p => matrix[p.Row, p.Column]);
+        IEnumerable<IGrouping<RoomContents, Position>> groupedPositions = positionsOf.GroupBy(p => matrix[p.X, p.Y]);
 
         // transformar o groupedPositions em dicionario
         Dictionary<RoomContents, List<Position>> positionsByPossibilidades = groupedPositions.ToDictionary(group => group.Key, group => group.ToList());
@@ -27,7 +27,7 @@ public static class RoomOperations
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = obstaclePosition.Move(direction);
-                if (matrix.IsPositionWithinBounds(adjacentPosition.Row, adjacentPosition.Column))
+                if (matrix.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y))
                 {
                     if (enemiesPositions.Contains(adjacentPosition))
                     {

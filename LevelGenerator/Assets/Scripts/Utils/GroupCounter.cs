@@ -13,7 +13,7 @@ public static class GroupCounter
         {
             for (int col = 0; col < matrix.GetLength(1); col++)
             {
-                if (!visitado[row, col] && positions.Contains(new Position { Row = row, Column = col }))
+                if (!visitado[row, col] && positions.Contains(new Position { X = row, Y = col }))
                 {
                     int tamanhoGrupo = CountGroup(matrix, visitado, positions, row, col);
                     tamanhosGrupos.Add(tamanhoGrupo);
@@ -26,7 +26,7 @@ public static class GroupCounter
 
     static int CountGroup(RoomContents[,] matriz, bool[,] visited, HashSet<Position> positions, int row, int col)
     {
-        if (!matriz.IsPositionWithinBounds(row, col) || visited[row, col] || !positions.Contains(new Position { Row = row, Column = col }))
+        if (!matriz.IsPositionWithinBounds(row, col) || visited[row, col] || !positions.Contains(new Position { X = row, Y = col }))
             return 0;
 
         visited[row, col] = true;

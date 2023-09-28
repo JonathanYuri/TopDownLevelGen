@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,14 +32,14 @@ public class UIMapGenerator : MonoBehaviour
         this.playerLocation = playerLocation;
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
 
-        int maxRow = map.Max(room => room.Row);
-        int maxColumn = map.Max(room => room.Column);
+        int maxX = map.Max(room => room.X);
+        int maxY = map.Max(room => room.Y);
 
-        int minRow = map.Min(room => room.Row);
-        int minColumn = map.Min(room => room.Column);
+        int minX = map.Min(room => room.X);
+        int minY = map.Min(room => room.Y);
 
-        int mapWidth = maxColumn - minColumn;
-        int mapHeight = maxRow - minRow;
+        int mapWidth = maxY - minY;
+        int mapHeight = maxX - minX;
 
         int maxSize = Mathf.Max(mapWidth + 1, mapHeight + 1);
         float roomSize = mapHolderRect.rect.size.x / (float)maxSize;
@@ -49,17 +51,13 @@ public class UIMapGenerator : MonoBehaviour
         float initialPosition = -mapHolderRect.rect.size.x / 2 + roomSize / 2;
 
         float horizontalRoomPosition = initialPosition;
-        float verticalRoomPosition = -initialPosition; // comeca de cima e vai descendo
+        float verticalRoomPosition = initialPosition; // comeca de baixo e vai subindo
 
-        // pra preencher o mapPanel todo
-        int maxMapColumn = mapWidth >= mapHeight ? maxColumn : minColumn + mapHeight;
-        int minMapRow = mapHeight >= mapWidth ? minRow : maxRow - mapWidth;
-
-        for (int i = maxRow; i >= minMapRow; i--)
+        for (int j = minY; j <= maxSize - 1 + minY; j++)
         {
-            for (int j = minColumn; j <= maxMapColumn; j++)
+            for (int i = minX; i <= maxSize - 1 + minX; i++)
             {
-                Position position = new() { Row = i, Column = j };
+                Position position = new() { X = i, Y = j };
                 GameObject roomPanel;
                 if (playerLocation.atRoom.Equals(position))
                 {
@@ -84,7 +82,7 @@ public class UIMapGenerator : MonoBehaviour
                 horizontalRoomPosition += roomSize;
             }
             horizontalRoomPosition = initialPosition;
-            verticalRoomPosition -= roomSize;
+            verticalRoomPosition += roomSize;
         }
     }
 

@@ -20,17 +20,17 @@ public class Range
 // TODO: fazer essa classe ser uma extensao de vector2, como tem no extensions, talvez n pq no vector2 pode ser float
 public class Position
 {
-    public int Row { get; set; }
-    public int Column { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
     public Position Move(Direction direction)
     {
         return direction switch
         {
-            Direction.Up => new Position { Row = Row + 1, Column = Column },
-            Direction.Down => new Position { Row = Row - 1, Column = Column },
-            Direction.Left => new Position { Row = Row, Column = Column - 1 },
-            Direction.Right => new Position { Row = Row, Column = Column + 1 },
+            Direction.Up => new Position { X = X, Y = Y + 1 },
+            Direction.Down => new Position { X = X, Y = Y - 1 },
+            Direction.Left => new Position { X = X - 1, Y = Y },
+            Direction.Right => new Position { X = X + 1, Y = Y },
             Direction _ => throw new ArgumentException("Direção desconhecida: " + direction)
         };
     }
@@ -43,20 +43,21 @@ public class Position
         }
 
         Position other = (Position)obj;
-        return Row == other.Row && Column == other.Column;
+        return X == other.X && Y == other.Y;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Row, Column);
+        return HashCode.Combine(X, Y);
     }
 }
 
 public static class Utils
 {
+    // pra spawnar as salas
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
     {
-        return new Vector2(mapPosition.Column * GameConstants.Cols + mapPosition.Column, mapPosition.Row * GameConstants.Rows + mapPosition.Row);
+        return new Vector2(mapPosition.X * GameConstants.Width + mapPosition.X, mapPosition.Y * GameConstants.Height + mapPosition.Y);
     }
 
     public static double MinMaxNormalization(double value, double min, double max)
@@ -80,7 +81,7 @@ public static class Utils
 
     public static int ManhattanDistance(Position position1, Position position2)
     {
-        return Math.Abs(position1.Row - position2.Column) + Math.Abs(position1.Row - position2.Column);
+        return Math.Abs(position1.X - position2.Y) + Math.Abs(position1.X - position2.Y);
     }
 
     public static List<int> ResolveKnapsack(List<int> values, int capacity)
