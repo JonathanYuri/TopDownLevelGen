@@ -140,7 +140,7 @@ public static class Utils
         return chosenItems[capacity];
     }
 
-    // pra spawnar as salas
+    // pra spawnar as rooms
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
     {
         return new Vector2(mapPosition.X * GameConstants.Width + mapPosition.X, mapPosition.Y * GameConstants.Height + mapPosition.Y);

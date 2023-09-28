@@ -13,7 +13,7 @@ public class PlayerLocation
         this.player = player;
         directionToPositionInRoomMatrix = new()
         {
-            // se estou indo pra baixo spawno o jogador na parte de cima da sala
+            // se estou indo pra baixo spawno o jogador na parte de cima da room
             { Vector3.down, new Vector2(0, GameConstants.RoomMiddle.Y - 1) }, // cima meio, to vindo de cima
             { Vector3.left, new Vector2(GameConstants.RoomMiddle.X - 1, 0) }, // direita meio, to vindo da direita
             { Vector3.right, new Vector2(-GameConstants.RoomMiddle.X + 1, 0)}, // esq meio, to vindo da esq

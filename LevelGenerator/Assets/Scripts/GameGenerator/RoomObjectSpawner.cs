@@ -75,33 +75,33 @@ public class RoomObjectSpawner : MonoBehaviour
         };
     }
 
-    public void SpawnRoomObjects(Room sala, GameObject room)
+    public void SpawnRoomObjects(Room room, GameObject roomObject)
     {
-        for (int i = 0; i < sala.Width; i++)
+        for (int i = 0; i < room.Width; i++)
         {
-            for (int j = 0; j < sala.Height; j++)
+            for (int j = 0; j < room.Height; j++)
             {
-                //Debug.LogWarning($"i: {i}, j: {j}: {sala.Values[i, j]}");
+                //Debug.LogWarning($"i: {i}, j: {j}: {room.Values[i, j]}");
                 Position position = new() { X = i, Y = j };
-                GameObject tile = SelectTheRightObjectsToSpawnInPosition(sala, position);
+                GameObject tile = SelectTheRightObjectsToSpawnInPosition(room, position);
 
-                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(i, j) + (Vector2)room.transform.position, tile.transform.rotation, room.transform);
+                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(i, j) + (Vector2)roomObject.transform.position, tile.transform.rotation, roomObject.transform);
             }
         }
     }
 
-    GameObject SelectTheRightObjectsToSpawnInPosition(Room sala, Position position)
+    GameObject SelectTheRightObjectsToSpawnInPosition(Room room, Position position)
     {
         GameObject tile = chao;
-        if (objects.TryGetValue(sala.Values[position.X, position.Y], out GameObject gameObject))
+        if (objects.TryGetValue(room.Values[position.X, position.Y], out GameObject gameObject))
         {
             tile = gameObject;
         }
-        else if (sala.Values[position.X, position.Y] == RoomContents.Door)
+        else if (room.Values[position.X, position.Y] == RoomContents.Door)
         {
             tile = SelectTheRightPositionDoor(position);
         }
-        else if (sala.Values[position.X, position.Y] == RoomContents.Wall)
+        else if (room.Values[position.X, position.Y] == RoomContents.Wall)
         {
             GameObject corner = SelectTheRightPositionCorner(position);
             tile = corner switch
@@ -116,7 +116,7 @@ public class RoomObjectSpawner : MonoBehaviour
     GameObject SelectTheRightPositionDoor(Position position)
     {
         // pegar todas as posicoes das portas e ver se eh igual a que estou agora
-        foreach (var kvp in GameConstants.NeighboorDirectionToDoorPosition)
+        foreach (var kvp in GameConstants.NeighborDirectionToDoorPosition)
         {
             if (kvp.Value.Equals(position))
             {

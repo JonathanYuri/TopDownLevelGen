@@ -60,7 +60,7 @@ public static class PathFinder
     {
         if (enemiesPositions.Count == 0)
         {
-            throw new Exception("Sem inimigos na sala");
+            throw new Exception("Sem inimigos na room");
         }
 
         int[,] matriz = TransformRoomForCountPaths(roomMatrix);

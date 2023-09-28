@@ -43,7 +43,7 @@ public class UIMapGenerator : MonoBehaviour
 
         //Debug.LogError("SIZE MAPHOLDER: " + mapHolderRect.rect.size);
         //Debug.LogError("ROOM SIZE: " + roomSize);
-        //Debug.LogError("Quantas salas?: " + maxSize);
+        //Debug.LogError("Quantas rooms?: " + maxSize);
 
         float initialPosition = -mapHolderRect.rect.size.x / 2 + roomSize / 2;
 

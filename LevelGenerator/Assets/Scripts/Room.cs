@@ -96,11 +96,11 @@ public class Room
         // porta pra esquerda ou pra direita
         if (doorPosition.Y == GameConstants.RoomMiddle.Y)
         {
-            if (doorPosition.X == Width - 1) // porta na direita da sala
+            if (doorPosition.X == Width - 1) // porta na direita da room
             {
                 Values[doorPosition.X - 1, doorPosition.Y] = RoomContents.Nothing;
             }
-            else if (doorPosition.X == 0) // porta na esquerda da sala
+            else if (doorPosition.X == 0) // porta na esquerda da room
             {
                 Values[doorPosition.X + 1, doorPosition.Y] = RoomContents.Nothing;
             }
@@ -109,11 +109,11 @@ public class Room
         // porta pra cima ou pra baixo
         else if (doorPosition.X == GameConstants.RoomMiddle.X)
         {
-            if (doorPosition.Y == Height - 1) // porta pra cima na sala
+            if (doorPosition.Y == Height - 1) // porta pra cima na room
             {
                 Values[doorPosition.X, doorPosition.Y - 1] = RoomContents.Nothing;
             }
-            else if (doorPosition.Y == 0) // porta pra baixo na sala
+            else if (doorPosition.Y == 0) // porta pra baixo na room
             {
                 Values[doorPosition.X, doorPosition.Y + 1] = RoomContents.Nothing;
             }
