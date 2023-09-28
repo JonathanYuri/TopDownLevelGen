@@ -6,37 +6,34 @@ public static class GroupCounter
 {
     public static List<int> CountGroups(RoomContents[,] matrix, HashSet<Position> positions)
     {
-        bool[,] visitado = new bool[matrix.GetLength(0), matrix.GetLength(1)];
+        HashSet<Position> visited = new();
+        List<int> groupSizes = new();
 
-        List<int> tamanhosGrupos = new();
-        for (int row = 0; row < matrix.GetLength(0); row++)
+        foreach (Position position in positions)
         {
-            for (int col = 0; col < matrix.GetLength(1); col++)
+            if (!visited.Contains(position))
             {
-                if (!visitado[row, col] && positions.Contains(new Position { X = row, Y = col }))
-                {
-                    int tamanhoGrupo = CountGroup(matrix, visitado, positions, row, col);
-                    tamanhosGrupos.Add(tamanhoGrupo);
-                }
+                int groupSize = CountGroupSize(matrix, visited, positions, position);
+                groupSizes.Add(groupSize);
             }
         }
 
-        return tamanhosGrupos;
+        return groupSizes;
     }
 
-    static int CountGroup(RoomContents[,] matriz, bool[,] visited, HashSet<Position> positions, int row, int col)
+    static int CountGroupSize(RoomContents[,] matriz, HashSet<Position> visited, HashSet<Position> positions, Position position)
     {
-        if (!matriz.IsPositionWithinBounds(row, col) || visited[row, col] || !positions.Contains(new Position { X = row, Y = col }))
+        if (!matriz.IsPositionWithinBounds(position) || visited.Contains(position) || !positions.Contains(position))
             return 0;
 
-        visited[row, col] = true;
+        visited.Add(position);
 
         int tamanhoAtual = 1;
 
-        tamanhoAtual += CountGroup(matriz, visited, positions, row - 1, col);
-        tamanhoAtual += CountGroup(matriz, visited, positions, row + 1, col);
-        tamanhoAtual += CountGroup(matriz, visited, positions, row, col - 1);
-        tamanhoAtual += CountGroup(matriz, visited, positions, row, col + 1);
+        tamanhoAtual += CountGroupSize(matriz, visited, positions, position.Move(Direction.Down));
+        tamanhoAtual += CountGroupSize(matriz, visited, positions, position.Move(Direction.Up));
+        tamanhoAtual += CountGroupSize(matriz, visited, positions, position.Move(Direction.Left));
+        tamanhoAtual += CountGroupSize(matriz, visited, positions, position.Move(Direction.Right));
 
         return tamanhoAtual;
     }

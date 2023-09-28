@@ -17,7 +17,7 @@ public class RoomIndividual
     public RoomIndividual(bool generateRandomly = true)
     {
         Value = default;
-        RoomMatrix = new RoomMatrix((RoomContents[,])GeneticAlgorithmConstants.Room.Values.Clone());
+        RoomMatrix = new RoomMatrix((RoomContents[,])GeneticAlgorithmConstants.ROOM.Values.Clone());
 
         if (generateRandomly)
         {
@@ -33,39 +33,39 @@ public class RoomIndividual
 
     void GenerateRoomRandomly()
     {
-        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.Room.changeablesPositions);
-        int qntObjects = GeneticAlgorithmConstants.Room.Enemies.Length + GeneticAlgorithmConstants.Room.Obstacles.Length;
+        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
+        int qntObjects = GeneticAlgorithmConstants.ROOM.Enemies.Length + GeneticAlgorithmConstants.ROOM.Obstacles.Length;
         Position[] chosenPositions = avaliablePositions.SelectRandomDistinctElements(qntObjects);
 
         int count = 0;
-        foreach (RoomContents enemy in GeneticAlgorithmConstants.Room.Enemies)
+        foreach (RoomContents enemy in GeneticAlgorithmConstants.ROOM.Enemies)
         {
             RoomMatrix.PutEnemyInPosition(enemy, chosenPositions[count]);
             count++;
         }
 
-        foreach (RoomContents obstacle in GeneticAlgorithmConstants.Room.Obstacles)
+        foreach (RoomContents obstacle in GeneticAlgorithmConstants.ROOM.Obstacles)
         {
             RoomMatrix.PutObstacleInPosition(obstacle, chosenPositions[count]);
             count++;
         }
     }
 
-    void ChangePlaceOf(HashSet<Position> positionsOf, Position position1)
+    void ChangePlaceOf(HashSet<Position> targetPositions, Position position1)
     {
-        int idx2 = Random.Range(0, GeneticAlgorithmConstants.Room.changeablesPositions.Count);
-        Position position2 = GeneticAlgorithmConstants.Room.changeablesPositions[idx2];
+        int idx2 = Random.Range(0, GeneticAlgorithmConstants.ROOM.ChangeablesPositions.Count);
+        Position position2 = GeneticAlgorithmConstants.ROOM.ChangeablesPositions.ElementAt(idx2);
 
         RoomContents content1 = RoomMatrix.Values[position1.X, position1.Y];
         RoomContents content2 = RoomMatrix.Values[position2.X, position2.Y];
 
         // Colocar na posicao 1 o conteudo da posicao 2
-        if (GeneticAlgorithmConstants.Room.Enemies.Contains(RoomMatrix.Values[position2.X, position2.Y]))
+        if (GeneticAlgorithmConstants.ROOM.Enemies.Contains(RoomMatrix.Values[position2.X, position2.Y]))
         {
             RoomMatrix.RemoveFromPosition(RoomMatrix.EnemiesPositions, position2);
             RoomMatrix.PutEnemyInPosition(content2, position1);
         }
-        else if (GeneticAlgorithmConstants.Room.Obstacles.Contains(RoomMatrix.Values[position2.X, position2.Y]))
+        else if (GeneticAlgorithmConstants.ROOM.Obstacles.Contains(RoomMatrix.Values[position2.X, position2.Y]))
         {
             RoomMatrix.RemoveFromPosition(RoomMatrix.ObstaclesPositions, position2);
             RoomMatrix.PutObstacleInPosition(content2, position1);
@@ -76,12 +76,12 @@ public class RoomIndividual
         }
 
         // Colocar na posicao 2 o conteudo da posicao 1
-        RoomMatrix.RemoveFromPosition(positionsOf, position1);
-        if (positionsOf.Equals(RoomMatrix.EnemiesPositions))
+        RoomMatrix.RemoveFromPosition(targetPositions, position1);
+        if (targetPositions.Equals(RoomMatrix.EnemiesPositions))
         {
             RoomMatrix.PutEnemyInPosition(content1, position2);
         }
-        else if (positionsOf.Equals(RoomMatrix.ObstaclesPositions))
+        else if (targetPositions.Equals(RoomMatrix.ObstaclesPositions))
         {
             RoomMatrix.PutObstacleInPosition(content1, position2);
         }
@@ -111,25 +111,25 @@ public class RoomIndividual
 
     bool IsMonstrous()
     {
-        if (!PathFinder.IsAPathBetweenDoors(RoomMatrix.Values, GeneticAlgorithmConstants.Room.doorsPositions))
+        if (!PathFinder.IsAPathBetweenDoors(RoomMatrix.Values))
         {
             return true;
         }
 
-        if (!PathFinder.IsAPathBetweenDoorAndEnemies(RoomMatrix.Values, GeneticAlgorithmConstants.Room.doorsPositions, RoomMatrix.EnemiesPositions))
+        if (!PathFinder.IsAPathBetweenDoorAndEnemies(RoomMatrix))
         {
             //Debug.Log("Mostro por causa do caminho ate inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfEnemies = RoomMatrix.EnemiesPositions.Count == GeneticAlgorithmConstants.Room.Enemies.Length;
+        bool hasTheRightAmountOfEnemies = RoomMatrix.EnemiesPositions.Count == GeneticAlgorithmConstants.ROOM.Enemies.Length;
         if (!hasTheRightAmountOfEnemies)
         {
             //Debug.Log("Mostro por causa da quantidade de inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfObstacles = RoomMatrix.ObstaclesPositions.Count == GeneticAlgorithmConstants.Room.Obstacles.Length;
+        bool hasTheRightAmountOfObstacles = RoomMatrix.ObstaclesPositions.Count == GeneticAlgorithmConstants.ROOM.Obstacles.Length;
         if (!hasTheRightAmountOfObstacles)
         {
             //Debug.Log("Mostro por causa da quantidade de obstaculos");
@@ -169,7 +169,7 @@ public class RoomIndividual
         Value = 0;
         for (int i = 0; i < vars.Count; i++)
         {
-            double normalizedValue = Utils.MinMaxNormalization(vars[i], bounds[i].min, bounds[i].max);
+            double normalizedValue = Utils.Normalization(vars[i], bounds[i].min, bounds[i].max);
             Value += (int)normalizedValue;
 
             /*

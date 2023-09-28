@@ -40,7 +40,7 @@ public class GameGenerator : MonoBehaviour
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
 
-        while (Map.Count < GameConstants.NumberOfRooms)
+        while (Map.Count < GameConstants.NUMBER_OF_ROOMS)
         {
             if (queue.Count == 0)
             {
@@ -60,7 +60,7 @@ public class GameGenerator : MonoBehaviour
             {
                 Position adjacentPosition = position.Move(direction);
 
-                if (!Map.Contains(adjacentPosition) && UnityEngine.Random.value < GameConstants.ProbabilityOfGeneratingRoomInNeighborhood)
+                if (!Map.Contains(adjacentPosition) && UnityEngine.Random.value < GameConstants.PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD)
                 {
                     queue.Enqueue(adjacentPosition);
                 }
@@ -101,7 +101,7 @@ public class GameGenerator : MonoBehaviour
         List<Position> doorPositions = new();
         foreach (Direction direction in neighborsDirection)
         {
-            doorPositions.Add(GameConstants.NeighborDirectionToDoorPosition[direction]);
+            doorPositions.Add(GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION[direction]);
         }
         return doorPositions.ToArray();
     }
@@ -113,8 +113,7 @@ public class GameGenerator : MonoBehaviour
 
         Position[] doorPositions = GetDoorPositions(neighborsDirection);
 
-        Room room = new(GameConstants.Height, GameConstants.Width, doorPositions,
-            Utils.ResolveKnapsackEnemies(GameConstants.EnemiesCapacity), Utils.ResolveKnapsackObstacles(GameConstants.ObstaclesCapacity));
+        Room room = new(doorPositions, Utils.ResolveKnapsackEnemies(GameConstants.ENEMIES_CAPACITY), Utils.ResolveKnapsackObstacles(GameConstants.OBSTACLES_CAPACITY));
         GeneticRoomGenerator geneticRoomGenerator = new(room);
 
         StartCoroutine(GenerateRoomsInBackground(room, geneticRoomGenerator, roomObject));

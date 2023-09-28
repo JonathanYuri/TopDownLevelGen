@@ -68,18 +68,18 @@ public class RoomObjectSpawner : MonoBehaviour
 
         cornerPositionToGameObject = new()
         {
-            { new Position { X = 0, Y = GameConstants.Height - 1 }, paredes[(int)CornerIndex.TopLeftCorner] },
-            { new Position { X = GameConstants.Width - 1, Y = GameConstants.Height - 1 }, paredes[(int)CornerIndex.TopRightCorner] },
+            { new Position { X = 0, Y = GameConstants.ROOM_HEIGHT - 1 }, paredes[(int)CornerIndex.TopLeftCorner] },
+            { new Position { X = GameConstants.ROOM_WIDTH - 1, Y = GameConstants.ROOM_HEIGHT - 1 }, paredes[(int)CornerIndex.TopRightCorner] },
             { new Position { X = 0, Y = 0 }, paredes[(int)CornerIndex.BottomLeftCorner] },
-            { new Position { X = GameConstants.Width - 1, Y = 0 }, paredes[(int)CornerIndex.BottomRightCorner] },
+            { new Position { X = GameConstants.ROOM_WIDTH - 1, Y = 0 }, paredes[(int)CornerIndex.BottomRightCorner] },
         };
     }
 
     public void SpawnRoomObjects(Room room, GameObject roomObject)
     {
-        for (int i = 0; i < room.Width; i++)
+        for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
         {
-            for (int j = 0; j < room.Height; j++)
+            for (int j = 0; j < GameConstants.ROOM_HEIGHT; j++)
             {
                 //Debug.LogWarning($"i: {i}, j: {j}: {room.Values[i, j]}");
                 Position position = new() { X = i, Y = j };
@@ -116,7 +116,7 @@ public class RoomObjectSpawner : MonoBehaviour
     GameObject SelectTheRightPositionDoor(Position position)
     {
         // pegar todas as posicoes das portas e ver se eh igual a que estou agora
-        foreach (var kvp in GameConstants.NeighborDirectionToDoorPosition)
+        foreach (var kvp in GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION)
         {
             if (kvp.Value.Equals(position))
             {
@@ -141,7 +141,7 @@ public class RoomObjectSpawner : MonoBehaviour
         {
             return paredes[(int)WallIndex.Left];
         }
-        else if (position.X == GameConstants.Width - 1)
+        else if (position.X == GameConstants.ROOM_WIDTH - 1)
         {
             return paredes[(int)WallIndex.Right];
         }
@@ -149,7 +149,7 @@ public class RoomObjectSpawner : MonoBehaviour
         {
             return paredes[(int)WallIndex.Bottom];
         }
-        else if (position.Y == GameConstants.Height - 1)
+        else if (position.Y == GameConstants.ROOM_HEIGHT - 1)
         {
             return paredes[(int)WallIndex.Top];
         }

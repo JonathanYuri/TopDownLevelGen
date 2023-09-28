@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-// TODO: adicionar comentarios ao codigo / refatorar pra entender melhor
 public static class PathFinder
 {
-    static bool HasPath(int[,] matrix, Position startPosition, Position endPosition)
+    static bool HasPathBetweenPositions(int[,] matrix, Position startPosition, Position endPosition)
     {
         bool[,] visited = new bool[matrix.GetLength(0), matrix.GetLength(1)];
         return DFS(matrix, startPosition, endPosition, visited);
@@ -38,15 +37,15 @@ public static class PathFinder
         return false;
     }
 
-    public static bool IsAPathBetweenDoors(RoomContents[,] roomMatrix, Position[] doorsPositions)
+    public static bool IsAPathBetweenDoors(RoomContents[,] roomMatrix)
     {
-        int[,] matrix = TransformRoomForCountPaths(roomMatrix);
-
-        for (int i = 0; i < doorsPositions.Length; i++)
+        int[,] matrix = TransformRoomForCountPaths(roomMatrix, IsPassable);
+         
+        for (int i = 0; i < GeneticAlgorithmConstants.ROOM.doorsPositions.Length; i++)
         {
-            for (int j = i + 1; j < doorsPositions.Length; j++)
+            for (int j = i + 1; j < GeneticAlgorithmConstants.ROOM.doorsPositions.Length; j++)
             {
-                if (!HasPath(matrix, doorsPositions[i], doorsPositions[j]))
+                if (!HasPathBetweenPositions(matrix, GeneticAlgorithmConstants.ROOM.doorsPositions[i], GeneticAlgorithmConstants.ROOM.doorsPositions[j]))
                 {
                     return false;
                 }
@@ -56,20 +55,20 @@ public static class PathFinder
         return true;
     }
 
-    public static bool IsAPathBetweenDoorAndEnemies(RoomContents[,] roomMatrix, Position[] doorsPositions, HashSet<Position> enemiesPositions)
+    public static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix)
     {
-        if (enemiesPositions.Count == 0)
+        if (roomMatrix.EnemiesPositions.Count == 0)
         {
-            throw new Exception("Sem inimigos na room");
+            return false;
         }
 
-        int[,] matriz = TransformRoomForCountPaths(roomMatrix);
+        int[,] matriz = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
 
         // so preciso ver de uma porta pra todos os inimigos, pq se tiver de uma tem da outra, ja que eu conto os caminhos de uma porta a outra
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
-        foreach (Position enemiePosition in enemiesPositions)
+        foreach (Position enemiePosition in roomMatrix.EnemiesPositions)
         {
-            if (!HasPath(matriz, doorsPositions[0], enemiePosition))
+            if (!HasPathBetweenPositions(matriz, GeneticAlgorithmConstants.ROOM.doorsPositions[0], enemiePosition))
             {
                 return false;
             }
@@ -78,7 +77,9 @@ public static class PathFinder
         return true;
     }
 
-    static int[,] TransformRoomForCountPaths(RoomContents[,] roomMatrix)
+    static bool IsPassable(RoomContents roomContent) => roomContent.GetAttribute<UltrapassavelAttribute>().IsUltrapassavel;
+
+    static int[,] TransformRoomForCountPaths(RoomContents[,] roomMatrix, Func<RoomContents, bool> criteria)
     {
         int[,] matrix = new int[roomMatrix.GetLength(0), roomMatrix.GetLength(1)];
 
@@ -86,14 +87,7 @@ public static class PathFinder
         {
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                if (roomMatrix[i, j].GetAttribute<UltrapassavelAttribute>().IsUltrapassavel)
-                {
-                    matrix[i, j] = 1;
-                }
-                else
-                {
-                    matrix[i, j] = 0;
-                }
+                matrix[i, j] = criteria(roomMatrix[i, j]) ? 1 : 0;
             }
         }
         return matrix;

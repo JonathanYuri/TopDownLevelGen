@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,19 +53,8 @@ public class UIMapGenerator : MonoBehaviour
             for (int i = minX; i <= maxSize - 1 + minX; i++)
             {
                 Position position = new() { X = i, Y = j };
-                GameObject roomPanel;
-                if (playerLocation.atRoom.Equals(position))
-                {
-                    roomPanel = Instantiate(playerInRoomPanel, mapHolder.transform);
-                }
-                else if (map.Contains(position))
-                {
-                    roomPanel = Instantiate(roomPanelPrefab, mapHolder.transform);
-                }
-                else
-                {
-                    roomPanel = Instantiate(blankSpacePrefab, mapHolder.transform);
-                }
+
+                GameObject roomPanel = ChoosePanelToPosition(map, playerLocation, position);
 
                 uiMap.Add(position, roomPanel.GetComponent<Image>());
 
@@ -81,6 +68,24 @@ public class UIMapGenerator : MonoBehaviour
             horizontalRoomPosition = initialPosition;
             verticalRoomPosition += roomSize;
         }
+    }
+
+    GameObject ChoosePanelToPosition(HashSet<Position> map, PlayerLocation playerLocation, Position position)
+    {
+        GameObject roomPanel;
+        if (playerLocation.atRoom.Equals(position))
+        {
+            roomPanel = Instantiate(playerInRoomPanel, mapHolder.transform);
+        }
+        else if (map.Contains(position))
+        {
+            roomPanel = Instantiate(roomPanelPrefab, mapHolder.transform);
+        }
+        else
+        {
+            roomPanel = Instantiate(blankSpacePrefab, mapHolder.transform);
+        }
+        return roomPanel;
     }
 
     public void UpdateUIMap(Position playerOldPosition, Position playerNewPosition)

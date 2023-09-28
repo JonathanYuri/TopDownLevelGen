@@ -37,46 +37,39 @@ public class Room
     RoomContents[,] values;
 
     public readonly Position[] doorsPositions;
-    public List<Position> changeablesPositions;
-
-    public int Height { get; }
-    public int Width { get; }
+    HashSet<Position> changeablesPositions;
 
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
 
     public RoomContents[,] Values { get => values; set => values = value; }
+    public HashSet<Position> ChangeablesPositions { get => changeablesPositions; set => changeablesPositions = value; }
 
-    public Room(int height, int width, Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
+    public Room(Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
     {
-        Height = height;
-        Width = width;
-
         this.doorsPositions = doorsPositions;
-        this.changeablesPositions = new();
+        ChangeablesPositions = GameConstants.ALL_POSITIONS_IN_ROOM;
 
         Enemies = enemies;
         Obstacles = obstacles;
 
-        Values = new RoomContents[width, height];
+        Values = new RoomContents[GameConstants.ROOM_WIDTH, GameConstants.ROOM_HEIGHT];
 
         PutTheWalls();
         PutTheDoors();
-
-        GetTheChangeablesPositions();
     }
 
     public void PutTheWalls()
     {
-        for (int j = 0; j < Height; j++)
+        for (int j = 0; j < GameConstants.ROOM_HEIGHT; j++)
         {
-            Values[Width - 1, j] = RoomContents.Wall;
-            Values[0, j] = RoomContents.Wall;
+            PlaceTheImmutableRoomContentInPosition(RoomContents.Wall, new Position() { X = GameConstants.ROOM_WIDTH - 1, Y = j });
+            PlaceTheImmutableRoomContentInPosition(RoomContents.Wall, new Position() { X = 0, Y = j });
         }
-        for (int i = 0; i < Width; i++)
+        for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
         {
-            Values[i, Height - 1] = RoomContents.Wall;
-            Values[i, 0] = RoomContents.Wall;
+            PlaceTheImmutableRoomContentInPosition(RoomContents.Wall, new Position() { X = i, Y = GameConstants.ROOM_HEIGHT - 1 });
+            PlaceTheImmutableRoomContentInPosition(RoomContents.Wall, new Position() { X = i, Y = 0 });
         }
     }
 
@@ -84,52 +77,45 @@ public class Room
     {
         foreach (Position position in doorsPositions)
         {
-            Values[position.X, position.Y] = RoomContents.Door;
+            PlaceTheImmutableRoomContentInPosition(RoomContents.Door, position);
 
             // nao pode ter nada na frente da porta
             PutTheNothingsBeforeTheDoors(position);
         }
     }
 
-    public void PutTheNothingsBeforeTheDoors(Position doorPosition)
+    void PutTheNothingsBeforeTheDoors(Position doorPosition)
     {
         // porta pra esquerda ou pra direita
-        if (doorPosition.Y == GameConstants.RoomMiddle.Y)
+        if (doorPosition.Y == GameConstants.ROOM_MIDDLE.Y)
         {
-            if (doorPosition.X == Width - 1) // porta na direita da room
+            if (doorPosition.X == GameConstants.ROOM_WIDTH - 1) // porta na direita da room
             {
-                Values[doorPosition.X - 1, doorPosition.Y] = RoomContents.Nothing;
+                PlaceTheImmutableRoomContentInPosition(RoomContents.Nothing, new Position() { X = doorPosition.X - 1, Y = doorPosition.Y });
             }
             else if (doorPosition.X == 0) // porta na esquerda da room
             {
-                Values[doorPosition.X + 1, doorPosition.Y] = RoomContents.Nothing;
+                PlaceTheImmutableRoomContentInPosition(RoomContents.Nothing, new Position() { X = doorPosition.X + 1, Y = doorPosition.Y });
             }
         }
 
         // porta pra cima ou pra baixo
-        else if (doorPosition.X == GameConstants.RoomMiddle.X)
+        else if (doorPosition.X == GameConstants.ROOM_MIDDLE.X)
         {
-            if (doorPosition.Y == Height - 1) // porta pra cima na room
+            if (doorPosition.Y == GameConstants.ROOM_HEIGHT - 1) // porta pra cima na room
             {
-                Values[doorPosition.X, doorPosition.Y - 1] = RoomContents.Nothing;
+                PlaceTheImmutableRoomContentInPosition(RoomContents.Nothing, new Position() { X = doorPosition.X, Y = doorPosition.Y - 1 });
             }
             else if (doorPosition.Y == 0) // porta pra baixo na room
             {
-                Values[doorPosition.X, doorPosition.Y + 1] = RoomContents.Nothing;
+                PlaceTheImmutableRoomContentInPosition(RoomContents.Nothing, new Position() { X = doorPosition.X, Y = doorPosition.Y + 1 });
             }
         }
     }
 
-    public void GetTheChangeablesPositions()
+    void PlaceTheImmutableRoomContentInPosition(RoomContents roomContent, Position position)
     {
-        for (int i = 0; i < Width; i++)
-        {
-            for (int j = 0; j < Height; j++)
-            {
-                var valor = Values[i, j];
-
-                if (valor.GetAttribute<MutavelAttribute>().IsMutavel) changeablesPositions.Add(new Position { X = i, Y = j });
-            }
-        }
+        Values[position.X, position.Y] = roomContent;
+        ChangeablesPositions.Remove(position);
     }
 }

@@ -5,10 +5,10 @@ using System.Linq;
 
 public static class RoomOperations
 {
-    public static Dictionary<RoomContents, List<Position>> GroupPositionsByRoomValue(RoomContents[,] matrix, HashSet<Position> positionsOf)
+    public static Dictionary<RoomContents, List<Position>> GroupPositionsByRoomValue(RoomContents[,] roomMatrix, HashSet<Position> targetPositions)
     {
         // agrupar as posicoes com base no valor da matrix na posicao
-        IEnumerable<IGrouping<RoomContents, Position>> groupedPositions = positionsOf.GroupBy(p => matrix[p.X, p.Y]);
+        IEnumerable<IGrouping<RoomContents, Position>> groupedPositions = targetPositions.GroupBy(p => roomMatrix[p.X, p.Y]);
 
         // transformar o groupedPositions em dicionario
         Dictionary<RoomContents, List<Position>> positionsByPossibilidades = groupedPositions.ToDictionary(group => group.Key, group => group.ToList());
@@ -17,22 +17,17 @@ public static class RoomOperations
     }
 
     public static int CountEnemiesNextToObstacles(
-        RoomContents[,] matrix,
-        HashSet<Position> enemiesPositions,
-        HashSet<Position> obstaclesPositions)
+        RoomMatrix roomMatrix)
     {
         int enemies = 0;
-        foreach (Position obstaclePosition in obstaclesPositions)
+        foreach (Position obstaclePosition in roomMatrix.ObstaclesPositions)
         {
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = obstaclePosition.Move(direction);
-                if (matrix.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y))
+                if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y) && roomMatrix.EnemiesPositions.Contains(adjacentPosition))
                 {
-                    if (enemiesPositions.Contains(adjacentPosition))
-                    {
-                        enemies++;
-                    }
+                    enemies++;
                 }
             }
         }
@@ -40,10 +35,10 @@ public static class RoomOperations
         return enemies;
     }
 
-    public static double AverageDistanceFromDoorsToEnemies(Position[] doorsPositions, HashSet<Position> enemiesPositions)
+    public static double AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions)
     {
         List<double> averagesDistances = new();
-        foreach (Position doorPosition in doorsPositions)
+        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.doorsPositions)
         {
             List<int> averagesDistancesFromDoorPosition = new();
             foreach (Position enemyPosition in enemiesPositions)
@@ -55,16 +50,12 @@ public static class RoomOperations
         return averagesDistances.Average();
     }
 
-    public static int MinimumDistanceBetweenDoorsAndEnemies(Position[] doorsPositions, HashSet<Position> enemiesPositions)
+    public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions)
     {
         int minDistance = int.MaxValue;
-        foreach (Position doorPosition in doorsPositions)
+        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.doorsPositions)
         {
-            int currentMinDistance = enemiesPositions.Min(enemyPosition => Utils.ManhattanDistance(doorPosition, enemyPosition));
-            if (currentMinDistance < minDistance)
-            {
-                minDistance = currentMinDistance;
-            }
+            minDistance = Math.Min(minDistance, enemiesPositions.Min(enemyPosition => Utils.ManhattanDistance(doorPosition, enemyPosition)));
         }
         return minDistance;
     }

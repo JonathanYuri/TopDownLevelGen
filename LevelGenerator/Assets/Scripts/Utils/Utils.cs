@@ -17,7 +17,6 @@ public class Range
     public int max;
 }
 
-// TODO: fazer essa classe ser uma extensao de vector2, como tem no extensions, talvez n pq no vector2 pode ser float
 public class Position
 {
     public int X { get; set; }
@@ -143,10 +142,10 @@ public static class Utils
     // pra spawnar as rooms
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
     {
-        return new Vector2(mapPosition.X * GameConstants.Width + mapPosition.X, mapPosition.Y * GameConstants.Height + mapPosition.Y);
+        return new Vector2(mapPosition.X * GameConstants.ROOM_WIDTH + mapPosition.X, mapPosition.Y * GameConstants.ROOM_HEIGHT + mapPosition.Y);
     }
 
-    public static double MinMaxNormalization(double value, double min, double max)
+    public static double Normalization(double value, double min, double max)
     {
         if (max == min)
         {
@@ -167,6 +166,6 @@ public static class Utils
 
     public static int ManhattanDistance(Position position1, Position position2)
     {
-        return Math.Abs(position1.X - position2.Y) + Math.Abs(position1.X - position2.Y);
+        return Math.Abs(position1.X - position2.X) + Math.Abs(position1.Y - position2.Y);
     }
 }
