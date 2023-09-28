@@ -32,7 +32,7 @@ public class UltrapassavelAttribute : Attribute
     public UltrapassavelAttribute(bool isUltrapassavel) => IsUltrapassavel = isUltrapassavel;
 }
 
-public class Sala
+public class Room
 {
     RoomContents[,] values;
 
@@ -47,7 +47,7 @@ public class Sala
 
     public RoomContents[,] Values { get => values; set => values = value; }
 
-    public Sala(int height, int width, Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
+    public Room(int height, int width, Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
     {
         Height = height;
         Width = width;

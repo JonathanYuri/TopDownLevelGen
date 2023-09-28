@@ -3,14 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct DoorDirectionBasedOnRotation
-{
-    public static Vector3 ToDown = new(0, 0, 270);
-    public static Vector3 ToUp = new(0, 0, 90);
-    public static Vector3 ToRight = new(0, 0, 0);
-    public static Vector3 ToLeft = new(0, 0, 180);
-}
-
 public class DoorEventArgs : EventArgs
 {
     public Vector3 doorDirection;
@@ -20,24 +12,20 @@ public class Door : MonoBehaviour
 {
     public Vector3 direction;
 
+    static readonly Dictionary<Vector3, Vector3> RotationToDirectionMap = new()
+    {
+        { new Vector3(0, 0, 270), Vector3.down },
+        { new Vector3(0, 0, 90), Vector3.up },
+        { new Vector3(0, 0, 0), Vector3.right },
+        { new Vector3(0, 0, 180), Vector3.left }
+    };
+
     private void Awake()
     {
-        Vector3 rotation = new (this.transform.eulerAngles.x, this.transform.eulerAngles.y, this.transform.eulerAngles.z);
-        if (rotation.Equals(DoorDirectionBasedOnRotation.ToDown))
+        Vector3 rotation = transform.eulerAngles;
+        if (RotationToDirectionMap.TryGetValue(rotation, out Vector3 mappedDirection))
         {
-            direction = Vector3.down;
-        }
-        else if (rotation.Equals(DoorDirectionBasedOnRotation.ToUp))
-        {
-            direction = Vector3.up;
-        }
-        else if (rotation.Equals(DoorDirectionBasedOnRotation.ToLeft))
-        {
-            direction = Vector3.left;
-        }
-        else if (rotation.Equals(DoorDirectionBasedOnRotation.ToRight))
-        {
-            direction = Vector3.right;
+            direction = mappedDirection;
         }
         else
         {

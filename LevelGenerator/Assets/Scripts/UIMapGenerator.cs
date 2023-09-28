@@ -16,8 +16,6 @@ public class UIMapGenerator : MonoBehaviour
     Image playerInRoomImage;
     [SerializeField] GameObject blankSpacePrefab;
 
-    PlayerLocation playerLocation;
-
     Dictionary<Position, Image> uiMap;
 
     private void Awake()
@@ -29,7 +27,6 @@ public class UIMapGenerator : MonoBehaviour
     public void CreateUIMap(HashSet<Position> map, PlayerLocation playerLocation)
     {
         uiMap = new();
-        this.playerLocation = playerLocation;
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
 
         int maxX = map.Max(room => room.X);

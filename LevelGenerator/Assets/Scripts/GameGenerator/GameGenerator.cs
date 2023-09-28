@@ -98,7 +98,7 @@ public class GameGenerator : MonoBehaviour
             doorPositions.Add(GameConstants.NeighboorDirectionToDoorPosition[direction]);
         }
 
-        Sala sala = new(GameConstants.Height, GameConstants.Width, doorPositions.ToArray(),
+        Room sala = new(GameConstants.Height, GameConstants.Width, doorPositions.ToArray(),
             Utils.ResolveKnapsackEnemies(GameConstants.EnemiesCapacity), Utils.ResolveKnapsackObstacles(GameConstants.ObstaclesCapacity));
         GeneticRoomGenerator geneticRoomGenerator = new(sala);
 
@@ -108,7 +108,7 @@ public class GameGenerator : MonoBehaviour
         // TODO: gerar a sala inicial e a sala do boss diferente das outras e gerar antes, a sala inicial e a do boss nao tem nd, a do boss tem o boss claro
     }
 
-    IEnumerator GenerateRoomsInBackground(Sala sala, GeneticRoomGenerator geneticRoomGenerator, GameObject room)
+    IEnumerator GenerateRoomsInBackground(Room sala, GeneticRoomGenerator geneticRoomGenerator, GameObject room)
     {
         float startTime = Time.realtimeSinceStartup;
         // Inicia a Coroutine para executar o algoritmo em segundo plano
@@ -123,7 +123,7 @@ public class GameGenerator : MonoBehaviour
         roomObjectSpawner.SpawnRoomObjects(sala, room);
     }
 
-    IEnumerator GeneticLoopingCoroutine(Sala sala, GeneticRoomGenerator geneticRoomGenerator)
+    IEnumerator GeneticLoopingCoroutine(Room sala, GeneticRoomGenerator geneticRoomGenerator)
     {
         sala.Values = geneticRoomGenerator.GeneticLooping();
         yield return null;

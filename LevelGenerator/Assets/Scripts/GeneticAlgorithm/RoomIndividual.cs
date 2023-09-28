@@ -21,10 +21,10 @@ public class RoomIndividual
     public HashSet<Position> EnemiesPositions { get => enemiesPositions; set => enemiesPositions = value; }
     public HashSet<Position> ObstaclesPositions { get => obstaclesPositions; set => obstaclesPositions = value; }
 
-    public RoomIndividual(Sala sala, bool generateRandomly = true)
+    public RoomIndividual(bool generateRandomly = true)
     {
         Value = default;
-        RoomValues = (RoomContents[,])sala.Values.Clone();
+        RoomValues = (RoomContents[,])GeneticAlgorithmConstants.Room.Values.Clone();
         EnemiesPositions = new();
         ObstaclesPositions = new();
 
@@ -61,18 +61,18 @@ public class RoomIndividual
 
     void GenerateRoomRandomly()
     {
-        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.Sala.changeablesPositions);
-        int qntObjects = GeneticAlgorithmConstants.Sala.Enemies.Length + GeneticAlgorithmConstants.Sala.Obstacles.Length;
+        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.Room.changeablesPositions);
+        int qntObjects = GeneticAlgorithmConstants.Room.Enemies.Length + GeneticAlgorithmConstants.Room.Obstacles.Length;
         Position[] chosenPositions = avaliablePositions.SelectRandomDistinctElements(qntObjects);
 
         int count = 0;
-        foreach (RoomContents enemy in GeneticAlgorithmConstants.Sala.Enemies)
+        foreach (RoomContents enemy in GeneticAlgorithmConstants.Room.Enemies)
         {
             PutEnemyInPosition(enemy, chosenPositions[count]);
             count++;
         }
 
-        foreach (RoomContents obstacle in GeneticAlgorithmConstants.Sala.Obstacles)
+        foreach (RoomContents obstacle in GeneticAlgorithmConstants.Room.Obstacles)
         {
             PutObstacleInPosition(obstacle, chosenPositions[count]);
             count++;
@@ -81,19 +81,19 @@ public class RoomIndividual
 
     void ChangePlaceOf(HashSet<Position> positionsOf, Position position1)
     {
-        int idx2 = Random.Range(0, GeneticAlgorithmConstants.Sala.changeablesPositions.Count);
-        Position position2 = GeneticAlgorithmConstants.Sala.changeablesPositions[idx2];
+        int idx2 = Random.Range(0, GeneticAlgorithmConstants.Room.changeablesPositions.Count);
+        Position position2 = GeneticAlgorithmConstants.Room.changeablesPositions[idx2];
 
         RoomContents content1 = RoomValues[position1.X, position1.Y];
         RoomContents content2 = RoomValues[position2.X, position2.Y];
 
         // Colocar na posicao 1 o conteudo da posicao 2
-        if (GeneticAlgorithmConstants.Sala.Enemies.Contains(RoomValues[position2.X, position2.Y]))
+        if (GeneticAlgorithmConstants.Room.Enemies.Contains(RoomValues[position2.X, position2.Y]))
         {
             RemoveFromPosition(EnemiesPositions, position2);
             PutEnemyInPosition(content2, position1);
         }
-        else if (GeneticAlgorithmConstants.Sala.Obstacles.Contains(RoomValues[position2.X, position2.Y]))
+        else if (GeneticAlgorithmConstants.Room.Obstacles.Contains(RoomValues[position2.X, position2.Y]))
         {
             RemoveFromPosition(ObstaclesPositions, position2);
             PutObstacleInPosition(content2, position1);
@@ -138,25 +138,25 @@ public class RoomIndividual
 
     bool IsMonstrous()
     {
-        if (!PathFinder.IsAPathBetweenDoors(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions))
+        if (!PathFinder.IsAPathBetweenDoors(RoomValues, GeneticAlgorithmConstants.Room.doorsPositions))
         {
             return true;
         }
 
-        if (!PathFinder.IsAPathBetweenDoorAndEnemies(RoomValues, GeneticAlgorithmConstants.Sala.doorsPositions, EnemiesPositions))
+        if (!PathFinder.IsAPathBetweenDoorAndEnemies(RoomValues, GeneticAlgorithmConstants.Room.doorsPositions, EnemiesPositions))
         {
             //Debug.Log("Mostro por causa do caminho ate inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfEnemies = EnemiesPositions.Count == GeneticAlgorithmConstants.Sala.Enemies.Length;
+        bool hasTheRightAmountOfEnemies = EnemiesPositions.Count == GeneticAlgorithmConstants.Room.Enemies.Length;
         if (!hasTheRightAmountOfEnemies)
         {
             //Debug.Log("Mostro por causa da quantidade de inimigos");
             return true;
         }
 
-        bool hasTheRightAmountOfObstacles = ObstaclesPositions.Count == GeneticAlgorithmConstants.Sala.Obstacles.Length;
+        bool hasTheRightAmountOfObstacles = ObstaclesPositions.Count == GeneticAlgorithmConstants.Room.Obstacles.Length;
         if (!hasTheRightAmountOfObstacles)
         {
             //Debug.Log("Mostro por causa da quantidade de obstaculos");

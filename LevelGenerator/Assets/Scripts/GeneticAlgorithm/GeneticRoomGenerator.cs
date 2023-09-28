@@ -16,9 +16,7 @@ public static class GeneticAlgorithmConstants
     public static int PopulationSize = 6;
     public static int TournamentSize = 5;
     public static int NumParentsTournament = 2;
-    static Sala sala;
-
-    public static Sala Sala { get => sala; set => sala = value; }
+    public static Room Room;
 
     public static void LimitVariables()
     {
@@ -34,11 +32,11 @@ public class GeneticRoomGenerator
     List<Range> boundsOfFitnessVars; // pra normalizar as variaveis da fitness do individuo
     Dictionary<int, List<int>> allFitness;
 
-    public GeneticRoomGenerator(Sala sala)
+    public GeneticRoomGenerator(Room room)
     {
         boundsOfFitnessVars = new();
         allFitness = new();
-        GeneticAlgorithmConstants.Sala = sala;
+        GeneticAlgorithmConstants.Room = room;
         GeneticAlgorithmConstants.LimitVariables();
         population = new RoomIndividual[GeneticAlgorithmConstants.PopulationSize];
     }
@@ -47,7 +45,7 @@ public class GeneticRoomGenerator
     {
         for (int i = 0; i < GeneticAlgorithmConstants.PopulationSize; i++)
         {
-            population[i] = new(GeneticAlgorithmConstants.Sala);
+            population[i] = new();
         }
     }
 
@@ -64,7 +62,8 @@ public class GeneticRoomGenerator
             double media = groups.Average();
 
             //
-            double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Sala.doorsPositions, population[i].EnemiesPositions);
+            double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(GeneticAlgorithmConstants.Room.doorsPositions, population[i].EnemiesPositions);
+            //double averageDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(GeneticAlgorithmConstants.Room.doorsPositions, population[i].EnemiesPositions);
             float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
             float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
             float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.Difficult);
@@ -195,7 +194,7 @@ public class GeneticRoomGenerator
 
     RoomIndividual Crossover(RoomIndividual pai, RoomIndividual mae)
     {
-        RoomIndividual child = new(GeneticAlgorithmConstants.Sala, false);
+        RoomIndividual child = new(false);
 
         Dictionary<RoomContents, List<Position>> enemiesPositionsInFather = RoomOperations.GroupPositionsByRoomValue(pai.RoomValues, pai.EnemiesPositions);
         Dictionary<RoomContents, List<Position>> enemiesPositionsInMother = RoomOperations.GroupPositionsByRoomValue(mae.RoomValues, mae.EnemiesPositions);
@@ -206,7 +205,7 @@ public class GeneticRoomGenerator
         if (enemiesPositionsInMother.Keys.Count != enemiesPositionsInFather.Keys.Count) throw new Exception("Inimigos diferentes no pai e na mae");
         if (obstaclesPositionsInMother.Keys.Count != obstaclesPositionsInFather.Keys.Count) throw new Exception("Obstaculos diferentes no pai e na mae");
 
-        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.Sala.changeablesPositions);
+        List<Position> avaliablePositions = new(GeneticAlgorithmConstants.Room.changeablesPositions);
         PlaceEnemiesInChild(child, enemiesPositionsInFather, enemiesPositionsInMother, avaliablePositions);
         PlaceObstaclesInChild(child, obstaclesPositionsInFather, obstaclesPositionsInMother, avaliablePositions);
 

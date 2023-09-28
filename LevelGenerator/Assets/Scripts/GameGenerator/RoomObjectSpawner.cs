@@ -75,7 +75,7 @@ public class RoomObjectSpawner : MonoBehaviour
         };
     }
 
-    public void SpawnRoomObjects(Sala sala, GameObject room)
+    public void SpawnRoomObjects(Room sala, GameObject room)
     {
         for (int i = 0; i < sala.Width; i++)
         {
@@ -90,7 +90,7 @@ public class RoomObjectSpawner : MonoBehaviour
         }
     }
 
-    GameObject SelectTheRightObjectsToSpawnInPosition(Sala sala, Position position)
+    GameObject SelectTheRightObjectsToSpawnInPosition(Room sala, Position position)
     {
         GameObject tile = chao;
         if (objects.TryGetValue(sala.Values[position.X, position.Y], out GameObject gameObject))
