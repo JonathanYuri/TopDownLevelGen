@@ -10,16 +10,13 @@ public class GenerateGame : MonoBehaviour
     [SerializeField] GameObject porta;
     [SerializeField] GameObject inimigo;
     [SerializeField] GameObject obstaculo;
-    [SerializeField] GameObject chao;
 
     [SerializeField] GameObject rooms;
     [SerializeField] GameObject room;
 
-    bool isGenerating = false;
-
     [SerializeField] GameObject[] portas;
     [SerializeField] GameObject[] paredes;
-    [SerializeField] GameObject chaoFinal;
+    [SerializeField] GameObject chao;
 
     Dictionary<RoomContents, GameObject> objects;
 
@@ -36,8 +33,6 @@ public class GenerateGame : MonoBehaviour
         {
             { RoomContents.Ground, chao },
             { RoomContents.Nothing, chao },
-            { RoomContents.Wall, parede },
-            { RoomContents.Door, porta },
 
             { RoomContents.Obstacle1, obstaculo },
             { RoomContents.Obstacle2, obstaculo },
@@ -109,24 +104,18 @@ public class GenerateGame : MonoBehaviour
         return chosenObstacles;
     }
 
-    public void Generate()
+    public HashSet<Position> Generate()
     {
-        if (isGenerating)
-        {
-            return;
-        }
-
         foreach (Transform child in rooms.transform)
         {
             Destroy(child.gameObject);
         }
 
-        float time = Time.time;
         GerarMapa();
 
         foreach (Position position in mapa)
         {
-            Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
+            //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
             // TODO: aq ja da pra gerar o esqueleto da sala, as portas e as paredes, so se quiser mais eficiencia
             Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
             GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
@@ -142,6 +131,8 @@ public class GenerateGame : MonoBehaviour
             }
             GerarSala(r, neighboorsDirection);
         }
+
+        return mapa;
     }
 
     void GerarMapa()
@@ -175,8 +166,6 @@ public class GenerateGame : MonoBehaviour
                 }
             }
         }
-
-        isGenerating = false;
     }
 
     void GerarSala(GameObject room, List<Direction> neighboorsDirection)
@@ -207,8 +196,6 @@ public class GenerateGame : MonoBehaviour
         //room.transform.localScale = new Vector3(1, 1, 1);
         //room.transform.position = new Vector3(0, 0, 0);
 
-        isGenerating = true;
-
         float startTime = Time.realtimeSinceStartup;
         // Inicia a Coroutine para executar o algoritmo em segundo plano
         yield return StartCoroutine(GeneticLoopingCoroutine(sala, geneticRoomGenerator));
@@ -224,78 +211,91 @@ public class GenerateGame : MonoBehaviour
             for (int j = 0; j < sala.Height; j++)
             {
                 //Debug.LogWarning($"i: {i}, j: {j}: {sala.Values[i, j]}");
-                GameObject tile = objects[sala.Values[i, j]];
-
-                if (sala.Values[i, j] == RoomContents.Door)
+                GameObject tile = chao;
+                if (objects.ContainsKey(sala.Values[i, j]))
                 {
-                    if (i == 0) // porta pra esquerda
-                    {
-                        tile = portas[2];
-                    }
-                    else if (i == sala.Width - 1) // porta pra direita
-                    {
-                        tile = portas[3];
-                    }
-                    else if (j == 0) // porta pra baixo
-                    {
-                        tile = portas[1];
-                    }
-                    else if (j == sala.Height - 1) // porta pra cima
-                    {
-                        tile = portas[0];
-                    }
+                    tile = objects[sala.Values[i, j]];
                 }
-
+                else if (sala.Values[i, j] == RoomContents.Door)
+                {
+                    tile = SelectTheRightDoor(sala, i, j);
+                }
                 else if (sala.Values[i, j] == RoomContents.Wall)
                 {
-                    if (i == 0 && j == 0) // quina baixo-esq
+                    GameObject corner = SelectTheRightCorner(sala, i, j);
+                    tile = corner switch
                     {
-                        tile = paredes[2];
-                    }
-                    else if (i == 0 && j == sala.Height - 1) // quina cima-esq
-                    {
-                        tile = paredes[0];
-                    }
-                    else if (i == sala.Width - 1 && j == 0) // quina baixo-direita
-                    {
-                        tile = paredes[3];
-                    }
-                    else if (i == sala.Width - 1 && j == sala.Height - 1) // quina cima-direita
-                    {
-                        tile = paredes[1];
-                    }
-
-                    // RESTO
-                    else if (i == 0) // esq
-                    {
-                        tile = paredes[6];
-                    }
-                    else if (i == sala.Width - 1) // direita
-                    {
-                        tile = paredes[7];
-                    }
-                    else if (j == 0) // baixo
-                    {
-                        tile = paredes[5];
-                    }
-                    else if (j == sala.Height - 1) // cima
-                    {
-                        tile = paredes[4];
-                    }
-                }
-
-                else if (sala.Values[i, j] == RoomContents.Ground || sala.Values[i, j] == RoomContents.Nothing)
-                {
-                    tile = chaoFinal;
+                        null => SelectTheRightWall(sala, i, j),
+                        _ => corner,
+                    };
                 }
 
                 Instantiate(tile, (Vector2)tile.transform.position + new Vector2(i, j) + (Vector2)room.transform.position, tile.transform.rotation, room.transform);
-                //Debug.Log(sala.matriz[i, j].ToString()[..2] + " ");
             }
         }
+    }
 
-        //room.transform.localScale = new Vector3(0.8141508f, 0.8141508f, 1);
-        //room.transform.position = new Vector3(0, -1.32f, 0);
+    GameObject SelectTheRightDoor(Sala sala, int i, int j)
+    {
+        if (i == 0) // porta pra esquerda
+        {
+            return portas[2];
+        }
+        else if (i == sala.Width - 1) // porta pra direita
+        {
+            return portas[3];
+        }
+        else if (j == 0) // porta pra baixo
+        {
+            return portas[1];
+        }
+        else if (j == sala.Height - 1) // porta pra cima
+        {
+            return portas[0];
+        }
+        return null;
+    }
+
+    GameObject SelectTheRightCorner(Sala sala, int i, int j)
+    {
+        if (i == 0 && j == 0) // quina baixo-esq
+        {
+            return paredes[2];
+        }
+        else if (i == 0 && j == sala.Height - 1) // quina cima-esq
+        {
+            return paredes[0];
+        }
+        else if (i == sala.Width - 1 && j == 0) // quina baixo-direita
+        {
+            return paredes[3];
+        }
+        else if (i == sala.Width - 1 && j == sala.Height - 1) // quina cima-direita
+        {
+            return paredes[1];
+        }
+        return null;
+    }
+
+    GameObject SelectTheRightWall(Sala sala, int i, int j)
+    {
+        if (i == 0) // esq
+        {
+            return paredes[6];
+        }
+        else if (i == sala.Width - 1) // direita
+        {
+            return paredes[7];
+        }
+        else if (j == 0) // baixo
+        {
+            return paredes[5];
+        }
+        else if (j == sala.Height - 1) // cima
+        {
+            return paredes[4];
+        }
+        return null;
     }
 
     IEnumerator GeneticLoopingCoroutine(Sala sala, GeneticRoomGenerator geneticRoomGenerator)

@@ -16,6 +16,8 @@ public class RoomIndividual
     public RoomContents[,] RoomValues { get => roomValues; set => roomValues = value; }
     public int Value { get => value; set => this.value = value; }
     public bool ItWasModified { get => itWasModified; set => itWasModified = value; }
+
+    // TODO: refactor VVV
     public HashSet<Position> EnemiesPositions { get => enemiesPositions; set => enemiesPositions = value; }
     public HashSet<Position> ObstaclesPositions { get => obstaclesPositions; set => obstaclesPositions = value; }
 

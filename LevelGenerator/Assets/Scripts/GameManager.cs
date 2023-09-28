@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    GenerateGame generateGame; // TODO: nao precisa da variavel? so rodar e pegar o mapa eh o suficiente?
     [SerializeField] GameObject playerPrefab;
     PlayerController player;
     PlayerLocation playerLocation;
@@ -14,18 +13,19 @@ public class GameManager : MonoBehaviour
 
     UIMapGenerator uiMapGenerator;
 
+    HashSet<Position> map;
+
     void Start()
     {
         sceneCamera = FindFirstObjectByType<Camera>();
         uiMapGenerator = FindFirstObjectByType<UIMapGenerator>();
-        generateGame = FindFirstObjectByType<GenerateGame>();
-        generateGame.Generate();
+        map = FindFirstObjectByType<GenerateGame>().Generate();
         SpawnPlayer();
 
         playerLocation = new(player, playerPrefab);
         // + Utils.TransformAMapPositionIntoAUnityPosition(generateGame.mapa.ElementAt(1))
-        playerLocation.SetPlayerToRoom(generateGame.mapa.ElementAt(0), new Vector2(0, 0)); // spawnar no meio
-        uiMapGenerator.CreateUIMap(generateGame.mapa, playerLocation);
+        playerLocation.SetPlayerToRoom(map.ElementAt(0), new Vector2(0, 0)); // spawnar no meio
+        uiMapGenerator.CreateUIMap(map, playerLocation);
     }
 
     private void OnDestroy()
