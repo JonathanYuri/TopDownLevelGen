@@ -51,40 +51,6 @@ public class RoomIndividual
         }
     }
 
-    void SwapRandomly(Position position1)
-    {
-        int idx2 = Random.Range(0, GeneticAlgorithmConstants.ROOM.ChangeablesPositions.Count);
-        Position position2 = GeneticAlgorithmConstants.ROOM.ChangeablesPositions.ElementAt(idx2);
-
-        RoomContents content1 = RoomMatrix.Values[position1.X, position1.Y];
-        RoomContents content2 = RoomMatrix.Values[position2.X, position2.Y];
-
-        RoomMatrix.UpdateContentInPosition(position1, content1, content2);
-        RoomMatrix.UpdateContentInPosition(position2, content2, content1);
-    }
-
-    void Mutate(HashSet<Position> positionsToMutate)
-    {
-        Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(Random.Range(0, positionsToMutate.Count));
-        foreach (Position position in positionsToChange)
-        {
-            SwapRandomly(position);
-        }
-    }
-
-    public void Mutate()
-    {
-        // escolher inimigos ou obstaculos para mudar
-        if (Random.value < 0.5f)
-        {
-            Mutate(RoomMatrix.EnemiesPositions);
-        }
-        else
-        {
-            Mutate(RoomMatrix.ObstaclesPositions);
-        }
-    }
-
     bool IsMonstrous()
     {
         if (!PathFinder.IsAPathBetweenDoors(RoomMatrix.Values))
