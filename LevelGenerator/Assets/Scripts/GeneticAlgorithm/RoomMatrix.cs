@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class RoomMatrix
 {
@@ -29,7 +30,7 @@ public class RoomMatrix
         positions.Remove(position);
     }
 
-    public void UpdateContentInPosition(Position position, RoomContents changeTo)
+    public void UpdateContentInPosition(Position position, RoomContents toChange, RoomContents changeTo)
     {
         HashSet<Position> addContentInPositions = new();
         if (Utils.IsAEnemy(changeTo))
@@ -41,15 +42,14 @@ public class RoomMatrix
             addContentInPositions = ObstaclesPositions;
         }
 
-        if (Utils.IsAEnemy(Values[position.X, position.Y]))
+        if (Utils.IsAEnemy(toChange))
         {
             RemoveFromPosition(EnemiesPositions, position);
-            PutContentInPosition(changeTo, addContentInPositions, position);
         }
-        else if (Utils.IsAObstacle(Values[position.X, position.Y]))
+        else if (Utils.IsAObstacle(toChange))
         {
             RemoveFromPosition(ObstaclesPositions, position);
-            PutContentInPosition(changeTo, addContentInPositions, position);
         }
+        PutContentInPosition(changeTo, addContentInPositions, position);
     }
 }
