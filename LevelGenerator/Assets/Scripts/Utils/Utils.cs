@@ -164,6 +164,10 @@ public static class Utils
         return combinedPositions;
     }
 
+    public static bool IsAObstacle(RoomContents content) => GeneticAlgorithmConstants.ROOM.Obstacles.Contains(content);
+
+    public static bool IsAEnemy(RoomContents content) => GeneticAlgorithmConstants.ROOM.Enemies.Contains(content);
+
     public static int ManhattanDistance(Position position1, Position position2)
     {
         return Math.Abs(position1.X - position2.X) + Math.Abs(position1.Y - position2.Y);

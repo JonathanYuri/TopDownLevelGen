@@ -18,20 +18,38 @@ public class RoomMatrix
         obstaclesPositions = new();
     }
 
-    public void PutEnemyInPosition(RoomContents enemy, Position position)
+    public void PutContentInPosition(RoomContents content, HashSet<Position> positions, Position position)
     {
-        Values[position.X, position.Y] = enemy;
-        EnemiesPositions.Add(position);
+        Values[position.X, position.Y] = content;
+        positions.Add(position);
     }
 
-    public void PutObstacleInPosition(RoomContents obstacle, Position position)
-    {
-        Values[position.X, position.Y] = obstacle;
-        ObstaclesPositions.Add(position);
-    }
-
-    public void RemoveFromPosition(HashSet<Position> positions, Position position)
+    void RemoveFromPosition(HashSet<Position> positions, Position position)
     {
         positions.Remove(position);
+    }
+
+    public void UpdateContentInPosition(Position position, RoomContents changeTo)
+    {
+        HashSet<Position> addContentInPositions = new();
+        if (Utils.IsAEnemy(changeTo))
+        {
+            addContentInPositions = EnemiesPositions;
+        }
+        else if (Utils.IsAObstacle(changeTo))
+        {
+            addContentInPositions = ObstaclesPositions;
+        }
+
+        if (Utils.IsAEnemy(Values[position.X, position.Y]))
+        {
+            RemoveFromPosition(EnemiesPositions, position);
+            PutContentInPosition(changeTo, addContentInPositions, position);
+        }
+        else if (Utils.IsAObstacle(Values[position.X, position.Y]))
+        {
+            RemoveFromPosition(ObstaclesPositions, position);
+            PutContentInPosition(changeTo, addContentInPositions, position);
+        }
     }
 }

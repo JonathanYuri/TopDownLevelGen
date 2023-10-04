@@ -40,18 +40,18 @@ public class RoomIndividual
         int count = 0;
         foreach (RoomContents enemy in GeneticAlgorithmConstants.ROOM.Enemies)
         {
-            RoomMatrix.PutEnemyInPosition(enemy, chosenPositions[count]);
+            RoomMatrix.PutContentInPosition(enemy, RoomMatrix.EnemiesPositions, chosenPositions[count]);
             count++;
         }
 
         foreach (RoomContents obstacle in GeneticAlgorithmConstants.ROOM.Obstacles)
         {
-            RoomMatrix.PutObstacleInPosition(obstacle, chosenPositions[count]);
+            RoomMatrix.PutContentInPosition(obstacle, RoomMatrix.ObstaclesPositions, chosenPositions[count]);
             count++;
         }
     }
 
-    void ChangePlaceOf(HashSet<Position> targetPositions, Position position1)
+    void ChangePlaceOf(Position position1)
     {
         int idx2 = Random.Range(0, GeneticAlgorithmConstants.ROOM.ChangeablesPositions.Count);
         Position position2 = GeneticAlgorithmConstants.ROOM.ChangeablesPositions.ElementAt(idx2);
@@ -59,32 +59,8 @@ public class RoomIndividual
         RoomContents content1 = RoomMatrix.Values[position1.X, position1.Y];
         RoomContents content2 = RoomMatrix.Values[position2.X, position2.Y];
 
-        // Colocar na posicao 1 o conteudo da posicao 2
-        if (GeneticAlgorithmConstants.ROOM.Enemies.Contains(RoomMatrix.Values[position2.X, position2.Y]))
-        {
-            RoomMatrix.RemoveFromPosition(RoomMatrix.EnemiesPositions, position2);
-            RoomMatrix.PutEnemyInPosition(content2, position1);
-        }
-        else if (GeneticAlgorithmConstants.ROOM.Obstacles.Contains(RoomMatrix.Values[position2.X, position2.Y]))
-        {
-            RoomMatrix.RemoveFromPosition(RoomMatrix.ObstaclesPositions, position2);
-            RoomMatrix.PutObstacleInPosition(content2, position1);
-        }
-        else
-        {
-            RoomMatrix.Values[position1.X, position1.Y] = content2;
-        }
-
-        // Colocar na posicao 2 o conteudo da posicao 1
-        RoomMatrix.RemoveFromPosition(targetPositions, position1);
-        if (targetPositions.Equals(RoomMatrix.EnemiesPositions))
-        {
-            RoomMatrix.PutEnemyInPosition(content1, position2);
-        }
-        else if (targetPositions.Equals(RoomMatrix.ObstaclesPositions))
-        {
-            RoomMatrix.PutObstacleInPosition(content1, position2);
-        }
+        RoomMatrix.UpdateContentInPosition(position2, content1);
+        RoomMatrix.UpdateContentInPosition(position1, content2);
     }
 
     void Mutate(HashSet<Position> positionsToMutate)
@@ -92,7 +68,7 @@ public class RoomIndividual
         Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(Random.Range(0, positionsToMutate.Count));
         foreach (Position position in positionsToChange)
         {
-            ChangePlaceOf(positionsToMutate, position);
+            ChangePlaceOf(position);
         }
     }
 

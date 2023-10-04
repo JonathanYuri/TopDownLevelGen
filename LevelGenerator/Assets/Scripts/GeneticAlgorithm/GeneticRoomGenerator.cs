@@ -129,64 +129,33 @@ public class GeneticRoomGenerator
         }
     }
 
-    // TODO: refatorar essas duas funcoes VV
-    void PlaceEnemiesInChild(
+    void PlaceContentsInChild(
         RoomIndividual child,
-        Dictionary<RoomContents, List<Position>> enemiesPositionsInFather,
-        Dictionary<RoomContents, List<Position>> enemiesPositionsInMother,
+        Dictionary<RoomContents, List<Position>> contentsPositionsInFather,
+        Dictionary<RoomContents, List<Position>> contentsPositionsInMother,
+        HashSet<Position> contentsPositionsToBePlaced,
         List<Position> avaliablePositions)
     {
-        foreach (RoomContents key in enemiesPositionsInFather.Keys)
+        foreach (RoomContents key in contentsPositionsInFather.Keys)
         {
-            HashSet<Position> combinedPositions = Utils.CombinePositions(enemiesPositionsInFather[key], enemiesPositionsInMother[key]);
+            HashSet<Position> combinedPositions = Utils.CombinePositions(contentsPositionsInFather[key], contentsPositionsInMother[key]);
             combinedPositions = combinedPositions.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
-            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(enemiesPositionsInFather[key].Count);
+            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(contentsPositionsInFather[key].Count);
 
             foreach (Position pos in chosenPositions)
             {
-                child.RoomMatrix.PutEnemyInPosition(key, pos);
+                child.RoomMatrix.PutContentInPosition(key, contentsPositionsToBePlaced, pos);
                 avaliablePositions.Remove(pos);
             }
 
             // nao colocou todos, colocar o resto aleatoriamente no que eu tenho
-            int missing = enemiesPositionsInFather[key].Count - chosenPositions.Length;
+            int missing = contentsPositionsInFather[key].Count - chosenPositions.Length;
             if (missing == 0) continue;
 
             Position[] positions = avaliablePositions.SelectRandomDistinctElements(missing);
             foreach (Position pos in positions)
             {
-                child.RoomMatrix.PutEnemyInPosition(key, pos);
-                avaliablePositions.Remove(pos);
-            }
-        }
-    }
-
-    void PlaceObstaclesInChild(
-        RoomIndividual child,
-        Dictionary<RoomContents, List<Position>> obstaclesPositionsInFather,
-        Dictionary<RoomContents, List<Position>> obstaclesPositionsInMother,
-        List<Position> avaliablePositions)
-    {
-        foreach (RoomContents key in obstaclesPositionsInFather.Keys)
-        {
-            HashSet<Position> combinedPositions = Utils.CombinePositions(obstaclesPositionsInFather[key], obstaclesPositionsInMother[key]);
-            combinedPositions = combinedPositions.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
-            Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(obstaclesPositionsInFather[key].Count);
-
-            foreach (Position pos in chosenPositions)
-            {
-                child.RoomMatrix.PutObstacleInPosition(key, pos);
-                avaliablePositions.Remove(pos);
-            }
-
-            // nao colocou todos, colocar o resto aleatoriamente no que eu tenho
-            int missing = obstaclesPositionsInFather[key].Count - chosenPositions.Length;
-            if (missing == 0) continue;
-
-            Position[] positions = avaliablePositions.SelectRandomDistinctElements(missing);
-            foreach (Position pos in positions)
-            {
-                child.RoomMatrix.PutObstacleInPosition(key, pos);
+                child.RoomMatrix.PutContentInPosition(key, contentsPositionsToBePlaced, pos);
                 avaliablePositions.Remove(pos);
             }
         }
@@ -206,8 +175,9 @@ public class GeneticRoomGenerator
         if (obstaclesPositionsInMother.Keys.Count != obstaclesPositionsInFather.Keys.Count) throw new Exception("Obstaculos diferentes no father e na mother");
 
         List<Position> avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
-        PlaceEnemiesInChild(child, enemiesPositionsInFather, enemiesPositionsInMother, avaliablePositions);
-        PlaceObstaclesInChild(child, obstaclesPositionsInFather, obstaclesPositionsInMother, avaliablePositions);
+
+        PlaceContentsInChild(child, enemiesPositionsInFather, enemiesPositionsInMother, child.RoomMatrix.EnemiesPositions, avaliablePositions);
+        PlaceContentsInChild(child, obstaclesPositionsInFather, obstaclesPositionsInMother, child.RoomMatrix.ObstaclesPositions, avaliablePositions);
 
         if (child.RoomMatrix.EnemiesPositions.Count != father.RoomMatrix.EnemiesPositions.Count
                                         ||
@@ -229,7 +199,6 @@ public class GeneticRoomGenerator
         {
             List<RoomIndividual> tournament = new();
 
-            // Seleciona aleatoriamente "tournamentSize" indivíduos para o torneio
             tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
 
             // Ordena os indivíduos do torneio por fitness (do melhor para o pior)
