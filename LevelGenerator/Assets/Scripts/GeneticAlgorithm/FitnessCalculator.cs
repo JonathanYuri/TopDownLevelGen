@@ -67,12 +67,24 @@ public class FitnessCalculator
         return vars;
     }
 
+    bool ShouldRecalculateFitness(RoomIndividual individual)
+    {
+        if (individual.ItWasModified)
+        {
+            return true;
+        }
+        if (areBoundsModified)
+        {
+            return true;
+        }
+        return false;
+    }
+
     void CalculeAllFitnessVarsOfPopulation(RoomIndividual[] population)
     {
         for (int i = 0; i < population.Length; i++)
         {
-            // so recalcular os fitness se nao foi modificado e se os limites nao foram modificados
-            if (!population[i].ItWasModified && !areBoundsModified)
+            if (!ShouldRecalculateFitness(population[i]))
             {
                 continue;
             }
@@ -90,11 +102,13 @@ public class FitnessCalculator
         // avaliar o individual se ele foi modificado
         for (int i = 0; i < population.Length; i++)
         {
-            if (population[i].ItWasModified)
+            if (!ShouldRecalculateFitness(population[i]))
             {
-                Evaluate(population[i], allFitness[i]);
-                population[i].ItWasModified = false;
+                continue;
             }
+
+            Evaluate(population[i], allFitness[i]);
+            population[i].ItWasModified = false;
         }
     }
 
@@ -117,12 +131,6 @@ public class FitnessCalculator
             double normalizedValue = Utils.Normalization(allFitnessVars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
             value += (int)normalizedValue;
 
-            /*
-            if (i == 2)
-            {
-                Debug.Log("DISTANCIA: " + vars[i] + " valor: " + normalizedValue);
-            }
-            */
             //Debug.Log("Var: " + i);
             //Debug.Log("NormalizedValue: " + normalizedValue + " var: " + vars[i] + " bounds: " + bounds[i].min + " x " + bounds[i].max);
         }
@@ -133,7 +141,7 @@ public class FitnessCalculator
 
     public void Evaluate(RoomIndividual individual)
     {
-        if (IsMonstrous(individual)) // TODO: FIX codigo duplicado
+        if (IsMonstrous(individual))
         {
             individual.Value = int.MinValue;
             return;
