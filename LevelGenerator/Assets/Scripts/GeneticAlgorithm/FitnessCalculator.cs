@@ -8,6 +8,8 @@ public class FitnessCalculator
     Dictionary<int, List<int>> allFitness;
     List<Range> boundsOfFitnessVars; // pra normalizar as variaveis da fitness do individual
 
+    bool areBoundsModified = true;
+
     public FitnessCalculator()
     {
         boundsOfFitnessVars = new();
@@ -16,6 +18,7 @@ public class FitnessCalculator
 
     void DetermineFitnessVarBounds()
     {
+        bool boundsModified = false;
         for (int i = 0; i < allFitness[0].Count; i++) // pra cada variavel do fitness
         {
             int max = allFitness.Max(fitness => fitness.Value[i]);
@@ -23,47 +26,65 @@ public class FitnessCalculator
 
             if (i < boundsOfFitnessVars.Count) // se tiver elementos naquela posicao
             {
-                boundsOfFitnessVars[i].max = Mathf.Max(max, boundsOfFitnessVars[i].max);
-                boundsOfFitnessVars[i].min = Mathf.Min(min, boundsOfFitnessVars[i].min);
+                if (max > boundsOfFitnessVars[i].max)
+                {
+                    boundsOfFitnessVars[i].max = max;
+                    boundsModified = true;
+                }
+                if (min < boundsOfFitnessVars[i].min)
+                {
+                    boundsOfFitnessVars[i].min = min;
+                    boundsModified = true;
+                }
             }
             else
             {
                 boundsOfFitnessVars.Add(new Range { max = max, min = min });
             }
         }
+
+       areBoundsModified = boundsModified;
     }
 
-    void CalculeAllFitnessVars(RoomIndividual[] population)
+    List<int> CalculeAllFitnessVars(RoomIndividual individual)
+    {
+        List<int> groups = GroupCounter.CountGroups(individual.RoomMatrix.Values, individual.RoomMatrix.EnemiesPositions);
+        double media = groups.Average();
+
+        //
+        double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions);
+        //double averageDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(GeneticAlgorithmConstants.Room.doorsPositions, population[i].EnemiesPositions);
+        float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
+        float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
+        float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.DIFFICULTY);
+
+        //
+        int var1 = -groups.Count; // minimizar a quantidade de grupos
+        int var2 = -(int)media; // minimizar a media de inimigos por grupos
+        int var3 = (int)value; // maximizar o value
+
+        List<int> vars = new() { var1, var2, var3 };
+        return vars;
+    }
+
+    void CalculeAllFitnessVarsOfPopulation(RoomIndividual[] population)
     {
         for (int i = 0; i < population.Length; i++)
         {
-            if (!population[i].ItWasModified) // so recalcular os fitness de quem foi modificado
+            // so recalcular os fitness se nao foi modificado e se os limites nao foram modificados
+            if (!population[i].ItWasModified && !areBoundsModified)
             {
                 continue;
             }
-            // 
-            List<int> groups = GroupCounter.CountGroups(population[i].RoomMatrix.Values, population[i].RoomMatrix.EnemiesPositions);
-            double media = groups.Average();
 
-            //
-            double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(population[i].RoomMatrix.EnemiesPositions);
-            //double averageDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(GeneticAlgorithmConstants.Room.doorsPositions, population[i].EnemiesPositions);
-            float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
-            float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
-            float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.DIFFICULTY);
-
-            //
-            int var1 = -groups.Count; // minimizar a quantidade de grupos
-            int var2 = -(int)media; // minimizar a media de inimigos por grupos
-            int var3 = (int)value; // maximizar o value
-
-            allFitness[i] = new List<int> { var1, var2, var3 };
+            List<int> vars = CalculeAllFitnessVars(population[i]);
+            allFitness[i] = vars;
         }
     }
 
     public void EvaluatePopulation(RoomIndividual[] population)
     {
-        CalculeAllFitnessVars(population);
+        CalculeAllFitnessVarsOfPopulation(population);
         DetermineFitnessVarBounds();
 
         // avaliar o individual se ele foi modificado
@@ -71,13 +92,13 @@ public class FitnessCalculator
         {
             if (population[i].ItWasModified)
             {
-                Evaluate(population[i], allFitness[i], boundsOfFitnessVars);
+                Evaluate(population[i], allFitness[i]);
                 population[i].ItWasModified = false;
             }
         }
     }
 
-    public void Evaluate(RoomIndividual individual, List<int> vars, List<Range> bounds)
+    public void Evaluate(RoomIndividual individual, List<int> allFitnessVars)
     {
         if (IsMonstrous(individual))
         {
@@ -91,9 +112,9 @@ public class FitnessCalculator
         //int qntInimigosProximosDeObstaculos = Utils.CountEnemiesNextToObstacles(roomMatrix);
 
         int value = 0;
-        for (int i = 0; i < vars.Count; i++)
+        for (int i = 0; i < allFitnessVars.Count; i++)
         {
-            double normalizedValue = Utils.Normalization(vars[i], bounds[i].min, bounds[i].max);
+            double normalizedValue = Utils.Normalization(allFitnessVars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
             value += (int)normalizedValue;
 
             /*
@@ -108,6 +129,25 @@ public class FitnessCalculator
 
         individual.Value = value;
         //Value = - groups.Count - (int)media + (int)value; // + qntInimigosProximosDeObstaculos;
+    }
+
+    public void Evaluate(RoomIndividual individual)
+    {
+        if (IsMonstrous(individual)) // TODO: FIX codigo duplicado
+        {
+            individual.Value = int.MinValue;
+            return;
+        }
+
+        int value = 0;
+        List<int> vars = CalculeAllFitnessVars(individual);
+        for (int i = 0; i < allFitness[0].Count; i++)
+        {
+            double normalizedValue = Utils.Normalization(vars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
+            value += (int)normalizedValue;
+        }
+
+        individual.Value = value;
     }
 
     bool IsMonstrous(RoomIndividual individual)

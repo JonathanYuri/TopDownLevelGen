@@ -73,6 +73,7 @@ public class GeneticRoomGenerator
             population = GeneticOperator.PerformReproduction(population);
             GeneticOperator.MutatePopulation(population);
             fitnessCalculator.EvaluatePopulation(population);
+            fitnessCalculator.Evaluate(best);
 
             iterations++;
         }
