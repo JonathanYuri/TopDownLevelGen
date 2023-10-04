@@ -87,9 +87,5 @@ public static class MatrixExtensions
                col >= 0 && col < matrix.GetLength(1);
     }
 
-    public static bool IsPositionWithinBounds<T>(this T[,] matrix, Position position)
-    {
-        return position.X >= 0 && position.X < matrix.GetLength(0) &&
-               position.Y >= 0 && position.Y < matrix.GetLength(1);
-    }
+    public static bool IsPositionWithinBounds<T>(this T[,] matrix, Position position) => IsPositionWithinBounds(matrix, position.X, position.Y);
 }

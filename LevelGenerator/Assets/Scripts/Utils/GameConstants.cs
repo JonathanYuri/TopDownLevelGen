@@ -25,4 +25,18 @@ public static class GameConstants
         Enumerable.Range(0, ROOM_WIDTH)
         .SelectMany(x => Enumerable.Range(0, ROOM_HEIGHT), (x, y) => new Position { X = x, Y = y })
     );
+
+    public static readonly Dictionary<RoomContents, int> ENEMIES_DIFFICULTY = new()
+    {
+        { RoomContents.Enemy1, 1 },
+        { RoomContents.Enemy2, 2 },
+        { RoomContents.Enemy3, 3 }
+    };
+
+    public static readonly Dictionary<RoomContents, int> OBSTACLES_DIFFICULTY = new()
+    {
+        { RoomContents.Obstacle1, 1 },
+        { RoomContents.Obstacle2, 2 },
+        { RoomContents.Obstacle3, 3 }
+    };
 }

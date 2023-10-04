@@ -53,92 +53,6 @@ public class Position
 
 public static class Utils
 {
-    public static RoomContents[] ResolveKnapsackEnemies(int capacityEnemies)
-    {
-        Dictionary<RoomContents, int> enemiesDifficult = new()
-        {
-            { RoomContents.Enemy1, 1 },
-            { RoomContents.Enemy2, 2 },
-            { RoomContents.Enemy3, 3 }
-        };
-
-        List<int> valuesEnemies = new(enemiesDifficult.Values);
-        List<RoomContents> keysEnemies = new(enemiesDifficult.Keys);
-
-        List<int> chosenEnemiesIdx = Utils.ResolveKnapsack(valuesEnemies, capacityEnemies);
-
-        RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
-        for (int i = 0; i < chosenEnemiesIdx.Count; i++)
-        {
-            int idx = chosenEnemiesIdx[i];
-            chosenEnemies[i] = keysEnemies[idx];
-        }
-
-        //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
-        return chosenEnemies;
-    }
-
-    public static RoomContents[] ResolveKnapsackObstacles(int capacityObstacles)
-    {
-        Dictionary<RoomContents, int> obstaclesDifficult = new()
-        {
-            { RoomContents.Obstacle1, 1 },
-            { RoomContents.Obstacle2, 2 },
-            { RoomContents.Obstacle3, 3 }
-        };
-
-        List<int> valuesObstacles = new(obstaclesDifficult.Values);
-        List<RoomContents> keysObstacles = new(obstaclesDifficult.Keys);
-
-        List<int> chosenObstaclesIdx = Utils.ResolveKnapsack(valuesObstacles, capacityObstacles);
-
-        RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
-        for (int i = 0; i < chosenObstaclesIdx.Count; i++)
-        {
-            int idx = chosenObstaclesIdx[i];
-            chosenObstacles[i] = keysObstacles[idx];
-        }
-
-        //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
-        return chosenObstacles;
-    }
-
-    public static List<int> ResolveKnapsack(List<int> values, int capacity)
-    {
-        int n = values.Count;
-        int[] dp = new int[capacity + 1];
-        List<int>[] chosenItems = new List<int>[capacity + 1];
-        for (int i = 0; i <= capacity; i++)
-        {
-            chosenItems[i] = new List<int>();
-        }
-
-        for (int w = 1; w <= capacity; w++)
-        {
-            int maxValue = dp[w];
-            List<int> chosenItem = new();
-
-            for (int i = 0; i < n; i++)
-            {
-                if (values[i] <= w)
-                {
-                    int newValue = dp[w - values[i]] + values[i];
-                    // se o valor for melhor ou se o valor for igual e tiver menos itens, eu coloco
-                    if (newValue > maxValue || (newValue == maxValue && chosenItems[w - values[i]].Count + 1 < chosenItem.Count))
-                    {
-                        maxValue = newValue;
-                        chosenItem = new List<int>(chosenItems[w - values[i]]) { i };
-                    }
-                }
-            }
-
-            dp[w] = maxValue;
-            chosenItems[w] = chosenItem;
-        }
-
-        return chosenItems[capacity];
-    }
-
     // pra spawnar as rooms
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
     {
@@ -153,7 +67,7 @@ public static class Utils
         }
         else
         {
-            return (value - min) / (max - min) * 100.0f;
+            return ((value - min) / (max - min)) * 100.0f;
         }
     }
 

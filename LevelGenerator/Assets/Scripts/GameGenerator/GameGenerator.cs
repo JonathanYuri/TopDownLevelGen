@@ -113,7 +113,7 @@ public class GameGenerator : MonoBehaviour
 
         Position[] doorPositions = GetDoorPositions(neighborsDirection);
 
-        Room room = new(doorPositions, Utils.ResolveKnapsackEnemies(GameConstants.ENEMIES_CAPACITY), Utils.ResolveKnapsackObstacles(GameConstants.OBSTACLES_CAPACITY));
+        Room room = new(doorPositions, Knapsack.ResolveKnapsackEnemies(), Knapsack.ResolveKnapsackObstacles());
         GeneticRoomGenerator geneticRoomGenerator = new(room);
 
         StartCoroutine(GenerateRoomsInBackground(room, geneticRoomGenerator, roomObject));
