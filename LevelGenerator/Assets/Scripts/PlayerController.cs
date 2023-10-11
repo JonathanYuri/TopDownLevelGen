@@ -18,18 +18,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Capturando os inputs do teclado
         float movimentoHorizontal = Input.GetAxis("Horizontal");
         float movimentoVertical = Input.GetAxis("Vertical");
 
-        // Calculando o vetor de movimento
-        Vector2 movimento = new(movimentoHorizontal, movimentoVertical);
-
-        // Normalizando o vetor de movimento para evitar movimento diagonal mais rápido
-        movimento.Normalize();
-
-        // Aplicando a força para mover o jogador
-        rb.velocity = movimento * movementSpeed;
+        Vector3 movimento = new Vector3(movimentoHorizontal, movimentoVertical) * movementSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(this.transform.position + movimento);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
