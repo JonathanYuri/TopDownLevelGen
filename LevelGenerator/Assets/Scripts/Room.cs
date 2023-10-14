@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public enum RoomContents
 {
@@ -36,24 +37,20 @@ public class Room
 {
     RoomContents[,] values;
 
-    readonly Position[] doorsPositions;
-    HashSet<Position> changeablesPositions;
-
+    public RoomContents[,] Values { get => values; set => values = value; }
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
+    public HashSet<Position> ChangeablesPositions { get; }
+    public Position[] DoorsPositions { get; }
+    public float Difficulty { get; }
 
-    public RoomContents[,] Values { get => values; set => values = value; }
-    public HashSet<Position> ChangeablesPositions { get => changeablesPositions; set => changeablesPositions = value; }
-
-    public Position[] DoorsPositions => doorsPositions;
-
-    public Room(Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
+    public Room(Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles, float difficulty)
     {
-        this.doorsPositions = doorsPositions;
-        ChangeablesPositions = GameConstants.ALL_POSITIONS_IN_ROOM;
-
         Enemies = enemies;
         Obstacles = obstacles;
+        DoorsPositions = doorsPositions;
+        ChangeablesPositions = GameConstants.ALL_POSITIONS_IN_ROOM;
+        Difficulty = Mathf.Clamp(difficulty, 0f, 1f);
 
         Values = new RoomContents[GameConstants.ROOM_WIDTH, GameConstants.ROOM_HEIGHT];
 

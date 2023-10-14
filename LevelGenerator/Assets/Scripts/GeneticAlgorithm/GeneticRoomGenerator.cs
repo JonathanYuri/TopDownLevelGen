@@ -11,7 +11,6 @@ public static class GeneticAlgorithmConstants
     public static int ITERATIONS_WITHOUT_IMPROVEMENT = 20;
     public static float CROSSOVER_PROBABILITY = 0.8f; // 0 a 1
     public static float MUTATION_PROBABILITY = 0.8f; // 0 a 1
-    public static float DIFFICULTY = 0f; // 0 a 1
     public static int POPULATION_SIZE = 6;
     public static int TOURNAMENT_SIZE = 5;
     public static int NUM_PARENTS_TOURNAMENT = 2;
@@ -21,7 +20,6 @@ public static class GeneticAlgorithmConstants
     {
         CROSSOVER_PROBABILITY = Mathf.Clamp(CROSSOVER_PROBABILITY, 0f, 1f);
         MUTATION_PROBABILITY = Mathf.Clamp(MUTATION_PROBABILITY, 0f, 1f);
-        DIFFICULTY = Mathf.Clamp(DIFFICULTY, 0f, 1f);
     }
 }
 

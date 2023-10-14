@@ -14,6 +14,7 @@ public class GameGenerator : MonoBehaviour
     HashSet<Position> map;
     Position initialRoomPosition;
     Position finalRoomPosition;
+    int distanceFromInitialToFinalRoom;
 
     RoomObjectSpawner roomObjectSpawner;
 
@@ -34,6 +35,7 @@ public class GameGenerator : MonoBehaviour
         GenerateMap();
         GenerateInitialRoom();
         GenerateFinalRoom();
+        distanceFromInitialToFinalRoom = Utils.CalculateDistance(initialRoomPosition, finalRoomPosition);
         GenerateRemainingRooms();
         return Map;
     }
@@ -92,7 +94,7 @@ public class GameGenerator : MonoBehaviour
         List<int> distancesToInitialPosition = new();
         foreach (Position position in withoutInitialPosition)
         {
-            distancesToInitialPosition.Add(Utils.ManhattanDistance(position, initialRoomPosition));
+            distancesToInitialPosition.Add(Utils.CalculateDistance(position, initialRoomPosition));
         }
 
         int maxIndex = distancesToInitialPosition.IndexOfMax(distance => distance);
@@ -111,11 +113,14 @@ public class GameGenerator : MonoBehaviour
 
     void GenerateObjectRoom(Position position, bool generateObjectsInRoom = true)
     {
-        Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
-        GameObject roomObject = Instantiate(room, p, Quaternion.identity, rooms.transform);
+        int distanceToInitialRoom = Utils.CalculateDistance(initialRoomPosition, position);
+        float difficulty = (float)distanceToInitialRoom / (float)distanceFromInitialToFinalRoom;
+        
+        Vector2 roomObjectPosition = Utils.TransformAMapPositionIntoAUnityPosition(position);
+        GameObject roomObject = Instantiate(room, roomObjectPosition, Quaternion.identity, rooms.transform);
 
         List<Direction> neighborsDirection = GetDirectionsToNeighboringRooms(position);
-        StartCoroutine(GenerateRoom(roomObject, neighborsDirection, generateObjectsInRoom));
+        StartCoroutine(GenerateRoom(roomObject, neighborsDirection, difficulty, generateObjectsInRoom));
     }
 
     List<Direction> GetDirectionsToNeighboringRooms(Position position)
@@ -142,12 +147,12 @@ public class GameGenerator : MonoBehaviour
         return doorPositions.ToArray();
     }
 
-    IEnumerator GenerateRoom(GameObject roomObject, List<Direction> neighborsDirection, bool generateObjectsInRoom = true)
+    IEnumerator GenerateRoom(GameObject roomObject, List<Direction> neighborsDirection, float difficulty, bool generateObjectsInRoom = true)
     {
         // TODO: melhorar a eficiencia do algoritmo
         Position[] doorPositions = GetDoorPositions(neighborsDirection);
 
-        Room room = new(doorPositions, Knapsack.ResolveKnapsackEnemies(), Knapsack.ResolveKnapsackObstacles());
+        Room room = new(doorPositions, Knapsack.ResolveKnapsackEnemies(), Knapsack.ResolveKnapsackObstacles(), difficulty);
         GeneticRoomGenerator geneticRoomGenerator = new(room);
 
         if (generateObjectsInRoom)
@@ -156,8 +161,6 @@ public class GameGenerator : MonoBehaviour
         }
 
         roomObjectSpawner.SpawnRoomObjects(room, roomObject);
-
-        // TODO: aumento de dificuldade chegando mais perto do boss
     }
 
     IEnumerator GenerateRoomsInBackground(Room room, GeneticRoomGenerator geneticRoomGenerator)

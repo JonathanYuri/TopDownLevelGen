@@ -82,7 +82,9 @@ public static class Utils
 
     public static bool IsAEnemy(RoomContents content) => GeneticAlgorithmConstants.ROOM.Enemies.Contains(content);
 
-    public static int ManhattanDistance(Position position1, Position position2)
+    public static int CalculateDistance(Position position1, Position position2) => ManhattanDistance(position1, position2);
+
+    static int ManhattanDistance(Position position1, Position position2)
     {
         return Math.Abs(position1.X - position2.X) + Math.Abs(position1.Y - position2.Y);
     }

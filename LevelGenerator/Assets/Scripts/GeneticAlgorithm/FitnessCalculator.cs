@@ -53,10 +53,14 @@ public class FitnessCalculator
 
         //
         double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions);
-        //double averageDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(GeneticAlgorithmConstants.Room.doorsPositions, population[i].EnemiesPositions);
         float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
         float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
-        float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.DIFFICULTY);
+
+        //double minimunDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(individual.RoomMatrix.EnemiesPositions);
+        //float valueWhenDifficultyIsMinimal = (float)minimunDistanceFromDoorsToEnemies; // maximizar a minima distancia entre os inimigos e as portas
+        //float valueWhenDifficultyIsMaximal = (float)-minimunDistanceFromDoorsToEnemies; // minimizar a minima distancia entre os inimigos e as portas
+        
+        float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.ROOM.Difficulty);
 
         //
         int var1 = -groups.Count; // minimizar a quantidade de grupos
@@ -130,6 +134,11 @@ public class FitnessCalculator
         {
             double normalizedValue = Utils.Normalization(allFitnessVars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
             value += (int)normalizedValue;
+
+            //if (i == 2)
+            //{
+            //    Debug.Log($"NORMALIZED VALUE: {normalizedValue}, DISTANCIA: {allFitnessVars[i]}, DIFFICULT: {GeneticAlgorithmConstants.ROOM.Difficulty}");
+            //}
 
             //Debug.Log("Var: " + i);
             //Debug.Log("NormalizedValue: " + normalizedValue + " var: " + vars[i] + " bounds: " + bounds[i].min + " x " + bounds[i].max);

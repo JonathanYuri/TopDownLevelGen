@@ -43,7 +43,7 @@ public static class RoomOperations
             List<int> averagesDistancesFromDoorPosition = new();
             foreach (Position enemyPosition in enemiesPositions)
             {
-                averagesDistancesFromDoorPosition.Add(Utils.ManhattanDistance(doorPosition, enemyPosition));
+                averagesDistancesFromDoorPosition.Add(Utils.CalculateDistance(doorPosition, enemyPosition));
             }
             averagesDistances.Add(averagesDistancesFromDoorPosition.Average());
         }
@@ -55,7 +55,7 @@ public static class RoomOperations
         int minDistance = int.MaxValue;
         foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorsPositions)
         {
-            minDistance = Math.Min(minDistance, enemiesPositions.Min(enemyPosition => Utils.ManhattanDistance(doorPosition, enemyPosition)));
+            minDistance = Math.Min(minDistance, enemiesPositions.Min(enemyPosition => Utils.CalculateDistance(doorPosition, enemyPosition)));
         }
         return minDistance;
     }
