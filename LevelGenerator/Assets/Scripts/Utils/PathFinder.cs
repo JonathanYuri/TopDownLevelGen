@@ -5,8 +5,8 @@ public static class PathFinder
 {
     static bool HasPathBetweenPositions(int[,] matrix, Position startPosition, Position endPosition)
     {
-        bool[,] visited = new bool[matrix.GetLength(0), matrix.GetLength(1)];
-        return DFS(matrix, startPosition, endPosition, visited);
+        //bool[,] visited = new bool[matrix.GetLength(0), matrix.GetLength(1)];
+        return BFS(matrix, startPosition, endPosition);
     }
 
     static bool IsValidMove(Position position, int[,] matrix, bool[,] visited)
@@ -31,6 +31,40 @@ public static class PathFinder
             if (IsValidMove(adjacentPosition, matrix, visited) && DFS(matrix, adjacentPosition, endPosition, visited))
             {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    static bool BFS(int[,] matrix, Position startPosition, Position endPosition)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        bool[,] visited = new bool[rows, cols];
+
+        Queue<Position> queue = new();
+        queue.Enqueue(startPosition);
+
+        while (queue.Count > 0)
+        {
+            Position currentPosition = queue.Dequeue();
+
+            if (currentPosition.Equals(endPosition))
+            {
+                return true;
+            }
+
+            visited[currentPosition.X, currentPosition.Y] = true;
+
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            {
+                Position adjacentPosition = currentPosition.Move(direction);
+                if (IsValidMove(adjacentPosition, matrix, visited))
+                {
+                    queue.Enqueue(adjacentPosition);
+                    visited[adjacentPosition.X, adjacentPosition.Y] = true;
+                }
             }
         }
 

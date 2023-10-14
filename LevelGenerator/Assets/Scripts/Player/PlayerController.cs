@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
         float movimentoHorizontal = Input.GetAxis("Horizontal");
         float movimentoVertical = Input.GetAxis("Vertical");
 
-        Vector3 movimento = new Vector3(movimentoHorizontal, movimentoVertical) * movementSpeed * Time.fixedDeltaTime;
+        Vector3 movimento = movementSpeed * Time.fixedDeltaTime * new Vector3(movimentoHorizontal, movimentoVertical);
         rb.MovePosition(this.transform.position + movimento);
     }
 
