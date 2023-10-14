@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class GameGenerator : MonoBehaviour
 {
@@ -13,6 +12,8 @@ public class GameGenerator : MonoBehaviour
     [SerializeField] GameObject room;
 
     HashSet<Position> map;
+    Position initialRoomPosition;
+    Position finalRoomPosition;
 
     RoomObjectSpawner roomObjectSpawner;
 
@@ -31,7 +32,9 @@ public class GameGenerator : MonoBehaviour
     public HashSet<Position> Generate()
     {
         GenerateMap();
-        GenerateEachRoomInMap();
+        GenerateInitialRoom();
+        GenerateFinalRoom();
+        GenerateRemainingRooms();
         return Map;
     }
 
@@ -68,18 +71,51 @@ public class GameGenerator : MonoBehaviour
         }
     }
 
-    void GenerateEachRoomInMap()
+    void GenerateInitialRoom()
     {
-        foreach (Position position in Map)
+        initialRoomPosition = new() { X = 0, Y = 0 };
+        GenerateObjectRoom(initialRoomPosition, false); // gerar so o esqueleto
+    }
+
+    void GenerateFinalRoom()
+    {
+        finalRoomPosition = ChooseFinalRoomPosition();
+        GenerateObjectRoom(finalRoomPosition, false); // gerar so o esqueleto
+    }
+
+    Position ChooseFinalRoomPosition()
+    {
+        Position[] selectedRoom = { initialRoomPosition };
+        Position[] withoutInitialPosition = Map.Except(selectedRoom).ToArray();
+
+        // fazer todas as distancias
+        List<int> distancesToInitialPosition = new();
+        foreach (Position position in withoutInitialPosition)
+        {
+            distancesToInitialPosition.Add(Utils.ManhattanDistance(position, initialRoomPosition));
+        }
+
+        int maxIndex = distancesToInitialPosition.IndexOfMax(distance => distance);
+        return withoutInitialPosition[maxIndex];
+    }
+
+    void GenerateRemainingRooms()
+    {
+        Position[] selectedRooms = {initialRoomPosition, finalRoomPosition};
+        foreach (Position position in Map.Except(selectedRooms))
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
-            // TODO: aq ja da pra gerar o esqueleto da room, as portas e as paredes, so se quiser mais eficiencia
-            Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
-            GameObject r = Instantiate(room, p, Quaternion.identity, rooms.transform);
-
-            List<Direction> neighborsDirection = GetDirectionsToNeighboringRooms(position);
-            GenerateRoom(r, neighborsDirection);
+            GenerateObjectRoom(position);
         }
+    }
+
+    void GenerateObjectRoom(Position position, bool generateObjectsInRoom = true)
+    {
+        Vector2 p = Utils.TransformAMapPositionIntoAUnityPosition(position);
+        GameObject roomObject = Instantiate(room, p, Quaternion.identity, rooms.transform);
+
+        List<Direction> neighborsDirection = GetDirectionsToNeighboringRooms(position);
+        StartCoroutine(GenerateRoom(roomObject, neighborsDirection, generateObjectsInRoom));
     }
 
     List<Direction> GetDirectionsToNeighboringRooms(Position position)
@@ -106,40 +142,35 @@ public class GameGenerator : MonoBehaviour
         return doorPositions.ToArray();
     }
 
-    void GenerateRoom(GameObject roomObject, List<Direction> neighborsDirection)
+    IEnumerator GenerateRoom(GameObject roomObject, List<Direction> neighborsDirection, bool generateObjectsInRoom = true)
     {
         // TODO: melhorar a eficiencia do algoritmo
-        // TODO: mudar tudo pra privado e oq tiver sendo usado em outra classe usar propriedade pra acessar
-
         Position[] doorPositions = GetDoorPositions(neighborsDirection);
 
         Room room = new(doorPositions, Knapsack.ResolveKnapsackEnemies(), Knapsack.ResolveKnapsackObstacles());
         GeneticRoomGenerator geneticRoomGenerator = new(room);
 
-        StartCoroutine(GenerateRoomsInBackground(room, geneticRoomGenerator, roomObject));
+        if (generateObjectsInRoom)
+        {
+            yield return StartCoroutine(GenerateRoomsInBackground(room, geneticRoomGenerator));
+        }
+
+        roomObjectSpawner.SpawnRoomObjects(room, roomObject);
 
         // TODO: aumento de dificuldade chegando mais perto do boss
-        // TODO: gerar a room inicial e a room do boss diferente das outras e gerar antes, a room inicial e a do boss nao tem nd, a do boss tem o boss claro
     }
 
-    IEnumerator GenerateRoomsInBackground(Room room, GeneticRoomGenerator geneticRoomGenerator, GameObject roomObject)
+    IEnumerator GenerateRoomsInBackground(Room room, GeneticRoomGenerator geneticRoomGenerator)
     {
         float startTime = Time.realtimeSinceStartup;
-        // Inicia a Coroutine para executar o algoritmo em segundo plano
-        yield return StartCoroutine(GeneticLoopingCoroutine(room, geneticRoomGenerator));
+
+        room.Values = geneticRoomGenerator.GeneticLooping();
+        yield return null;
+
         float endTime = Time.realtimeSinceStartup;
         float executionTime = endTime - startTime;
         totalCoroutineExecutionTime += executionTime;
         Debug.LogError("Tempo de execução da corrotina: " + executionTime + " segundos");
         Debug.LogError("Tempo total de execução ate agora: " + totalCoroutineExecutionTime + " segundos");
-
-        // O loop for é executado somente após o retorno da função GeneticLooping()
-        roomObjectSpawner.SpawnRoomObjects(room, roomObject);
-    }
-
-    IEnumerator GeneticLoopingCoroutine(Room room, GeneticRoomGenerator geneticRoomGenerator)
-    {
-        room.Values = geneticRoomGenerator.GeneticLooping();
-        yield return null;
     }
 }

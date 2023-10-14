@@ -77,6 +77,35 @@ public static class IEnumerableExtensions
 
         return maxItem;
     }
+
+    public static int IndexOfMax<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+
+        TKey maxKey = default;
+        int maxIndex = -1;
+
+        bool firstItem = true;
+        int currentIndex = 0;
+        foreach (var item in source)
+        {
+            var itemKey = keySelector(item);
+
+            if (firstItem || Comparer<TKey>.Default.Compare(itemKey, maxKey) > 0)
+            {
+                maxKey = itemKey;
+                maxIndex = currentIndex;
+                firstItem = false;
+            }
+            currentIndex++;
+        }
+
+        if (firstItem)
+            throw new InvalidOperationException("A sequencia esta vazia.");
+
+        return maxIndex;
+    }
 }
 
 public static class MatrixExtensions

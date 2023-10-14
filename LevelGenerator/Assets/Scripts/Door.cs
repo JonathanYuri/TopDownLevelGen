@@ -10,7 +10,7 @@ public class DoorEventArgs : EventArgs
 
 public class Door : MonoBehaviour
 {
-    public Vector3 direction;
+    Vector3 direction;
 
     static readonly Dictionary<Vector3, Vector3> RotationToDirectionMap = new()
     {
@@ -20,12 +20,14 @@ public class Door : MonoBehaviour
         { new Vector3(0, 0, 180), Vector3.left }
     };
 
+    public Vector3 Direction { get => direction; set => direction = value; }
+
     private void Awake()
     {
         Vector3 rotation = transform.eulerAngles;
         if (RotationToDirectionMap.TryGetValue(rotation, out Vector3 mappedDirection))
         {
-            direction = mappedDirection;
+            Direction = mappedDirection;
         }
         else
         {

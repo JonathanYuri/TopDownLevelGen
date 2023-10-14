@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
             Door door = collision.GetComponent<Door>();
             DoorEventArgs doorEventArgs = new()
             {
-                doorDirection = door.direction,
+                doorDirection = door.Direction,
             };
             PassedThroughTheDoorEvent?.Invoke(this, doorEventArgs);
         }

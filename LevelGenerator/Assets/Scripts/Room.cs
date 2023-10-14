@@ -36,7 +36,7 @@ public class Room
 {
     RoomContents[,] values;
 
-    public readonly Position[] doorsPositions;
+    readonly Position[] doorsPositions;
     HashSet<Position> changeablesPositions;
 
     public RoomContents[] Enemies { get; }
@@ -44,6 +44,8 @@ public class Room
 
     public RoomContents[,] Values { get => values; set => values = value; }
     public HashSet<Position> ChangeablesPositions { get => changeablesPositions; set => changeablesPositions = value; }
+
+    public Position[] DoorsPositions => doorsPositions;
 
     public Room(Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles)
     {
@@ -59,7 +61,7 @@ public class Room
         PutTheDoors();
     }
 
-    public void PutTheWalls()
+    void PutTheWalls()
     {
         for (int j = 0; j < GameConstants.ROOM_HEIGHT; j++)
         {
@@ -73,9 +75,9 @@ public class Room
         }
     }
 
-    public void PutTheDoors()
+    void PutTheDoors()
     {
-        foreach (Position position in doorsPositions)
+        foreach (Position position in DoorsPositions)
         {
             PlaceTheImmutableRoomContentInPosition(RoomContents.Door, position);
 
