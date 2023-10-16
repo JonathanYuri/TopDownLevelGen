@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GameGenerator : MonoBehaviour
+public class LevelGenerator : MonoBehaviour
 {
+    LevelDataManager levelDataManager;
     float totalCoroutineExecutionTime = 0f;
 
     [SerializeField] GameObject rooms;
@@ -28,10 +29,13 @@ public class GameGenerator : MonoBehaviour
     private void Start()
     {
         roomObjectSpawner = GetComponent<RoomObjectSpawner>();
+        levelDataManager = FindObjectOfType<LevelDataManager>();
     }
 
     public HashSet<Position> Generate()
     {
+        DestroyAllPastObjects();
+
         GenerateMap();
         GenerateInitialRoom();
         GenerateFinalRoom();
@@ -40,12 +44,20 @@ public class GameGenerator : MonoBehaviour
         return Map;
     }
 
+    void DestroyAllPastObjects()
+    {
+        for (int i = 0; i < rooms.transform.childCount; i++)
+        {
+            Destroy(room.transform.GetChild(i).gameObject);
+        }
+    }
+
     void GenerateMap()
     {
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
 
-        while (Map.Count < GameConstants.NUMBER_OF_ROOMS)
+        while (Map.Count < levelDataManager.sharedLevelData.roomCount)
         {
             if (queue.Count == 0)
             {
@@ -152,7 +164,9 @@ public class GameGenerator : MonoBehaviour
         // TODO: melhorar a eficiencia do algoritmo
         Position[] doorPositions = GetDoorPositions(neighborsDirection);
 
-        Room room = new(doorPositions, Knapsack.ResolveKnapsackEnemies(), Knapsack.ResolveKnapsackObstacles(), difficulty);
+        RoomContents[] enemies = Knapsack.ResolveKnapsackEnemies(levelDataManager.Enemies, levelDataManager.EnemiesValues);
+        RoomContents[] obstacles = Knapsack.ResolveKnapsackObstacles(levelDataManager.Obstacles, levelDataManager.ObstaclesValues);
+        Room room = new(doorPositions, enemies, obstacles, difficulty);
         GeneticRoomGenerator geneticRoomGenerator = new(room);
 
         if (generateObjectsInRoom)

@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
 
     public EventHandler<DoorEventArgs> PassedThroughTheDoorEvent;
+    public event Action OnLevelComplete;
 
     void Start()
     {
@@ -35,6 +36,10 @@ public class PlayerController : MonoBehaviour
                 doorDirection = door.Direction,
             };
             PassedThroughTheDoorEvent?.Invoke(this, doorEventArgs);
+        }
+        else if (collision.CompareTag("LevelPortal"))
+        {
+            OnLevelComplete.Invoke();
         }
     }
 }

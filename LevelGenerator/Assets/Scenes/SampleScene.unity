@@ -570,6 +570,7 @@ GameObject:
   - component: {fileID: 2146271735}
   - component: {fileID: 2146271734}
   - component: {fileID: 2146271736}
+  - component: {fileID: 2146271737}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -621,3 +622,16 @@ MonoBehaviour:
   roomPanelPrefab: {fileID: 2696002759004637187, guid: b4bdd381a41a8e240a1d313f3c975990, type: 3}
   playerInRoomPanel: {fileID: 2696002759004637187, guid: 210ecaa32d5e20c409361a1e7f72f3f9, type: 3}
   blankSpacePrefab: {fileID: 2696002759004637187, guid: 7ea186aa2de37b542a4cae15e0a6f055, type: 3}
+--- !u!114 &2146271737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2146271733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddca4014cddbdee419e2e2760dfa6c08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedLevelData: {fileID: 11400000, guid: 1503feb2276d7124d87a1dd06c3afe6f, type: 2}

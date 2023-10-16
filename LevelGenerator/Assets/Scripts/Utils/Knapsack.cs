@@ -4,36 +4,30 @@ using UnityEngine;
 
 public class Knapsack
 {
-    public static RoomContents[] ResolveKnapsackEnemies()
+    public static RoomContents[] ResolveKnapsackEnemies(List<RoomContents> enemies, List<int> enemiesValues)
     {
-        List<int> valuesEnemies = new(GameConstants.ENEMIES_DIFFICULTY.Values);
-        List<RoomContents> keysEnemies = new(GameConstants.ENEMIES_DIFFICULTY.Keys);
-
-        List<int> chosenEnemiesIdx = ResolveKnapsack(valuesEnemies, GameConstants.ENEMIES_CAPACITY);
+        List<int> chosenEnemiesIdx = ResolveKnapsack(enemiesValues, GameConstants.ENEMIES_CAPACITY);
 
         RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
         for (int i = 0; i < chosenEnemiesIdx.Count; i++)
         {
             int idx = chosenEnemiesIdx[i];
-            chosenEnemies[i] = keysEnemies[idx];
+            chosenEnemies[i] = enemies[idx];
         }
 
         //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
         return chosenEnemies;
     }
 
-    public static RoomContents[] ResolveKnapsackObstacles()
+    public static RoomContents[] ResolveKnapsackObstacles(List<RoomContents> obstacles, List<int> obstaclesValues)
     {
-        List<int> valuesObstacles = new(GameConstants.OBSTACLES_DIFFICULTY.Values);
-        List<RoomContents> keysObstacles = new(GameConstants.OBSTACLES_DIFFICULTY.Keys);
-
-        List<int> chosenObstaclesIdx = ResolveKnapsack(valuesObstacles, GameConstants.OBSTACLES_CAPACITY);
+        List<int> chosenObstaclesIdx = ResolveKnapsack(obstaclesValues, GameConstants.OBSTACLES_CAPACITY);
 
         RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
         for (int i = 0; i < chosenObstaclesIdx.Count; i++)
         {
             int idx = chosenObstaclesIdx[i];
-            chosenObstacles[i] = keysObstacles[idx];
+            chosenObstacles[i] = obstacles[idx];
         }
 
         //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));

@@ -4,8 +4,6 @@ using System.Linq;
 public static class GameConstants
 {
     public static float PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD = 0.5f;
-
-    public static int NUMBER_OF_ROOMS = 10;
     public static int ROOM_HEIGHT = 9;
     public static int ROOM_WIDTH = 15;
     public static int ENEMIES_CAPACITY = 30;
@@ -25,18 +23,4 @@ public static class GameConstants
         Enumerable.Range(0, ROOM_WIDTH)
         .SelectMany(x => Enumerable.Range(0, ROOM_HEIGHT), (x, y) => new Position { X = x, Y = y })
     );
-
-    public static readonly Dictionary<RoomContents, int> ENEMIES_DIFFICULTY = new()
-    {
-        { RoomContents.Enemy1, 1 },
-        { RoomContents.Enemy2, 2 },
-        { RoomContents.Enemy3, 3 }
-    };
-
-    public static readonly Dictionary<RoomContents, int> OBSTACLES_DIFFICULTY = new()
-    {
-        { RoomContents.Obstacle1, 1 },
-        { RoomContents.Obstacle2, 2 },
-        { RoomContents.Obstacle3, 3 }
-    };
 }

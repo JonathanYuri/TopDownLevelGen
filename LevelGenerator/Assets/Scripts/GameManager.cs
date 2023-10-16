@@ -19,13 +19,21 @@ public class GameManager : MonoBehaviour
     {
         sceneCamera = FindFirstObjectByType<Camera>();
         uiMapGenerator = FindFirstObjectByType<UIMapGenerator>();
-        map = FindFirstObjectByType<GameGenerator>().Generate();
-        SpawnPlayer();
 
+        GenerateGame();
+    }
+
+    void GenerateGame()
+    {
+        map = FindFirstObjectByType<LevelGenerator>().Generate();
+        if (player == null)
+        {
+            SpawnPlayer();
+        }
         playerLocation = new(player, playerPrefab);
-        // + Utils.TransformAMapPositionIntoAUnityPosition(generateGame.mapa.ElementAt(1))
         playerLocation.SetPlayerToRoom(map.ElementAt(0), new Vector2(0, 0)); // spawnar no meio
         uiMapGenerator.CreateUIMap(map, playerLocation);
+
     }
 
     private void OnDestroy()
@@ -33,6 +41,7 @@ public class GameManager : MonoBehaviour
         if (player != null)
         {
             player.PassedThroughTheDoorEvent -= Player_PassedThroughTheDoor;
+            player.OnLevelComplete -= Player_OnLevelComplete;
         }
     }
 
@@ -43,6 +52,12 @@ public class GameManager : MonoBehaviour
         );
         player = playerObject.GetComponent<PlayerController>();
         player.PassedThroughTheDoorEvent += Player_PassedThroughTheDoor;
+        player.OnLevelComplete += Player_OnLevelComplete;
+    }
+
+    void Player_OnLevelComplete()
+    {
+        
     }
 
     void Player_PassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
