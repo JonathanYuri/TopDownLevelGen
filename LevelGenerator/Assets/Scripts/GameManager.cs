@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     Camera sceneCamera;
 
     UIMapGenerator uiMapGenerator;
+    LevelGenerator levelGenerator;
 
     HashSet<Position> map;
 
@@ -19,21 +20,21 @@ public class GameManager : MonoBehaviour
     {
         sceneCamera = FindFirstObjectByType<Camera>();
         uiMapGenerator = FindFirstObjectByType<UIMapGenerator>();
+        levelGenerator = FindFirstObjectByType<LevelGenerator>();
 
         GenerateGame();
     }
 
     void GenerateGame()
     {
-        map = FindFirstObjectByType<LevelGenerator>().Generate();
+        map = levelGenerator.Generate();
         if (player == null)
         {
             SpawnPlayer();
         }
-        playerLocation = new(player, playerPrefab);
-        playerLocation.SetPlayerToRoom(map.ElementAt(0), new Vector2(0, 0)); // spawnar no meio
+        playerLocation ??= new(player, playerPrefab);
+        playerLocation.SetPlayerToInitialRoom(map.ElementAt(0), sceneCamera);
         uiMapGenerator.CreateUIMap(map, playerLocation);
-
     }
 
     private void OnDestroy()
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour
 
     void Player_OnLevelComplete()
     {
-        
+        GenerateGame();
     }
 
     void Player_PassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)

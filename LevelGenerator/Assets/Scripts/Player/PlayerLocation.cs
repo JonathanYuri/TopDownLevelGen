@@ -21,6 +21,13 @@ public class PlayerLocation
         };
     }
 
+    public void SetPlayerToInitialRoom(Position initialRoomPosition, Camera camera)
+    {
+        camera.transform.position = new Vector3(0, 0, camera.transform.position.z);
+        player.transform.position = new Vector3(0, 0);
+        atRoom = new() { X = initialRoomPosition.X, Y = initialRoomPosition.Y };
+    }
+
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)
     {
         //Debug.LogWarning("Position: " + room.Row + " x " + room.Column);

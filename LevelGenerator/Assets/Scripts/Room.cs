@@ -17,6 +17,7 @@ public enum RoomContents
     [Mutavel(false)][Ultrapassavel(true)] Nothing,
     [Mutavel(false)][Ultrapassavel(true)] Door,
     [Mutavel(false)][Ultrapassavel(false)] Wall,
+    [Mutavel(false)][Ultrapassavel(true)] Portal,
 }
 
 [AttributeUsage(AttributeTargets.Field)]

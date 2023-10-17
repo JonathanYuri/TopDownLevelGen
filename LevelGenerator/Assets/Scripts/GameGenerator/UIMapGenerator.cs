@@ -16,14 +16,24 @@ public class UIMapGenerator : MonoBehaviour
 
     Dictionary<Position, Image> uiMap;
 
-    private void Awake()
+    void Awake()
     {
         roomPanelImage = roomPanelPrefab.GetComponent<Image>();
         playerInRoomImage = playerInRoomPanel.GetComponent<Image>();
     }
 
+    void DestroyPastUIMap()
+    {
+        for (int i = 0; i < mapHolder.transform.childCount; i++)
+        {
+            Destroy(mapHolder.transform.GetChild(i).gameObject);
+        }
+    }
+
     public void CreateUIMap(HashSet<Position> map, PlayerLocation playerLocation)
     {
+        DestroyPastUIMap();
+
         uiMap = new();
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
 

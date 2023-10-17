@@ -299,6 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inimigo: {fileID: 6056213582785261799, guid: 522e4dd0b395aad46bce46fc67a00757, type: 3}
   obstaculo: {fileID: 6056213582785261799, guid: 5466bd5675fffc24dab69ae0db3c36e4, type: 3}
+  portal: {fileID: 4874131849379363410, guid: 0292f0fcba1e73240877de8f72f26d52, type: 3}
   portas:
   - {fileID: 2427380696651136222, guid: 42e5f5db84b1eab4aaf1a1e62f0e5b45, type: 3}
   - {fileID: 7795729443609628655, guid: 5f7a006bf17ec524b95378b60110806d, type: 3}

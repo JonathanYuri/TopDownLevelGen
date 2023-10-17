@@ -6,6 +6,7 @@ public class RoomObjectSpawner : MonoBehaviour
 {
     [SerializeField] GameObject inimigo;
     [SerializeField] GameObject obstaculo;
+    [SerializeField] GameObject portal;
 
     [SerializeField] GameObject[] portas;
     [SerializeField] GameObject[] paredes;
@@ -56,6 +57,8 @@ public class RoomObjectSpawner : MonoBehaviour
             { RoomContents.Enemy1, inimigo },
             { RoomContents.Enemy2, inimigo },
             { RoomContents.Enemy3, inimigo },
+
+            { RoomContents.Portal, portal },
         };
 
         directionOfDoorsToGameObject = new()
@@ -85,7 +88,10 @@ public class RoomObjectSpawner : MonoBehaviour
                 Position position = new() { X = i, Y = j };
                 GameObject tile = SelectTheRightObjectsToSpawnInPosition(room, position);
 
-                Instantiate(tile, (Vector2)tile.transform.position + new Vector2(i, j) + (Vector2)roomObject.transform.position, tile.transform.rotation, roomObject.transform);
+                // new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) pra colocar o (0, 0) que eh o canto inferior esquerdo para a coordenada -7, -4
+                // new Vector2(i, j) para colocar todos os objetos nas posicoes certas da matriz
+                // (Vector2)roomObject.transform.position para colocar nas salas certas
+                Instantiate(tile, new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) + new Vector2(i, j) + (Vector2)roomObject.transform.position, tile.transform.rotation, roomObject.transform);
             }
         }
     }
