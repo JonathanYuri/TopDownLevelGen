@@ -4,11 +4,23 @@ using UnityEngine;
 
 public class LevelDataManager : MonoBehaviour
 {
-    public LevelData sharedLevelData;
+    int indexCurrentLevel = 0;
 
-    public List<RoomContents> Enemies { get { return sharedLevelData.enemies; } }
-    public List<int> EnemiesValues { get { return sharedLevelData.enemiesDifficult; } }
+    public List<LevelData> levels;
 
-    public List<RoomContents> Obstacles { get { return sharedLevelData.obstacles; } }
-    public List<int> ObstaclesValues { get { return sharedLevelData.obstaclesDifficult; } }
+    public void NextLevel()
+    {
+        if (indexCurrentLevel < levels.Count - 1)
+        {
+            indexCurrentLevel++;
+        }
+    }
+
+    public int RoomCount { get { return levels[indexCurrentLevel].roomCount; } }
+
+    public List<RoomContents> Enemies { get { return levels[indexCurrentLevel].enemies; } }
+    public List<int> EnemiesValues { get { return levels[indexCurrentLevel].enemiesDifficult; } }
+
+    public List<RoomContents> Obstacles { get { return levels[indexCurrentLevel].obstacles; } }
+    public List<int> ObstaclesValues { get { return levels[indexCurrentLevel].obstaclesDifficult; } }
 }

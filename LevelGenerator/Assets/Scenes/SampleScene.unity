@@ -635,4 +635,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddca4014cddbdee419e2e2760dfa6c08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sharedLevelData: {fileID: 11400000, guid: 1503feb2276d7124d87a1dd06c3afe6f, type: 2}
+  levels:
+  - {fileID: 11400000, guid: 1503feb2276d7124d87a1dd06c3afe6f, type: 2}
+  - {fileID: 11400000, guid: 1daf670f9855e0241a4f8fd8a7275437, type: 2}

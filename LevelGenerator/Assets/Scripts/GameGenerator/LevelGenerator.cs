@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
+[RequireComponent(typeof(RoomObjectSpawner))]
 public class LevelGenerator : MonoBehaviour
 {
     LevelDataManager levelDataManager;
@@ -29,7 +29,7 @@ public class LevelGenerator : MonoBehaviour
     private void Start()
     {
         roomObjectSpawner = GetComponent<RoomObjectSpawner>();
-        levelDataManager = FindObjectOfType<LevelDataManager>();
+        levelDataManager = FindFirstObjectByType<LevelDataManager>();
     }
 
     public HashSet<Position> Generate()
@@ -59,7 +59,7 @@ public class LevelGenerator : MonoBehaviour
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
 
-        while (map.Count < levelDataManager.sharedLevelData.roomCount)
+        while (map.Count < levelDataManager.RoomCount)
         {
             if (queue.Count == 0)
             {

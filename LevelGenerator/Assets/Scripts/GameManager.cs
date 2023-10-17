@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(LevelDataManager))]
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject playerPrefab;
@@ -16,12 +17,15 @@ public class GameManager : MonoBehaviour
 
     HashSet<Position> map;
 
+    int level = 0;
+    LevelDataManager levelDataManager;
+
     void Start()
     {
         sceneCamera = FindFirstObjectByType<Camera>();
         uiMapGenerator = FindFirstObjectByType<UIMapGenerator>();
         levelGenerator = FindFirstObjectByType<LevelGenerator>();
-
+        levelDataManager = GetComponent<LevelDataManager>();
         GenerateGame();
     }
 
@@ -58,6 +62,8 @@ public class GameManager : MonoBehaviour
 
     void Player_OnLevelComplete()
     {
+        level++;
+        levelDataManager.NextLevel();
         GenerateGame();
     }
 
