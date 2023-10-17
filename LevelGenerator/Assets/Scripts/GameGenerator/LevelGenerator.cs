@@ -71,10 +71,7 @@ public class LevelGenerator : MonoBehaviour
             Position position = queue.Dequeue();
             map.Add(position);
 
-            // escolher qualquer posição
             Direction[] shuffledArr = Enum.GetValues(typeof(Direction)).Cast<Direction>().Shuffle();
-
-            // destravar as posições
             foreach (Direction direction in shuffledArr)
             {
                 Position adjacentPosition = position.Move(direction);
@@ -90,13 +87,13 @@ public class LevelGenerator : MonoBehaviour
     void GenerateInitialRoom()
     {
         initialRoomPosition = new() { X = 0, Y = 0 };
-        GenerateObjectRoom(initialRoomPosition, false); // gerar so o esqueleto
+        GenerateRoomObject(initialRoomPosition, false); // gerar so o esqueleto
     }
 
     void GenerateFinalRoom()
     {
         finalRoomPosition = ChooseFinalRoomPosition();
-        GenerateObjectRoom(finalRoomPosition, false); // gerar so o esqueleto
+        GenerateRoomObject(finalRoomPosition, false); // gerar so o esqueleto
     }
 
     Position ChooseFinalRoomPosition()
@@ -121,11 +118,11 @@ public class LevelGenerator : MonoBehaviour
         foreach (Position position in map.Except(selectedRooms))
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
-            GenerateObjectRoom(position);
+            GenerateRoomObject(position);
         }
     }
 
-    void GenerateObjectRoom(Position position, bool generateObjectsInRoom = true)
+    void GenerateRoomObject(Position position, bool generateObjectsInRoom = true)
     {
         int distanceToInitialRoom = Utils.CalculateDistance(initialRoomPosition, position);
         float difficulty = (float)distanceToInitialRoom / (float)distanceFromInitialToFinalRoom;
@@ -166,8 +163,8 @@ public class LevelGenerator : MonoBehaviour
         // TODO: melhorar a eficiencia do algoritmo
         Position[] doorPositions = GetDoorPositions(neighborsDirection);
 
-        RoomContents[] enemies = Knapsack.ResolveKnapsackEnemies(levelDataManager.Enemies, levelDataManager.EnemiesValues);
-        RoomContents[] obstacles = Knapsack.ResolveKnapsackObstacles(levelDataManager.Obstacles, levelDataManager.ObstaclesValues);
+        RoomContents[] enemies = Knapsack.ResolveKnapsackEnemies(levelDataManager.Enemies, levelDataManager.EnemiesValues, levelDataManager.EnemiesCapacity);
+        RoomContents[] obstacles = Knapsack.ResolveKnapsackObstacles(levelDataManager.Obstacles, levelDataManager.ObstaclesValues, levelDataManager.ObstaclesCapacity);
         Room room = new(doorPositions, enemies, obstacles, difficulty);
         GeneticRoomGenerator geneticRoomGenerator = new(room);
 

@@ -6,8 +6,6 @@ public static class GameConstants
     public static float PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD = 0.5f;
     public static int ROOM_HEIGHT = 9;
     public static int ROOM_WIDTH = 15;
-    public static int ENEMIES_CAPACITY = 30;
-    public static int OBSTACLES_CAPACITY = 30;
 
     public static Position ROOM_MIDDLE = new () { X = (int)(ROOM_WIDTH / 2), Y = (int)(ROOM_HEIGHT / 2) };
 

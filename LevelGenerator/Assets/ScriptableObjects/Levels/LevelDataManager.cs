@@ -20,7 +20,9 @@ public class LevelDataManager : MonoBehaviour
 
     public List<RoomContents> Enemies { get { return levels[indexCurrentLevel].enemies; } }
     public List<int> EnemiesValues { get { return levels[indexCurrentLevel].enemiesDifficult; } }
+    public int EnemiesCapacity { get { return levels[indexCurrentLevel].enemiesCapacity; } }
 
     public List<RoomContents> Obstacles { get { return levels[indexCurrentLevel].obstacles; } }
     public List<int> ObstaclesValues { get { return levels[indexCurrentLevel].obstaclesDifficult; } }
+    public int ObstaclesCapacity { get { return levels[indexCurrentLevel].obstaclesCapacity; } }
 }

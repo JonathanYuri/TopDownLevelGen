@@ -11,9 +11,11 @@ public class LevelData : ScriptableObject
 
     public List<RoomContents> enemies;
     public List<int> enemiesDifficult;
+    public int enemiesCapacity = 30;
 
     [Header("Obstacles")]
 
     public List<RoomContents> obstacles;
     public List<int> obstaclesDifficult;
+    public int obstaclesCapacity = 30;
 }

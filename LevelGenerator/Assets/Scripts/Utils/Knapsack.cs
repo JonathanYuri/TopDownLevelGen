@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Knapsack
 {
-    public static RoomContents[] ResolveKnapsackEnemies(List<RoomContents> enemies, List<int> enemiesValues)
+    public static RoomContents[] ResolveKnapsackEnemies(List<RoomContents> enemies, List<int> enemiesValues, int enemiesCapacity)
     {
-        List<int> chosenEnemiesIdx = ResolveKnapsack(enemiesValues, GameConstants.ENEMIES_CAPACITY);
+        List<int> chosenEnemiesIdx = ResolveKnapsack(enemiesValues, enemiesCapacity);
 
         RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
         for (int i = 0; i < chosenEnemiesIdx.Count; i++)
@@ -19,9 +19,9 @@ public class Knapsack
         return chosenEnemies;
     }
 
-    public static RoomContents[] ResolveKnapsackObstacles(List<RoomContents> obstacles, List<int> obstaclesValues)
+    public static RoomContents[] ResolveKnapsackObstacles(List<RoomContents> obstacles, List<int> obstaclesValues, int obstaclesCapacity)
     {
-        List<int> chosenObstaclesIdx = ResolveKnapsack(obstaclesValues, GameConstants.OBSTACLES_CAPACITY);
+        List<int> chosenObstaclesIdx = ResolveKnapsack(obstaclesValues, obstaclesCapacity);
 
         RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
         for (int i = 0; i < chosenObstaclesIdx.Count; i++)
