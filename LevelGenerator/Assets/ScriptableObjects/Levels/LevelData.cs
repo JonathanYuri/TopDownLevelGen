@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents a ScriptableObject that stores level data.
+/// </summary>
 [CreateAssetMenu(fileName = "NewLevel", menuName = "ScriptableObject/Level")]
 public class LevelData : ScriptableObject
 {

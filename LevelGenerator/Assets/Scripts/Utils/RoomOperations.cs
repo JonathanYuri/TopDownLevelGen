@@ -1,10 +1,18 @@
 using System.Collections.Generic;
 using System;
-using Random = UnityEngine.Random;
 using System.Linq;
 
+/// <summary>
+/// A static class that provides various operations related to room contents.
+/// </summary>
 public static class RoomOperations
 {
+    /// <summary>
+    /// Groups positions based on the room value in the room matrix.
+    /// </summary>
+    /// <param name="roomMatrix">The room matrix representing the room layout.</param>
+    /// <param name="targetPositions">The positions to group based on room values.</param>
+    /// <returns>A dictionary that maps room contents to lists of positions with the same value.</returns>
     public static Dictionary<RoomContents, List<Position>> GroupPositionsByRoomValue(RoomContents[,] roomMatrix, HashSet<Position> targetPositions)
     {
         // agrupar as posicoes com base no valor da matrix na posicao

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
+/// <summary>
+/// A static class containing constants and parameters for the genetic algorithm.
+/// </summary>
 public static class GeneticAlgorithmConstants
 {
     // TODO: mudar a probabilidade de crossover e mutacao durante a execucao?
@@ -16,6 +18,9 @@ public static class GeneticAlgorithmConstants
     public static int NUM_PARENTS_TOURNAMENT = 2;
     public static Room ROOM;
 
+    /// <summary>
+    /// Limits the genetic algorithm constants to a valid range.
+    /// </summary>
     public static void LimitVariables()
     {
         CROSSOVER_PROBABILITY = Mathf.Clamp(CROSSOVER_PROBABILITY, 0f, 1f);
@@ -23,11 +28,18 @@ public static class GeneticAlgorithmConstants
     }
 }
 
+/// <summary>
+/// Represents a class for generating and evolving room configurations using a genetic algorithm.
+/// </summary>
 public class GeneticRoomGenerator
 {
     RoomIndividual[] population;
     readonly FitnessCalculator fitnessCalculator;
 
+    /// <summary>
+    /// Initializes a new instance of the GeneticRoomGenerator class.
+    /// </summary>
+    /// <param name="room">The room pattern for which the genetic algorithm will generate individuals.</param>
     public GeneticRoomGenerator(Room room)
     {
         GeneticAlgorithmConstants.ROOM = room;
@@ -36,6 +48,9 @@ public class GeneticRoomGenerator
         fitnessCalculator = new();
     }
 
+    /// <summary>
+    /// Generates the initial population of individuals for the genetic algorithm.
+    /// </summary>
     void GeneratePopulation()
     {
         for (int i = 0; i < GeneticAlgorithmConstants.POPULATION_SIZE; i++)
@@ -44,6 +59,10 @@ public class GeneticRoomGenerator
         }
     }
 
+    /// <summary>
+    /// Executes the main loop of the genetic algorithm to evolve a population of individuals.
+    /// </summary>
+    /// <returns>A matrix representing the best room configuration found by the genetic algorithm.</returns>
     public RoomContents[,] GeneticLooping()
     {
         GeneratePopulation();
@@ -91,6 +110,12 @@ public class GeneticRoomGenerator
         return best.RoomMatrix.Values;
     }
 
+    /// <summary>
+    /// Determines whether the genetic algorithm should continue the loop.
+    /// </summary>
+    /// <param name="iterationsWithoutImprovement">The number of iterations without improvement.</param>
+    /// <param name="best">The best individual found so far.</param>
+    /// <returns><c>true</c> if the loop should continue; otherwise, <c>false</c>.</returns>
     bool ShouldContinueLooping(int iterationsWithoutImprovement, RoomIndividual best)
     {
         if (iterationsWithoutImprovement < GeneticAlgorithmConstants.ITERATIONS_WITHOUT_IMPROVEMENT)

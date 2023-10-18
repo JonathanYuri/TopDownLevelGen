@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents the location and movement of the player in the game.
+/// </summary>
 public class PlayerLocation
 {
     PlayerController player;
@@ -24,8 +27,7 @@ public class PlayerLocation
     public void SetPlayerToInitialRoom(Position initialRoomPosition, Camera camera)
     {
         camera.transform.position = new Vector3(0, 0, camera.transform.position.z);
-        player.transform.position = new Vector3(0, 0);
-        atRoom = new() { X = initialRoomPosition.X, Y = initialRoomPosition.Y };
+        SetPlayerToRoom(initialRoomPosition, new Vector3(0, 0));
     }
 
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)
@@ -35,6 +37,11 @@ public class PlayerLocation
         atRoom = roomPosition;
     }
 
+    /// <summary>
+    /// Translates the player's position to a neighboring room based on the specified direction.
+    /// </summary>
+    /// <param name="direction">The direction of movement.</param>
+    /// <param name="camera">The game camera.</param>
     public void TranslatePlayerToDirectionOfRoom(Vector3 direction, Camera camera)
     {
         Position roomPosition = new()

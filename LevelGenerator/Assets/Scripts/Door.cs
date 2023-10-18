@@ -3,11 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Event arguments for the door passed through event.
+/// </summary>
 public class DoorEventArgs : EventArgs
 {
     public Vector3 doorDirection;
 }
 
+/// <summary>
+/// Represents a door in the game world.
+/// </summary>
 public class Door : MonoBehaviour
 {
     Vector3 direction;

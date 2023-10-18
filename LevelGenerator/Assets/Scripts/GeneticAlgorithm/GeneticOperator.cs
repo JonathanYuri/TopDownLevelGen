@@ -5,10 +5,22 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// A static class that provides functions to perform genetic operators like reproduction and mutation
+/// on a population of room individuals.
+/// </summary>
 public static class GeneticOperator
 {
     #region Reproduction
 
+    /// <summary>
+    /// Places room contents in the child individual by combining the contents from the father and mother individuals.
+    /// </summary>
+    /// <param name="child">The child individual to place the contents in.</param>
+    /// <param name="contentsPositionsInFather">A dictionary of room contents positions in the father individual.</param>
+    /// <param name="contentsPositionsInMother">A dictionary of room contents positions in the mother individual.</param>
+    /// <param name="contentsPositionsToBePlaced">A set of positions to place the contents in the child individual.</param>
+    /// <param name="avaliablePositions">A list of available positions in the room for placing contents.</param>
     static void PlaceContentsInChild(
         RoomIndividual child,
         Dictionary<RoomContents, List<Position>> contentsPositionsInFather,
@@ -41,6 +53,12 @@ public static class GeneticOperator
         }
     }
 
+    /// <summary>
+    /// Performs crossover between a father individual and a mother individual to create a child individual.
+    /// </summary>
+    /// <param name="father">The father individual.</param>
+    /// <param name="mother">The mother individual.</param>
+    /// <returns>The child individual resulting from the crossover operation.</returns>
     static RoomIndividual Crossover(RoomIndividual father, RoomIndividual mother)
     {
         RoomIndividual child = new(false);
@@ -71,6 +89,11 @@ public static class GeneticOperator
         return child;
     }
 
+    /// <summary>
+    /// Selects parents for reproduction using tournament selection.
+    /// </summary>
+    /// <param name="population">The population of room individuals to select parents from.</param>
+    /// <returns>An array of parent individuals selected for reproduction.</returns>
     static RoomIndividual[] TournamentSelection(RoomIndividual[] population)
     {
         RoomIndividual[] parents = new RoomIndividual[GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT];
@@ -86,6 +109,11 @@ public static class GeneticOperator
         return parents;
     }
 
+    /// <summary>
+    /// Performs reproduction by selecting parents and creating child individuals through crossover.
+    /// </summary>
+    /// <param name="population">The population of room individuals to perform reproduction on.</param>
+    /// <returns>An array of child individuals created through reproduction.</returns>
     public static RoomIndividual[] PerformReproduction(RoomIndividual[] population)
     {
         RoomIndividual[] newPopulation = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
@@ -117,6 +145,11 @@ public static class GeneticOperator
 
     #region Mutation
 
+    /// <summary>
+    /// Swaps the positions of two room contents randomly in an individual's room matrix.
+    /// </summary>
+    /// <param name="individual">The room individual whose room matrix will be modified.</param>
+    /// <param name="position1">The first position to swap content with another position.</param>
     static void SwapRoomPositionsRandomly(RoomIndividual individual, Position position1)
     {
         int idx2 = Random.Range(0, GeneticAlgorithmConstants.ROOM.ChangeablesPositions.Count);
@@ -129,6 +162,11 @@ public static class GeneticOperator
         individual.RoomMatrix.UpdateContentInPosition(position2, content2, content1);
     }
 
+    /// <summary>
+    /// Mutates an individual's room matrix by randomly changing the positions of room contents in the provided set of positions.
+    /// </summary>
+    /// <param name="individual">The room individual to mutate.</param>
+    /// <param name="positionsToMutate">The set of positions in which room contents should be mutated.</param>
     static void Mutate(RoomIndividual individual, HashSet<Position> positionsToMutate)
     {
         Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(Random.Range(0, positionsToMutate.Count));
@@ -138,6 +176,10 @@ public static class GeneticOperator
         }
     }
 
+    /// <summary>
+    /// Mutates an individual's room matrix by randomly changing the positions of either enemies or obstacles.
+    /// </summary>
+    /// <param name="individual">The room individual to mutate.</param>
     static void Mutate(RoomIndividual individual)
     {
         // escolher inimigos ou obstaculos para mudar
@@ -151,6 +193,10 @@ public static class GeneticOperator
         }
     }
 
+    /// <summary>
+    /// Mutates the entire population by applying mutations to each individual based on the mutation probability.
+    /// </summary>
+    /// <param name="population">The population of room individuals to mutate.</param>
     public static void MutatePopulation(RoomIndividual[] population)
     {
         foreach (RoomIndividual individual in population)

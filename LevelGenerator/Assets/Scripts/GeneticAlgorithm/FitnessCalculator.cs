@@ -3,23 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Manages fitness calculation for room individuals in the genetic algorithm.
+/// </summary>
 public class FitnessCalculator
 {
-    Dictionary<int, List<int>> allFitness;
+    int numberOfFitnessVariables = 3;
+    Dictionary<int, int[]> allFitness;
     List<Range> boundsOfFitnessVars; // pra normalizar as variaveis da fitness do individual
 
     bool areBoundsModified = true;
 
     public FitnessCalculator()
     {
-        boundsOfFitnessVars = new();
         allFitness = new();
+        boundsOfFitnessVars = new();
     }
 
+    /// <summary>
+    /// Determines the bounds of fitness variables based on the current and previous fitness values.
+    /// </summary>
     void DetermineFitnessVarBounds()
     {
         bool boundsModified = false;
-        for (int i = 0; i < allFitness[0].Count; i++) // pra cada variavel do fitness
+        for (int i = 0; i < numberOfFitnessVariables; i++) // pra cada variavel do fitness
         {
             int max = allFitness.Max(fitness => fitness.Value[i]);
             int min = allFitness.Min(fitness => fitness.Value[i]);
@@ -46,12 +53,16 @@ public class FitnessCalculator
        areBoundsModified = boundsModified;
     }
 
-    List<int> CalculeAllFitnessVars(RoomIndividual individual)
+    /// <summary>
+    /// Calculates fitness variables based on the characteristics of the room individual.
+    /// </summary>
+    /// <param name="individual">The room individual for which to calculate fitness variables.</param>
+    /// <returns>A array of calculated fitness variables.</returns>
+    int[] CalculeAllFitnessVars(RoomIndividual individual)
     {
         List<int> groups = GroupCounter.CountGroups(individual.RoomMatrix.Values, individual.RoomMatrix.EnemiesPositions);
         double media = groups.Average();
 
-        //
         double averageDistanceFromDoorsToEnemies = RoomOperations.AverageDistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions);
         float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
         float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
@@ -59,18 +70,24 @@ public class FitnessCalculator
         //double minimunDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(individual.RoomMatrix.EnemiesPositions);
         //float valueWhenDifficultyIsMinimal = (float)minimunDistanceFromDoorsToEnemies; // maximizar a minima distancia entre os inimigos e as portas
         //float valueWhenDifficultyIsMaximal = (float)-minimunDistanceFromDoorsToEnemies; // minimizar a minima distancia entre os inimigos e as portas
-        
+
+        // Calculate the final value by interpolating between minimal and maximal values based on the difficulty.
         float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.ROOM.Difficulty);
 
-        //
         int var1 = -groups.Count; // minimizar a quantidade de grupos
         int var2 = -(int)media; // minimizar a media de inimigos por grupos
         int var3 = (int)value; // maximizar o value
 
-        List<int> vars = new() { var1, var2, var3 };
+        int[] vars = new int[] { var1, var2, var3 };
         return vars;
     }
 
+    /// <summary>
+    /// Determines whether the fitness should be recalculated for a specific individual.
+    /// This is based on whether the individual has been modified or if the bounds of fitness variables have been modified.
+    /// </summary>
+    /// <param name="individual">The individual for which fitness is being evaluated.</param>
+    /// <returns>True if fitness should be recalculated, false otherwise.</returns>
     bool ShouldRecalculateFitness(RoomIndividual individual)
     {
         if (individual.ItWasModified)
@@ -84,6 +101,11 @@ public class FitnessCalculator
         return false;
     }
 
+    /// <summary>
+    /// Calculates fitness variables for all individuals within a population if recalculation is necessary.
+    /// If an individual has been modified or the bounds of fitness variables have changed, their fitness variables are recalculated.
+    /// </summary>
+    /// <param name="population">The population of individuals for which to calculate fitness variables.</param>
     void CalculeAllFitnessVarsOfPopulation(RoomIndividual[] population)
     {
         for (int i = 0; i < population.Length; i++)
@@ -93,11 +115,16 @@ public class FitnessCalculator
                 continue;
             }
 
-            List<int> vars = CalculeAllFitnessVars(population[i]);
-            allFitness[i] = vars;
+            allFitness[i] = CalculeAllFitnessVars(population[i]);
         }
     }
 
+    /// <summary>
+    /// Evaluates the fitness of an entire population of individuals.
+    /// Fitness variables are calculated for each individual, and bounds of fitness variables are determined.
+    /// If an individual has been modified or the bounds of fitness variables have changed, their fitness is recalculated.
+    /// </summary>
+    /// <param name="population">The population of individuals to evaluate.</param>
     public void EvaluatePopulation(RoomIndividual[] population)
     {
         CalculeAllFitnessVarsOfPopulation(population);
@@ -116,7 +143,13 @@ public class FitnessCalculator
         }
     }
 
-    public void Evaluate(RoomIndividual individual, List<int> allFitnessVars)
+    /// <summary>
+    /// Calculates and assigns the fitness value for an individual based on provided fitness variables.
+    /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
+    /// </summary>
+    /// <param name="individual">The individual to evaluate.</param>
+    /// <param name="allFitnessVars">An array of fitness variables used in the evaluation.</param>
+    public void Evaluate(RoomIndividual individual, int[] allFitnessVars)
     {
         if (IsMonstrous(individual))
         {
@@ -124,30 +157,16 @@ public class FitnessCalculator
             return;
         }
 
-        //Debug.Log("Total de grupos de Enemies na matriz: " + groups.Count);
-        //Debug.Log("Média do tamanho dos grupos: " + media);
-
-        //int qntInimigosProximosDeObstaculos = Utils.CountEnemiesNextToObstacles(roomMatrix);
-
-        int value = 0;
-        for (int i = 0; i < allFitnessVars.Count; i++)
-        {
-            double normalizedValue = Utils.Normalization(allFitnessVars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
-            value += (int)normalizedValue;
-
-            //if (i == 2)
-            //{
-            //    Debug.Log($"NORMALIZED VALUE: {normalizedValue}, DISTANCIA: {allFitnessVars[i]}, DIFFICULT: {GeneticAlgorithmConstants.ROOM.Difficulty}");
-            //}
-
-            //Debug.Log("Var: " + i);
-            //Debug.Log("NormalizedValue: " + normalizedValue + " var: " + vars[i] + " bounds: " + bounds[i].min + " x " + bounds[i].max);
-        }
-
-        individual.Value = value;
+        individual.Value = CalculateNormalizedFitnessValue(allFitnessVars);
         //Value = - groups.Count - (int)media + (int)value; // + qntInimigosProximosDeObstaculos;
     }
 
+    /// <summary>
+    /// Calculates and assigns the fitness value for an individual.
+    /// Fitness variables are determined internally for the individual before evaluation.
+    /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
+    /// </summary>
+    /// <param name="individual">The individual to evaluate.</param>
     public void Evaluate(RoomIndividual individual)
     {
         if (IsMonstrous(individual))
@@ -156,17 +175,32 @@ public class FitnessCalculator
             return;
         }
 
-        int value = 0;
-        List<int> vars = CalculeAllFitnessVars(individual);
-        for (int i = 0; i < allFitness[0].Count; i++)
-        {
-            double normalizedValue = Utils.Normalization(vars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
-            value += (int)normalizedValue;
-        }
-
-        individual.Value = value;
+        int[] vars = CalculeAllFitnessVars(individual);
+        individual.Value = CalculateNormalizedFitnessValue(vars);
     }
 
+    /// <summary>
+    /// Calculates the normalized fitness value based on a set of fitness variables.
+    /// Normalization ensures that the fitness value falls within specified bounds.
+    /// </summary>
+    /// <param name="fitnessVars">An array of fitness variables used to calculate the fitness value.</param>
+    /// <returns>The normalized fitness value.</returns>
+    int CalculateNormalizedFitnessValue(int[] fitnessVars)
+    {
+        int value = 0;
+        for (int i = 0; i < numberOfFitnessVariables; i++)
+        {
+            double normalizedValue = Utils.Normalization(fitnessVars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
+            value += (int)normalizedValue;
+        }
+        return value;
+    }
+
+    /// <summary>
+    /// Determines if a given room individual is considered "monstrous" based on certain criteria.
+    /// </summary>
+    /// <param name="individual">The room individual to evaluate.</param>
+    /// <returns>True if the individual is monstrous; otherwise, false.</returns>
     bool IsMonstrous(RoomIndividual individual)
     {
         if (!PathFinder.IsAPathBetweenDoors(individual.RoomMatrix.Values))

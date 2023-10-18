@@ -2,8 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A static class that provides methods for solving the Knapsack problem to select items.
+/// </summary>
 public class Knapsack
 {
+    /// <summary>
+    /// Resolves the Knapsack problem for selecting enemies based on their values and a capacity constraint.
+    /// </summary>
+    /// <param name="enemies">The list of enemies to choose from.</param>
+    /// <param name="enemiesValues">The list of values associated with each enemy.</param>
+    /// <param name="enemiesCapacity">The maximum capacity for selecting enemies.</param>
+    /// <returns>An array of selected enemies based on the Knapsack problem solution.</returns>
     public static RoomContents[] ResolveKnapsackEnemies(List<RoomContents> enemies, List<int> enemiesValues, int enemiesCapacity)
     {
         List<int> chosenEnemiesIdx = ResolveKnapsack(enemiesValues, enemiesCapacity);
@@ -19,6 +29,13 @@ public class Knapsack
         return chosenEnemies;
     }
 
+    /// <summary>
+    /// Resolves the Knapsack problem for selecting obstacles based on their values and a capacity constraint.
+    /// </summary>
+    /// <param name="obstacles">The list of obstacles to choose from.</param>
+    /// <param name="obstaclesValues">The list of values associated with each obstacle.</param>
+    /// <param name="obstaclesCapacity">The maximum capacity for selecting obstacles.</param>
+    /// <returns>An array of selected obstacles based on the Knapsack problem solution.</returns>
     public static RoomContents[] ResolveKnapsackObstacles(List<RoomContents> obstacles, List<int> obstaclesValues, int obstaclesCapacity)
     {
         List<int> chosenObstaclesIdx = ResolveKnapsack(obstaclesValues, obstaclesCapacity);
@@ -34,6 +51,12 @@ public class Knapsack
         return chosenObstacles;
     }
 
+    /// <summary>
+    /// Resolves the Knapsack problem for selecting items based on their values and a capacity constraint.
+    /// </summary>
+    /// <param name="values">The list of values associated with each item.</param>
+    /// <param name="capacity">The maximum capacity for selecting items.</param>
+    /// <returns>A list of indices representing the selected items based on the Knapsack problem solution.</returns>
     public static List<int> ResolveKnapsack(in List<int> values, in int capacity)
     {
         int n = values.Count;

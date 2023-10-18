@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
+/// <summary>
+/// Represents an individual in a genetic algorithm, specifically designed for room layout optimization.
+/// </summary>
 public class RoomIndividual
 {
     RoomMatrix roomMatrix;
@@ -14,6 +14,10 @@ public class RoomIndividual
     public bool ItWasModified { get => itWasModified; set => itWasModified = value; }
     public RoomMatrix RoomMatrix { get => roomMatrix; set => roomMatrix = value; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RoomIndividual"/> class, optionally generating it randomly.
+    /// </summary>
+    /// <param name="generateRandomly">Determines whether to generate the room layout randomly.</param>
     public RoomIndividual(bool generateRandomly = true)
     {
         Value = default;
@@ -25,12 +29,19 @@ public class RoomIndividual
         }
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RoomIndividual"/> class as a copy of another individual.
+    /// </summary>
+    /// <param name="individual">The individual to copy.</param>
     public RoomIndividual(RoomIndividual individual)
     {
         Value = individual.Value;
         RoomMatrix = individual.RoomMatrix;
     }
 
+    /// <summary>
+    /// Generates a random room layout by placing enemies and obstacles in available positions.
+    /// </summary>
     void GenerateRoomRandomly()
     {
         List<Position> avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);

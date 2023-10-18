@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Represents a direction in 2D space.
+/// </summary>
 public enum Direction
 {
     Up,
@@ -17,11 +20,19 @@ public class Range
     public int max;
 }
 
+/// <summary>
+/// Represents a 2D position with X and Y coordinates.
+/// </summary>
 public class Position
 {
     public int X { get; set; }
     public int Y { get; set; }
 
+    /// <summary>
+    /// Moves the position in a specified direction.
+    /// </summary>
+    /// <param name="direction">The direction in which to move the position.</param>
+    /// <returns>A new position after moving in the specified direction.</returns>
     public Position Move(Direction direction)
     {
         return direction switch
@@ -51,14 +62,28 @@ public class Position
     }
 }
 
+/// <summary>
+/// A utility class containing various helper methods and extensions.
+/// </summary>
 public static class Utils
 {
-    // pra spawnar as rooms
+    /// <summary>
+    /// Transforms a map position into a Unity position for spawning rooms.
+    /// </summary>
+    /// <param name="mapPosition">The position in the map coordinate system.</param>
+    /// <returns>A Unity Vector2 position for spawning rooms.</returns>
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
     {
         return new Vector2(mapPosition.X * GameConstants.ROOM_WIDTH + mapPosition.X, mapPosition.Y * GameConstants.ROOM_HEIGHT + mapPosition.Y);
     }
 
+    /// <summary>
+    /// Normalizes a value within a given range to a 0-100 scale.
+    /// </summary>
+    /// <param name="value">The value to normalize.</param>
+    /// <param name="min">The minimum value of the range.</param>
+    /// <param name="max">The maximum value of the range.</param>
+    /// <returns>The normalized value in the 0-100 scale.</returns>
     public static double Normalization(double value, double min, double max)
     {
         if (max == min)

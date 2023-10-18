@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages level data and provides access to the current level's information.
+/// </summary>
 public class LevelDataManager : MonoBehaviour
 {
     int indexCurrentLevel = 0;
 
     public List<LevelData> levels;
 
+    /// <summary>
+    /// Advances to the next level in the list of available levels, if there is one.
+    /// </summary>
     public void NextLevel()
     {
         if (indexCurrentLevel < levels.Count - 1)

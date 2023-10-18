@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Responsible for creating and positioning objects in the room environment, such as enemies, obstacles, and doors.
+/// </summary>
 public class RoomObjectSpawner : MonoBehaviour
 {
     [SerializeField] GameObject inimigo;
@@ -13,6 +16,7 @@ public class RoomObjectSpawner : MonoBehaviour
 
     [SerializeField] GameObject chao;
 
+    // Enums to indicate the position of each element in the array of walls
     enum CornerIndex
     {
         TopLeftCorner = 0,
@@ -20,7 +24,6 @@ public class RoomObjectSpawner : MonoBehaviour
         BottomLeftCorner = 2,
         BottomRightCorner = 3,
     }
-
     enum WallIndex
     {
         Top = 4,
@@ -29,6 +32,7 @@ public class RoomObjectSpawner : MonoBehaviour
         Right = 7,
     }
 
+    // Enum to indicate the position of each element in the array of doors
     enum DoorIndex
     {
         Up = 0,
@@ -78,6 +82,11 @@ public class RoomObjectSpawner : MonoBehaviour
         };
     }
 
+    /// <summary>
+    /// Spawns room objects within the given room.
+    /// </summary>
+    /// <param name="room">The room containing information about the objects to spawn.</param>
+    /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
     public void SpawnRoomObjects(Room room, GameObject roomObject)
     {
         for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
@@ -91,11 +100,21 @@ public class RoomObjectSpawner : MonoBehaviour
                 // new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) pra colocar o (0, 0) que eh o canto inferior esquerdo para a coordenada -7, -4
                 // new Vector2(i, j) para colocar todos os objetos nas posicoes certas da matriz
                 // (Vector2)roomObject.transform.position para colocar nas salas certas
-                Instantiate(tile, new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) + new Vector2(i, j) + (Vector2)roomObject.transform.position, tile.transform.rotation, roomObject.transform);
+                Instantiate(tile,
+                            new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) +
+                                new Vector2(i, j) +
+                                (Vector2)roomObject.transform.position,
+                            tile.transform.rotation, roomObject.transform);
             }
         }
     }
 
+    /// <summary>
+    /// Selects the appropriate GameObject to spawn at the given position within a room.
+    /// </summary>
+    /// <param name="room">The room containing information about objects.</param>
+    /// <param name="position">The position within the room to select the object for.</param>
+    /// <returns>The GameObject to be spawned at the specified position.</returns>
     GameObject SelectTheRightObjectsToSpawnInPosition(Room room, Position position)
     {
         GameObject tile = chao;
@@ -119,9 +138,13 @@ public class RoomObjectSpawner : MonoBehaviour
         return tile;
     }
 
+    /// <summary>
+    /// Selects the appropriate door GameObject to spawn at the given position within a room.
+    /// </summary>
+    /// <param name="position">The position within the room to select the door for.</param>
+    /// <returns>The door GameObject to be spawned at the specified position, or null if there's no door at that position.</returns>
     GameObject SelectTheRightPositionDoor(Position position)
     {
-        // pegar todas as posicoes das portas e ver se eh igual a que estou agora
         foreach (var kvp in GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION)
         {
             if (kvp.Value.Equals(position))
@@ -132,6 +155,11 @@ public class RoomObjectSpawner : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Selects the appropriate corner GameObject to spawn at the given position within a room.
+    /// </summary>
+    /// <param name="position">The position within the room to select the corner for.</param>
+    /// <returns>The corner GameObject to be spawned at the specified position, or null if there's no corner at that position.</returns>
     GameObject SelectTheRightPositionCorner(Position position)
     {
         if (cornerPositionToGameObject.TryGetValue(position, out GameObject corner))
@@ -141,6 +169,11 @@ public class RoomObjectSpawner : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Selects the appropriate wall GameObject to spawn at the given position within a room.
+    /// </summary>
+    /// <param name="position">The position within the room to select the wall for.</param>
+    /// <returns>The wall GameObject to be spawned at the specified position, or null if there's no wall at that position.</returns>
     GameObject SelectTheRightPositionWall(Position position)
     {
         if (position.X == 0)

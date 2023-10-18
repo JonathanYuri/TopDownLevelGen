@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+/// A static class that provides game-related constants and configurations.
+/// </summary>
 public static class GameConstants
 {
     public static float PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD = 0.5f;

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Manages the game and player interactions.
+/// </summary>
 [RequireComponent(typeof(LevelDataManager))]
 public class GameManager : MonoBehaviour
 {
@@ -71,8 +74,7 @@ public class GameManager : MonoBehaviour
     {
         Position playerOldPosition = playerLocation.atRoom;
         playerLocation.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection, sceneCamera);
-        Position playerNewPosition = playerLocation.atRoom;
 
-        uiMapGenerator.UpdateUIMap(playerOldPosition, playerNewPosition);
+        uiMapGenerator.UpdateUIMap(playerOldPosition);
     }
 }

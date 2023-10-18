@@ -2,38 +2,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Enumeration that defines possible room contents.
+/// </summary>
 public enum RoomContents
 {
-    [Mutavel(true)][Ultrapassavel(true)] Ground, // TODO: colocar tudo em ingles
+    [Mutable(true)][Traversable(true)] Ground, // TODO: colocar tudo em ingles
 
-    [Mutavel(true)][Ultrapassavel(false)] Obstacle1,
-    [Mutavel(true)][Ultrapassavel(false)] Obstacle2,
-    [Mutavel(true)][Ultrapassavel(false)] Obstacle3,
+    [Mutable(true)][Traversable(false)] Obstacle1,
+    [Mutable(true)][Traversable(false)] Obstacle2,
+    [Mutable(true)][Traversable(false)] Obstacle3,
 
-    [Mutavel(true)][Ultrapassavel(true)] Enemy1,
-    [Mutavel(true)][Ultrapassavel(true)] Enemy2,
-    [Mutavel(true)][Ultrapassavel(true)] Enemy3,
+    [Mutable(true)][Traversable(true)] Enemy1,
+    [Mutable(true)][Traversable(true)] Enemy2,
+    [Mutable(true)][Traversable(true)] Enemy3,
 
-    [Mutavel(false)][Ultrapassavel(true)] Nothing,
-    [Mutavel(false)][Ultrapassavel(true)] Door,
-    [Mutavel(false)][Ultrapassavel(false)] Wall,
-    [Mutavel(false)][Ultrapassavel(true)] Portal,
+    [Mutable(false)][Traversable(true)] Nothing,
+    [Mutable(false)][Traversable(true)] Door,
+    [Mutable(false)][Traversable(false)] Wall,
+    [Mutable(false)][Traversable(true)] Portal,
 }
 
+/// <summary>
+/// Attribute that defines whether content is mutable.
+/// </summary>
 [AttributeUsage(AttributeTargets.Field)]
-public class MutavelAttribute : Attribute
+public class MutableAttribute : Attribute
 {
-    public bool IsMutavel { get; }
-    public MutavelAttribute(bool isMutavel) => IsMutavel = isMutavel;
+    public bool IsMutable { get; }
+    public MutableAttribute(bool isMutable) => IsMutable = isMutable;
 }
 
+/// <summary>
+/// Attribute that defines whether content is traversable.
+/// </summary>
 [AttributeUsage(AttributeTargets.Field)]
-public class UltrapassavelAttribute : Attribute
+public class TraversableAttribute : Attribute
 {
-    public bool IsUltrapassavel { get; }
-    public UltrapassavelAttribute(bool isUltrapassavel) => IsUltrapassavel = isUltrapassavel;
+    public bool IsTraversable { get; }
+    public TraversableAttribute(bool isTraversable) => IsTraversable = isTraversable;
 }
 
+/// <summary>
+/// Class that represents a room.
+/// </summary>
 public class Room
 {
     RoomContents[,] values;
