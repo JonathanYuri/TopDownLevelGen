@@ -37,7 +37,7 @@ public class Door : MonoBehaviour
         }
         else
         {
-            throw new ArgumentException("Direcao de porta desconhecida: " + rotation);
+            throw new ArgumentException("Unknown door direction: " + rotation);
         }
     }
 }
