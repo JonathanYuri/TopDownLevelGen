@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// A static class containing constants and parameters for the genetic algorithm.

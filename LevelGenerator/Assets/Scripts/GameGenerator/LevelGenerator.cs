@@ -124,7 +124,15 @@ public class LevelGenerator : MonoBehaviour
         Position[] selectedRoom = { initialRoomPosition };
         Position[] withoutInitialPosition = map.Except(selectedRoom).ToArray();
 
-        return withoutInitialPosition.MaxBy(position => Utils.CalculateDistance(position, initialRoomPosition));
+        // fazer todas as distancias
+        List<int> distancesToInitialPosition = new();
+        foreach (Position position in withoutInitialPosition)
+        {
+            distancesToInitialPosition.Add(Utils.CalculateDistance(position, initialRoomPosition));
+        }
+
+        int maxIndex = distancesToInitialPosition.IndexOfMax(distance => distance);
+        return withoutInitialPosition[maxIndex];
     }
 
     /// <summary>
