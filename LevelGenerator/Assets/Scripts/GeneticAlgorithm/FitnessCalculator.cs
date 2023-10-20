@@ -28,8 +28,7 @@ public class FitnessCalculator
         bool boundsModified = false;
         for (int i = 0; i < numberOfFitnessVariables; i++) // pra cada variavel do fitness
         {
-            int max = allFitness.Max(fitness => fitness.Value[i]);
-            int min = allFitness.Min(fitness => fitness.Value[i]);
+            (int min, int max) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
 
             if (i < boundsOfFitnessVars.Count) // se tiver elementos naquela posicao
             {
@@ -74,11 +73,11 @@ public class FitnessCalculator
         // Calculate the final value by interpolating between minimal and maximal values based on the difficulty.
         float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.ROOM.Difficulty);
 
-        int var1 = -groups.Count; // minimizar a quantidade de grupos
-        int var2 = -(int)media; // minimizar a media de inimigos por grupos
-        int var3 = (int)value; // maximizar o value
-
-        int[] vars = new int[] { var1, var2, var3 };
+        int[] vars = new int[] {
+            -groups.Count, // minimizar a quantidade de grupos
+            -(int)media, // minimizar a media de inimigos por grupos
+            (int)value, // maximizar o value
+        };
         return vars;
     }
 
@@ -175,8 +174,7 @@ public class FitnessCalculator
             return;
         }
 
-        int[] vars = CalculeAllFitnessVars(individual);
-        individual.Value = CalculateNormalizedFitnessValue(vars);
+        individual.Value = CalculateNormalizedFitnessValue(CalculeAllFitnessVars(individual));
     }
 
     /// <summary>
