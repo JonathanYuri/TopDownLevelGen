@@ -28,7 +28,7 @@ public class FitnessCalculator
         bool boundsModified = false;
         for (int i = 0; i < numberOfFitnessVariables; i++) // pra cada variavel do fitness
         {
-            (int min, int max) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
+            (int max, int min) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
 
             if (i < boundsOfFitnessVars.Count) // se tiver elementos naquela posicao
             {
