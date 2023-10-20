@@ -84,6 +84,8 @@ public static class IEnumerableExtensions
     /// <param name="source">The collection to search.</param>
     /// <param name="keySelector">A function to extract a key from each element.</param>
     /// <returns>The element with the maximum key.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public static TSource MaxBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
@@ -119,6 +121,8 @@ public static class IEnumerableExtensions
     /// <param name="source">The collection to search.</param>
     /// <param name="keySelector">A function to extract a key from each element.</param>
     /// <returns>The index of the element with the maximum key.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public static int IndexOfMax<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         if (source == null) throw new ArgumentNullException(nameof(source));
@@ -146,6 +150,48 @@ public static class IEnumerableExtensions
             throw new InvalidOperationException("A sequencia esta vazia.");
 
         return maxIndex;
+    }
+
+    /// <summary>
+    /// Finds the elements in the collection with the maximum key and minimum key as determined by the specified selector function.
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="keySelector"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static (TKey, TKey) MaxAndMin<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    {
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+
+        bool firstItem = true;
+        TKey maxKey = default;
+        TKey minKey = default;
+
+        foreach (var item in source)
+        {
+            var itemKey = keySelector(item);
+
+            if (firstItem || Comparer<TKey>.Default.Compare(itemKey, maxKey) > 0)
+            {
+                maxKey = itemKey;
+            }
+
+            if (firstItem || Comparer<TKey>.Default.Compare(itemKey, minKey) < 0)
+            {
+                minKey = itemKey;
+            }
+
+            firstItem = false;
+        }
+
+        if (firstItem)
+            throw new InvalidOperationException("A sequência está vazia.");
+
+        return (maxKey, minKey);
     }
 }
 
