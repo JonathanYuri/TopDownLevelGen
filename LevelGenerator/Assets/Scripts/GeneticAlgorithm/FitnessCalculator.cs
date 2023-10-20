@@ -73,12 +73,11 @@ public class FitnessCalculator
         // Calculate the final value by interpolating between minimal and maximal values based on the difficulty.
         float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.ROOM.Difficulty);
 
-        int[] vars = new int[] {
+        return new int[] {
             -groups.Count, // minimizar a quantidade de grupos
             -(int)media, // minimizar a media de inimigos por grupos
             (int)value, // maximizar o value
         };
-        return vars;
     }
 
     /// <summary>
