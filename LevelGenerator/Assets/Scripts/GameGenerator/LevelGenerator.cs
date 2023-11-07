@@ -15,17 +15,13 @@ public class LevelGenerator : MonoBehaviour
 
     [SerializeField] Transform rooms;
 
-    HashSet<Position> map;
-
     public Position InitialRoomPosition { get; private set; }
     public Position FinalRoomPosition { get; private set; }
     public int DistanceFromInitialToFinalRoom { get; private set; }
     public Transform Rooms { get => rooms; set => rooms = value; }
-    public HashSet<Position> Map { get => map; set => map = value; }
 
     void Awake()
     {
-        Map = new();
         roomGenerator = GetComponent<RoomGenerator>();
     }
 
@@ -38,14 +34,12 @@ public class LevelGenerator : MonoBehaviour
     /// Generates a level, including its map.
     /// </summary>
     /// <returns>A collection of positions representing the generated map.</returns>
-    public HashSet<Position> Generate()
+    public void Generate()
     {
         DestroyAllPastObjects();
-
         GenerateMap();
         GenerateInitialAndFinalRoom();
         GenerateRemainingRooms();
-        return Map;
     }
 
     /// <summary>
@@ -53,7 +47,7 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void DestroyAllPastObjects()
     {
-        Map.Clear();
+        Map.Instance.RoomPositions.Clear();
         for (int i = 0; i < Rooms.childCount; i++)
         {
             Destroy(Rooms.GetChild(i).gameObject);
@@ -68,28 +62,31 @@ public class LevelGenerator : MonoBehaviour
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
 
-        while (Map.Count < levelDataManager.RoomCount)
+        HashSet<Position> map = new();
+        while (map.Count < levelDataManager.RoomCount)
         {
             if (queue.Count == 0)
             {
-                int pos = UnityEngine.Random.Range(0, Map.Count);
-                queue.Enqueue(Map.ElementAt(pos));
+                int pos = UnityEngine.Random.Range(0, map.Count);
+                queue.Enqueue(map.ElementAt(pos));
             }
 
             Position position = queue.Dequeue();
-            Map.Add(position);
+            map.Add(position);
 
-            Direction[] shuffledArr = Enum.GetValues(typeof(Direction)).Cast<Direction>().Shuffle();
-            foreach (Direction direction in shuffledArr)
+            Direction[] shuffledDirections = Enum.GetValues(typeof(Direction)).Cast<Direction>().Shuffle();
+            foreach (Direction direction in shuffledDirections)
             {
                 Position adjacentPosition = position.Move(direction);
 
-                if (!Map.Contains(adjacentPosition) && UnityEngine.Random.value < GameConstants.PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD)
+                if (!map.Contains(adjacentPosition) && UnityEngine.Random.value < GameConstants.PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD)
                 {
                     queue.Enqueue(adjacentPosition);
                 }
             }
         }
+
+        Map.Instance.RoomPositions = map;
     }
 
     /// <summary>
@@ -114,7 +111,7 @@ public class LevelGenerator : MonoBehaviour
     Position ChooseFinalRoomPosition()
     {
         Position[] selectedRoom = { InitialRoomPosition };
-        Position[] withoutInitialPosition = Map.Except(selectedRoom).ToArray();
+        Position[] withoutInitialPosition = Map.Instance.RoomPositions.Except(selectedRoom).ToArray();
 
         return withoutInitialPosition.MaxBy(position => Utils.CalculateDistance(position, InitialRoomPosition));
     }
@@ -125,7 +122,9 @@ public class LevelGenerator : MonoBehaviour
     void GenerateRemainingRooms()
     {
         Position[] selectedRooms = {InitialRoomPosition, FinalRoomPosition};
-        foreach (Position roomPosition in Map.Except(selectedRooms))
+        var remainingRooms = Map.Instance.RoomPositions.Except(selectedRooms);
+
+        foreach (Position roomPosition in remainingRooms)
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
             StartCoroutine(roomGenerator.GenerateRoom(roomPosition));

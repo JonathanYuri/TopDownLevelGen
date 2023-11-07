@@ -223,3 +223,17 @@ public static class MatrixExtensions
     /// <returns>True if the position is within the matrix bounds; otherwise, false.</returns>
     public static bool IsPositionWithinBounds<T>(this T[,] matrix, Position position) => IsPositionWithinBounds(matrix, position.X, position.Y);
 }
+
+public static class DictionaryExtensions
+{
+    public static Dictionary<TValue, TKey> InvertDictionary<TKey, TValue>(this Dictionary<TKey, TValue> originalDictionary)
+    {
+        Dictionary<TValue, TKey> invertedDictionary = new();
+        foreach (var kvp in originalDictionary)
+        {
+            invertedDictionary[kvp.Value] = kvp.Key;
+        }
+
+        return invertedDictionary;
+    }
+}

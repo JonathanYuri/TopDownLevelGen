@@ -11,14 +11,11 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject playerPrefab;
     PlayerController player;
-    PlayerLocation playerLocation;
 
     Camera sceneCamera;
 
     UIMapGenerator uiMapGenerator;
     LevelGenerator levelGenerator;
-
-    HashSet<Position> map;
 
     int level = 0;
     LevelDataManager levelDataManager;
@@ -34,14 +31,19 @@ public class GameManager : MonoBehaviour
 
     void GenerateGame()
     {
-        map = levelGenerator.Generate();
+        levelGenerator.Generate();
+
         if (player == null)
         {
-            SpawnPlayer();
+            PlayerLocation.Instance.SpawnPlayer(playerPrefab);
+            player = PlayerLocation.Instance.Player;
+
+            player.PassedThroughTheDoorEvent += Player_PassedThroughTheDoor;
+            player.OnLevelComplete += Player_OnLevelComplete;
         }
-        playerLocation ??= new(player, playerPrefab);
-        playerLocation.SetPlayerToInitialRoom(map.ElementAt(0), sceneCamera);
-        uiMapGenerator.CreateUIMap(map, playerLocation);
+
+        PlayerLocation.Instance.SetPlayerToInitialRoom(sceneCamera);
+        uiMapGenerator.CreateUIMap();
     }
 
     private void OnDestroy()
@@ -53,16 +55,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void SpawnPlayer()
-    {
-        GameObject playerObject = Instantiate(
-            playerPrefab
-        );
-        player = playerObject.GetComponent<PlayerController>();
-        player.PassedThroughTheDoorEvent += Player_PassedThroughTheDoor;
-        player.OnLevelComplete += Player_OnLevelComplete;
-    }
-
     void Player_OnLevelComplete()
     {
         level++;
@@ -72,8 +64,8 @@ public class GameManager : MonoBehaviour
 
     void Player_PassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
     {
-        Position playerOldPosition = playerLocation.atRoom;
-        playerLocation.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection, sceneCamera);
+        Position playerOldPosition = PlayerLocation.Instance.AtRoom;
+        PlayerLocation.Instance.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection, sceneCamera);
 
         uiMapGenerator.UpdateUIMap(playerOldPosition);
     }

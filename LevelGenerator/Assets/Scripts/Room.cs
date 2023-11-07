@@ -20,7 +20,7 @@ public enum RoomContents
     [Mutable(false)][Traversable(true)] Nothing,
     [Mutable(false)][Traversable(true)] Door,
     [Mutable(false)][Traversable(false)] Wall,
-    [Mutable(false)][Traversable(true)] Portal,
+    [Mutable(false)][Traversable(true)] LevelEnd,
 }
 
 /// <summary>
@@ -54,16 +54,16 @@ public class Room
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
     public HashSet<Position> ChangeablesPositions { get; }
-    public Position[] DoorsPositions { get; }
+    public Position[] DoorPositions { get; }
     public float Difficulty { get; }
 
-    public Room(Position[] doorsPositions, RoomContents[] enemies, RoomContents[] obstacles, float difficulty)
+    public Room(RoomData roomData)
     {
-        Enemies = enemies;
-        Obstacles = obstacles;
-        DoorsPositions = doorsPositions;
+        Enemies = roomData.enemies;
+        Obstacles = roomData.obstacles;
+        DoorPositions = roomData.doorPositions;
         ChangeablesPositions = GameConstants.ALL_POSITIONS_IN_ROOM;
-        Difficulty = Mathf.Clamp(difficulty, 0f, 1f);
+        Difficulty = Mathf.Clamp(roomData.difficulty, 0f, 1f);
 
         Values = new RoomContents[GameConstants.ROOM_WIDTH, GameConstants.ROOM_HEIGHT];
 
@@ -87,7 +87,7 @@ public class Room
 
     void PutTheDoors()
     {
-        foreach (Position position in DoorsPositions)
+        foreach (Position position in DoorPositions)
         {
             PlaceTheImmutableRoomContentInPosition(RoomContents.Door, position);
 

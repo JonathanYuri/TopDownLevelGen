@@ -101,11 +101,11 @@ public static class PathFinder
     {
         int[,] matrix = TransformRoomForCountPaths(roomMatrix, IsPassable);
          
-        for (int i = 0; i < GeneticAlgorithmConstants.ROOM.DoorsPositions.Length; i++)
+        for (int i = 0; i < GeneticAlgorithmConstants.ROOM.DoorPositions.Length; i++)
         {
-            for (int j = i + 1; j < GeneticAlgorithmConstants.ROOM.DoorsPositions.Length; j++)
+            for (int j = i + 1; j < GeneticAlgorithmConstants.ROOM.DoorPositions.Length; j++)
             {
-                if (!HasPathBetweenPositions(matrix, GeneticAlgorithmConstants.ROOM.DoorsPositions[i], GeneticAlgorithmConstants.ROOM.DoorsPositions[j]))
+                if (!HasPathBetweenPositions(matrix, GeneticAlgorithmConstants.ROOM.DoorPositions[i], GeneticAlgorithmConstants.ROOM.DoorPositions[j]))
                 {
                     return false;
                 }
@@ -128,7 +128,7 @@ public static class PathFinder
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
         foreach (Position enemiePosition in roomMatrix.EnemiesPositions)
         {
-            if (!HasPathBetweenPositions(matriz, GeneticAlgorithmConstants.ROOM.DoorsPositions[0], enemiePosition))
+            if (!HasPathBetweenPositions(matriz, GeneticAlgorithmConstants.ROOM.DoorPositions[0], enemiePosition))
             {
                 return false;
             }

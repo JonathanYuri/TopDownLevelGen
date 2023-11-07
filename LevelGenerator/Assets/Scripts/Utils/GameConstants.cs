@@ -20,6 +20,8 @@ public static class GameConstants
         { Direction.Right, new Position { X = GameConstants.ROOM_WIDTH - 1, Y = GameConstants.ROOM_MIDDLE.Y } }
     };
 
+    public static readonly Dictionary<Position, Direction> DOOR_POSITION_TO_NEIGHBOR_DIRECTION = NEIGHBOR_DIRECTION_TO_DOOR_POSITION.InvertDictionary();
+
     public static readonly HashSet<Position> ALL_POSITIONS_IN_ROOM = new(
         Enumerable.Range(0, ROOM_WIDTH)
         .SelectMany(x => Enumerable.Range(0, ROOM_HEIGHT), (x, y) => new Position { X = x, Y = y })

@@ -46,7 +46,7 @@ public static class RoomOperations
     public static double AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions)
     {
         List<double> averagesDistances = new();
-        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorsPositions)
+        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorPositions)
         {
             List<int> averagesDistancesFromDoorPosition = new();
             foreach (Position enemyPosition in enemiesPositions)
@@ -61,7 +61,7 @@ public static class RoomOperations
     public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions)
     {
         int minDistance = int.MaxValue;
-        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorsPositions)
+        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorPositions)
         {
             minDistance = Math.Min(minDistance, enemiesPositions.Min(enemyPosition => Utils.CalculateDistance(doorPosition, enemyPosition)));
         }

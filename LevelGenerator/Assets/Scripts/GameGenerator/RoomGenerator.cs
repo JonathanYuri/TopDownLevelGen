@@ -29,13 +29,12 @@ public class RoomGenerator : MonoBehaviour
     /// </summary>
     /// <param name="roomPosition">The position where the room object will be generated.</param>
     /// <returns>GameObject of the room</returns>
-    GameObject GenerateRoomObject(Position roomPosition)
+    GameObject GenerateRoomGameObject(Position roomPosition)
     {
         Vector2 roomObjectPosition = Utils.TransformAMapPositionIntoAUnityPosition(roomPosition);
         GameObject roomObject = Instantiate(roomPrefab, roomObjectPosition, Quaternion.identity, levelGenerator.Rooms);
         return roomObject;
     }
-
 
     /// <summary>
     /// Generates a room within the specified room object and position.
@@ -45,24 +44,36 @@ public class RoomGenerator : MonoBehaviour
     /// <returns>An IEnumerator for asynchronous room generation.</returns>
     public IEnumerator GenerateRoom(Position roomPosition, bool generateObjectsInRoom = true)
     {
-        GameObject roomObject = GenerateRoomObject(roomPosition);
+        GameObject roomObject = GenerateRoomGameObject(roomPosition);
         RoomData roomData = GetRoomData(roomPosition);
 
-        Room room = new(roomData.doorPositions, roomData.enemies, roomData.obstacles, roomData.difficulty);
-        GeneticRoomGenerator geneticRoomGenerator = new(room);
-
+        Room room = new(roomData);
+        
         if (generateObjectsInRoom)
         {
-            room.Values = geneticRoomGenerator.GeneticLooping();
+            float startTime = Time.realtimeSinceStartup;
+
+            room.Values = GenerateRoomWithGeneticAlgorithm(room);
             yield return null;
+
+            float endTime = Time.realtimeSinceStartup;
+
+            Debug.LogError("Tempo de execução da corrotina: " + (endTime - startTime) + " segundos");
+            Debug.LogError("Tempo total de execução ate agora: " + endTime + " segundos");
         }
 
         if (IsFinalRoom(roomPosition))
         {
-            room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.Portal;
+            room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
         }
 
         roomObjectSpawner.SpawnRoomObjects(room, roomObject);
+    }
+
+    RoomContents[,] GenerateRoomWithGeneticAlgorithm(Room room)
+    {
+        GeneticRoomGenerator geneticRoomGenerator = new(room);
+        return geneticRoomGenerator.GeneticLooping();
     }
 
     bool IsFinalRoom(Position roomPosition) => levelGenerator.FinalRoomPosition != null && levelGenerator.FinalRoomPosition.Equals(roomPosition);
@@ -73,7 +84,7 @@ public class RoomGenerator : MonoBehaviour
         float difficulty = (float)distanceToInitialRoom / (float)levelGenerator.DistanceFromInitialToFinalRoom;
 
         return new(
-                MapUtility.GetDoorPositionsFromRoomPosition(levelGenerator.Map, roomPosition),
+                MapUtility.GetDoorPositionsFromRoomPosition(roomPosition),
                 Knapsack.ResolveKnapsackEnemies(levelDataManager.Enemies, levelDataManager.EnemiesValues, levelDataManager.EnemiesCapacity),
                 Knapsack.ResolveKnapsackObstacles(levelDataManager.Obstacles, levelDataManager.ObstaclesValues, levelDataManager.ObstaclesCapacity),
                 difficulty

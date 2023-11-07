@@ -17,7 +17,6 @@ public class UIMapGenerator : MonoBehaviour
     Image playerInRoomImage;
     [SerializeField] GameObject blankSpacePrefab;
 
-    PlayerLocation playerLocation;
     Dictionary<Position, Image> uiMap;
 
     void Awake()
@@ -42,31 +41,29 @@ public class UIMapGenerator : MonoBehaviour
     /// <summary>
     /// Creates the UI map to represent the game map with room panels and player's current position.
     /// </summary>
-    /// <param name="map">A HashSet of Positions representing the rooms in the game map.</param>
-    /// <param name="playerLocation">The current location of the player in the game map.</param>
-    public void CreateUIMap(HashSet<Position> map, PlayerLocation playerLocation)
+    public void CreateUIMap()
     {
-        this.playerLocation = playerLocation;
         DestroyPastUIMap();
 
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
 
-        int mapSize = CalculateMapSize(map);
+        int mapSize = CalculateMapSize();
         float roomSize = CalculateRoomSize(mapSize, mapHolderRect);
         Vector2 roomScale = new(roomSize / mapHolderRect.rect.size.x, roomSize / mapHolderRect.rect.size.y);
 
         Vector2 initialRoomPosition = CalculateInitialRoomPosition(mapHolderRect, roomSize);
 
-        CreateRoomPanels(map, mapSize, roomSize, roomScale, initialRoomPosition);
+        CreateRoomPanels(mapSize, roomSize, roomScale, initialRoomPosition);
     }
 
     /// <summary>
     /// Calculates the size of the game map based on the positions of rooms in the map.
     /// </summary>
-    /// <param name="map">A HashSet of Positions representing the rooms in the game map.</param>
     /// <returns>The size of the game map.</returns>
-    int CalculateMapSize(HashSet<Position> map)
+    int CalculateMapSize()
     {
+        HashSet<Position> map = Map.Instance.RoomPositions;
+
         int maxX = map.Max(room => room.X);
         int maxY = map.Max(room => room.Y);
 
@@ -104,13 +101,13 @@ public class UIMapGenerator : MonoBehaviour
     /// <summary>
     /// Creates room panels for each room in the map, positioning them within the map holder based on the specified parameters.
     /// </summary>
-    /// <param name="map">The set of room positions in the map.</param>
     /// <param name="mapSize">The size of the map.</param>
     /// <param name="roomSize">The size of each room panel.</param>
     /// <param name="roomScale">The scale to apply to each room panel.</param>
     /// <param name="initialRoomPosition">The initial position of the first room panel.</param>
-    void CreateRoomPanels(HashSet<Position> map, int mapSize, float roomSize, Vector2 roomScale, Vector2 initialRoomPosition)
+    void CreateRoomPanels(int mapSize, float roomSize, Vector2 roomScale, Vector2 initialRoomPosition)
     {
+        HashSet<Position> map = Map.Instance.RoomPositions;
         float horizontalRoomPosition = initialRoomPosition.x;
         float verticalRoomPosition = initialRoomPosition.y;
 
@@ -122,13 +119,8 @@ public class UIMapGenerator : MonoBehaviour
             for (int i = minX; i <= mapSize - 1 + minX; i++)
             {
                 Position position = new() { X = i, Y = j };
-                GameObject roomPanel = ChoosePanelToPosition(map, position);
-                uiMap.Add(position, roomPanel.GetComponent<Image>());
 
-                RectTransform roomRectTransform = roomPanel.GetComponent<RectTransform>();
-                roomPanel.transform.localScale = new Vector3(roomScale.x, roomScale.y, 1);
-                roomPanel.transform.localPosition = new Vector3(horizontalRoomPosition, verticalRoomPosition);
-
+                InstantiatePanelForPosition(position, roomScale, horizontalRoomPosition, verticalRoomPosition);
                 horizontalRoomPosition += roomSize;
             }
             horizontalRoomPosition = initialRoomPosition.x;
@@ -136,28 +128,35 @@ public class UIMapGenerator : MonoBehaviour
         }
     }
 
+    void InstantiatePanelForPosition(Position position, Vector2 roomScale, float horizontalRoomPosition, float verticalRoomPosition)
+    {
+        GameObject roomPanel = ChoosePanelToPosition(position);
+        GameObject roomPanelInGame = Instantiate(roomPanel, mapHolder.transform);
+
+        roomPanelInGame.transform.localScale = new Vector3(roomScale.x, roomScale.y, 1);
+        roomPanelInGame.transform.localPosition = new Vector3(horizontalRoomPosition, verticalRoomPosition);
+
+        uiMap.Add(position, roomPanelInGame.GetComponent<Image>());
+    }
+
     /// <summary>
     /// Chooses the appropriate room panel based on the given position and player location.
     /// </summary>
-    /// <param name="map">The set of room positions in the map.</param>
     /// <param name="position">The position for which to select a room panel.</param>
     /// <returns>The selected room panel GameObject.</returns>
-    GameObject ChoosePanelToPosition(HashSet<Position> map, Position position)
+    GameObject ChoosePanelToPosition(Position position)
     {
-        GameObject roomPanel;
-        if (playerLocation.atRoom.Equals(position))
+        if (PlayerLocation.Instance.AtRoom.Equals(position))
         {
-            roomPanel = Instantiate(playerInRoomPanel, mapHolder.transform);
+            return playerInRoomPanel;
         }
-        else if (map.Contains(position))
+
+        if (Map.Instance.RoomPositions.Contains(position))
         {
-            roomPanel = Instantiate(roomPanelPrefab, mapHolder.transform);
+            return roomPanelPrefab;
         }
-        else
-        {
-            roomPanel = Instantiate(blankSpacePrefab, mapHolder.transform);
-        }
-        return roomPanel;
+
+        return blankSpacePrefab;
     }
 
     /// <summary>
@@ -167,6 +166,6 @@ public class UIMapGenerator : MonoBehaviour
     public void UpdateUIMap(Position playerOldPosition)
     {
         uiMap[playerOldPosition].color = roomPanelImage.color;
-        uiMap[playerLocation.atRoom].color = playerInRoomImage.color;
+        uiMap[PlayerLocation.Instance.AtRoom].color = playerInRoomImage.color;
     }
 }
