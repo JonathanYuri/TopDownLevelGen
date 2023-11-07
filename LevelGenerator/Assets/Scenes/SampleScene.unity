@@ -249,6 +249,7 @@ GameObject:
   - component: {fileID: 1613456225}
   - component: {fileID: 1613456224}
   - component: {fileID: 1613456226}
+  - component: {fileID: 1613456227}
   m_Layer: 0
   m_Name: Room Generator
   m_TagString: Untagged
@@ -268,8 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc8b47e147014754b81c5baa37612fd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rooms: {fileID: 1186078642}
-  room: {fileID: 6991287572130058452, guid: 6d2ed8babcd3d2b4191b38568ad1a99e, type: 3}
+  rooms: {fileID: 1186078643}
 --- !u!4 &1613456225
 Transform:
   m_ObjectHideFlags: 0
@@ -315,6 +315,19 @@ MonoBehaviour:
   - {fileID: 1574884110865691756, guid: a1eb403aca262894e882ba1d83529c1b, type: 3}
   - {fileID: 534313402385343721, guid: 5737d7b845b6cb2428af047b53e18f7d, type: 3}
   chao: {fileID: 4518443509631710534, guid: 816b3aca2a9fd164daf8cd55a4e8f5a4, type: 3}
+--- !u!114 &1613456227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1613456223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f8ce9fde1397a44e9b52ac706a932be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomPrefab: {fileID: 6991287572130058452, guid: 6d2ed8babcd3d2b4191b38568ad1a99e, type: 3}
 --- !u!1 &1626703165
 GameObject:
   m_ObjectHideFlags: 0

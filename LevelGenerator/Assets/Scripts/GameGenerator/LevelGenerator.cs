@@ -3,36 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 /// <summary>
 /// Generates and manages levels using a room-based approach.
 /// </summary>
-[RequireComponent(typeof(RoomObjectSpawner))]
+[RequireComponent(typeof(RoomGenerator))]
 public class LevelGenerator : MonoBehaviour
 {
     LevelDataManager levelDataManager;
-    float totalCoroutineExecutionTime = 0f;
+    RoomGenerator roomGenerator;
 
-    [SerializeField] GameObject rooms;
-    [SerializeField] GameObject room;
+    [SerializeField] Transform rooms;
 
     HashSet<Position> map;
 
-    Position initialRoomPosition;
-    Position finalRoomPosition;
-    int distanceFromInitialToFinalRoom;
+    public Position InitialRoomPosition { get; private set; }
+    public Position FinalRoomPosition { get; private set; }
+    public int DistanceFromInitialToFinalRoom { get; private set; }
+    public Transform Rooms { get => rooms; set => rooms = value; }
+    public HashSet<Position> Map { get => map; set => map = value; }
 
-    RoomObjectSpawner roomObjectSpawner;
-
-    private void Awake()
+    void Awake()
     {
-        map = new();
+        Map = new();
+        roomGenerator = GetComponent<RoomGenerator>();
     }
 
-    private void Start()
+    void Start()
     {
-        roomObjectSpawner = GetComponent<RoomObjectSpawner>();
         levelDataManager = FindFirstObjectByType<LevelDataManager>();
     }
 
@@ -45,11 +43,9 @@ public class LevelGenerator : MonoBehaviour
         DestroyAllPastObjects();
 
         GenerateMap();
-        GenerateInitialRoom();
-        GenerateFinalRoom();
-        distanceFromInitialToFinalRoom = Utils.CalculateDistance(initialRoomPosition, finalRoomPosition);
+        GenerateInitialAndFinalRoom();
         GenerateRemainingRooms();
-        return map;
+        return Map;
     }
 
     /// <summary>
@@ -57,10 +53,10 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void DestroyAllPastObjects()
     {
-        map.Clear();
-        for (int i = 0; i < rooms.transform.childCount; i++)
+        Map.Clear();
+        for (int i = 0; i < Rooms.childCount; i++)
         {
-            Destroy(rooms.transform.GetChild(i).gameObject);
+            Destroy(Rooms.GetChild(i).gameObject);
         }
     }
 
@@ -69,27 +65,26 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void GenerateMap()
     {
-        totalCoroutineExecutionTime = 0;
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
 
-        while (map.Count < levelDataManager.RoomCount)
+        while (Map.Count < levelDataManager.RoomCount)
         {
             if (queue.Count == 0)
             {
-                int pos = UnityEngine.Random.Range(0, map.Count);
-                queue.Enqueue(map.ElementAt(pos));
+                int pos = UnityEngine.Random.Range(0, Map.Count);
+                queue.Enqueue(Map.ElementAt(pos));
             }
 
             Position position = queue.Dequeue();
-            map.Add(position);
+            Map.Add(position);
 
             Direction[] shuffledArr = Enum.GetValues(typeof(Direction)).Cast<Direction>().Shuffle();
             foreach (Direction direction in shuffledArr)
             {
                 Position adjacentPosition = position.Move(direction);
 
-                if (!map.Contains(adjacentPosition) && UnityEngine.Random.value < GameConstants.PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD)
+                if (!Map.Contains(adjacentPosition) && UnityEngine.Random.value < GameConstants.PROBABILITY_OF_GENERATING_ROOM_IN_NEIGHBORHOOD)
                 {
                     queue.Enqueue(adjacentPosition);
                 }
@@ -98,21 +93,18 @@ public class LevelGenerator : MonoBehaviour
     }
 
     /// <summary>
+    /// Generates the final room at a calculated position within the level layout.
     /// Generates the initial room at the starting position of the level layout.
     /// </summary>
-    void GenerateInitialRoom()
+    void GenerateInitialAndFinalRoom()
     {
-        initialRoomPosition = new() { X = 0, Y = 0 };
-        GenerateRoomObject(initialRoomPosition, false); // gerar so o esqueleto
-    }
+        InitialRoomPosition = new() { X = 0, Y = 0 };
+        FinalRoomPosition = ChooseFinalRoomPosition();
 
-    /// <summary>
-    /// Generates the final room at a calculated position within the level layout.
-    /// </summary>
-    void GenerateFinalRoom()
-    {
-        finalRoomPosition = ChooseFinalRoomPosition();
-        GenerateRoomObject(finalRoomPosition, false); // gerar so o esqueleto
+        DistanceFromInitialToFinalRoom = Utils.CalculateDistance(InitialRoomPosition, FinalRoomPosition);
+
+        StartCoroutine(roomGenerator.GenerateRoom(InitialRoomPosition, false)); // gerar so o esqueleto
+        StartCoroutine(roomGenerator.GenerateRoom(FinalRoomPosition, false));  // gerar so o esqueleto
     }
 
     /// <summary>
@@ -121,10 +113,10 @@ public class LevelGenerator : MonoBehaviour
     /// <returns>The chosen position for the final room.</returns>
     Position ChooseFinalRoomPosition()
     {
-        Position[] selectedRoom = { initialRoomPosition };
-        Position[] withoutInitialPosition = map.Except(selectedRoom).ToArray();
+        Position[] selectedRoom = { InitialRoomPosition };
+        Position[] withoutInitialPosition = Map.Except(selectedRoom).ToArray();
 
-        return withoutInitialPosition.MaxBy(position => Utils.CalculateDistance(position, initialRoomPosition));
+        return withoutInitialPosition.MaxBy(position => Utils.CalculateDistance(position, InitialRoomPosition));
     }
 
     /// <summary>
@@ -132,94 +124,11 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void GenerateRemainingRooms()
     {
-        Position[] selectedRooms = {initialRoomPosition, finalRoomPosition};
-        foreach (Position roomPosition in map.Except(selectedRooms))
+        Position[] selectedRooms = {InitialRoomPosition, FinalRoomPosition};
+        foreach (Position roomPosition in Map.Except(selectedRooms))
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
-            GenerateRoomObject(roomPosition);
+            StartCoroutine(roomGenerator.GenerateRoom(roomPosition));
         }
-    }
-
-    /// <summary>
-    /// Generates a room object at the specified position, with optional content generation.
-    /// </summary>
-    /// <param name="roomPosition">The position where the room object will be generated.</param>
-    /// <param name="generateObjectsInRoom">Determines whether to generate content within the room object (default: true).</param>
-    void GenerateRoomObject(Position roomPosition, bool generateObjectsInRoom = true)
-    {
-        Vector2 roomObjectPosition = Utils.TransformAMapPositionIntoAUnityPosition(roomPosition);
-        GameObject roomObject = Instantiate(room, roomObjectPosition, Quaternion.identity, rooms.transform);
-
-        StartCoroutine(GenerateRoom(roomObject, roomPosition, generateObjectsInRoom));
-    }
-
-    /// <summary>
-    /// Retrieves an array of door positions based on neighboring room directions from the specified room position.
-    /// </summary>
-    /// <param name="roomPosition">The position of the room for which to find door positions.</param>
-    /// <returns>An array of positions representing door locations.</returns>
-    Position[] GetDoorPositionsFromRoomPosition(Position roomPosition)
-    {
-        List<Position> doorsPositions = new();
-        foreach (Direction direction in Enum.GetValues(typeof(Direction)).Cast<Direction>())
-        {
-            Position adjacentPosition = roomPosition.Move(direction);
-            if (map.Contains(adjacentPosition))
-            {
-                doorsPositions.Add(GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION[direction]);
-            }
-        }
-        return doorsPositions.ToArray();
-    }
-
-    /// <summary>
-    /// Generates a room within the specified room object and position.
-    /// </summary>
-    /// <param name="roomObject">The GameObject representing the room object to generate.</param>
-    /// <param name="roomPosition">The position of the room to be generated.</param>
-    /// <param name="generateObjectsInRoom">Determines whether to generate objects in the room (default: true).</param>
-    /// <returns>An IEnumerator for asynchronous room generation.</returns>
-    IEnumerator GenerateRoom(GameObject roomObject, Position roomPosition, bool generateObjectsInRoom = true)
-    {
-        Position[] doorPositions = GetDoorPositionsFromRoomPosition(roomPosition);
-        RoomContents[] enemies = Knapsack.ResolveKnapsackEnemies(levelDataManager.Enemies, levelDataManager.EnemiesValues, levelDataManager.EnemiesCapacity);
-        RoomContents[] obstacles = Knapsack.ResolveKnapsackObstacles(levelDataManager.Obstacles, levelDataManager.ObstaclesValues, levelDataManager.ObstaclesCapacity);
-        int distanceToInitialRoom = Utils.CalculateDistance(initialRoomPosition, roomPosition);
-        float difficulty = (float)distanceToInitialRoom / (float)distanceFromInitialToFinalRoom;
-
-        Room room = new(doorPositions, enemies, obstacles, difficulty);
-        GeneticRoomGenerator geneticRoomGenerator = new(room);
-
-        if (generateObjectsInRoom)
-        {
-            yield return StartCoroutine(GenerateRoomsInBackground(room, geneticRoomGenerator));
-        }
-
-        if (finalRoomPosition != null && finalRoomPosition.Equals(roomPosition))
-        {
-            room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.Portal;
-        }
-
-        roomObjectSpawner.SpawnRoomObjects(room, roomObject);
-    }
-
-    /// <summary>
-    /// Generates room content asynchronously within a room using a genetic algorithm.
-    /// </summary>
-    /// <param name="room">The room for which to generate content.</param>
-    /// <param name="geneticRoomGenerator">The genetic algorithm generator for the room.</param>
-    /// <returns>An IEnumerator for asynchronous room content generation.</returns>
-    IEnumerator GenerateRoomsInBackground(Room room, GeneticRoomGenerator geneticRoomGenerator)
-    {
-        float startTime = Time.realtimeSinceStartup;
-
-        room.Values = geneticRoomGenerator.GeneticLooping();
-        yield return null;
-
-        float endTime = Time.realtimeSinceStartup;
-        float executionTime = endTime - startTime;
-        totalCoroutineExecutionTime += executionTime;
-        Debug.LogError("Tempo de execução da corrotina: " + executionTime + " segundos");
-        Debug.LogError("Tempo total de execução ate agora: " + totalCoroutineExecutionTime + " segundos");
     }
 }

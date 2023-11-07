@@ -114,3 +114,25 @@ public static class Utils
         return Math.Abs(position1.X - position2.X) + Math.Abs(position1.Y - position2.Y);
     }
 }
+
+public static class MapUtility
+{
+    /// <summary>
+    /// Retrieves an array of door positions based on neighboring room directions from the specified room position.
+    /// </summary>
+    /// <param name="roomPosition">The position of the room for which to find door positions.</param>
+    /// <returns>An array of positions representing door locations.</returns>
+    public static Position[] GetDoorPositionsFromRoomPosition(HashSet<Position> roomPositionsInMap, Position roomPosition)
+    {
+        List<Position> doorsPositions = new();
+        foreach (Direction direction in Enum.GetValues(typeof(Direction)).Cast<Direction>())
+        {
+            Position adjacentPosition = roomPosition.Move(direction);
+            if (roomPositionsInMap.Contains(adjacentPosition))
+            {
+                doorsPositions.Add(GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION[direction]);
+            }
+        }
+        return doorsPositions.ToArray();
+    }
+}
