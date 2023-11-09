@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 294553fad6994d042928e28071ba65c6, type: 3}
   m_Name: Level 1
   m_EditorClassIdentifier: 
-  roomCount: 20
+  roomCount: 15
   enemies: 040000000500000006000000
   enemiesDifficult: 010000000200000003000000
+  enemiesCapacity: 30
   obstacles: 010000000200000003000000
   obstaclesDifficult: 010000000200000003000000
+  obstaclesCapacity: 30
