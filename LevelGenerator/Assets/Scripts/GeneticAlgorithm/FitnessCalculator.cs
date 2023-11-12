@@ -8,16 +8,45 @@ using UnityEngine;
 /// </summary>
 public class FitnessCalculator
 {
-    int numberOfFitnessVariables = 3;
+    const int numberOfFitnessVariables = 3;
+
     Dictionary<int, int[]> allFitness;
     List<Range> boundsOfFitnessVars; // pra normalizar as variaveis da fitness do individual
-
     bool areBoundsModified = true;
+
+    float numGroupsImportance = 1f;
+    float enemiesPerGroupAverageImportance = 1f;
+    float enemyDoorDistanceImportance = 1f;
+
+    enum FitnessVariable
+    {
+        NumGroups = 0,
+        EnemiesPerGroupAverage = 1,
+        EnemyDoorDistance = 2
+    }
+
+    Dictionary<FitnessVariable, float> importances;
 
     public FitnessCalculator()
     {
         allFitness = new();
         boundsOfFitnessVars = new();
+
+        LimitImportances();
+
+        importances = new()
+        {
+            { FitnessVariable.NumGroups, numGroupsImportance },
+            { FitnessVariable.EnemiesPerGroupAverage, enemiesPerGroupAverageImportance },
+            { FitnessVariable.EnemyDoorDistance, enemyDoorDistanceImportance }
+        };
+    }
+
+    void LimitImportances()
+    {
+        numGroupsImportance = Mathf.Clamp(numGroupsImportance, 0f, 1f);
+        enemiesPerGroupAverageImportance = Mathf.Clamp(enemiesPerGroupAverageImportance, 0f, 1f);
+        enemyDoorDistanceImportance = Mathf.Clamp(enemyDoorDistanceImportance, 0f, 1f);
     }
 
     /// <summary>
@@ -73,11 +102,11 @@ public class FitnessCalculator
         // Calculate the final value by interpolating between minimal and maximal values based on the difficulty.
         float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.ROOM.Difficulty);
 
-        return new int[] {
-            -groups.Count, // minimizar a quantidade de grupos
-            -(int)media, // minimizar a media de inimigos por grupos
-            (int)value, // maximizar o value
-        };
+        int[] vars = new int[numberOfFitnessVariables];
+        vars[(int)FitnessVariable.NumGroups] = -groups.Count; // minimizar a quantidade de grupos
+        vars[(int)FitnessVariable.EnemiesPerGroupAverage] = -(int)media; // minimizar a media de inimigos por grupos
+        vars[(int)FitnessVariable.EnemyDoorDistance] = (int)value; // maximizar o value
+        return vars;
     }
 
     /// <summary>
@@ -188,7 +217,7 @@ public class FitnessCalculator
         for (int i = 0; i < numberOfFitnessVariables; i++)
         {
             double normalizedValue = Utils.Normalization(fitnessVars[i], boundsOfFitnessVars[i].min, boundsOfFitnessVars[i].max);
-            value += (int)normalizedValue;
+            value += (int)(normalizedValue * importances[(FitnessVariable)i]);
         }
         return value;
     }
