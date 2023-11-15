@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using RoomGeneticAlgorithm.Variables;
 
 /// <summary>
 /// A static class that provides various operations related to room contents.
@@ -24,8 +25,7 @@ public static class RoomOperations
         return positionsByPossibilidades;
     }
 
-    public static int CountEnemiesNextToObstacles(
-        RoomMatrix roomMatrix)
+    public static int CountEnemiesNextToObstacles(RoomMatrix roomMatrix)
     {
         int enemies = 0;
         foreach (Position obstaclePosition in roomMatrix.ObstaclesPositions)
@@ -43,10 +43,10 @@ public static class RoomOperations
         return enemies;
     }
 
-    public static double AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions)
+    public static double AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
     {
         List<double> averagesDistances = new();
-        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorPositions)
+        foreach (Position doorPosition in doorPositions)
         {
             List<int> averagesDistancesFromDoorPosition = new();
             foreach (Position enemyPosition in enemiesPositions)
@@ -58,10 +58,10 @@ public static class RoomOperations
         return averagesDistances.Average();
     }
 
-    public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions)
+    public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
     {
         int minDistance = int.MaxValue;
-        foreach (Position doorPosition in GeneticAlgorithmConstants.ROOM.DoorPositions)
+        foreach (Position doorPosition in doorPositions)
         {
             minDistance = Math.Min(minDistance, enemiesPositions.Min(enemyPosition => Utils.CalculateDistance(doorPosition, enemyPosition)));
         }

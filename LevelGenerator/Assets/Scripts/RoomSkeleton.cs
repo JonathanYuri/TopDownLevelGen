@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Class that represents a room.
+/// Class that represents a room skeleton.
 /// </summary>
-public class Room
+public class RoomSkeleton
 {
     RoomContents[,] values;
 
@@ -16,7 +15,7 @@ public class Room
     public Position[] DoorPositions { get; }
     public float Difficulty { get; }
 
-    public Room(RoomData roomData)
+    public RoomSkeleton(RoomData roomData)
     {
         Enemies = roomData.enemies;
         Obstacles = roomData.obstacles;

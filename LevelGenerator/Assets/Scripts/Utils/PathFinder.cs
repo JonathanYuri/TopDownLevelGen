@@ -1,3 +1,4 @@
+using RoomGeneticAlgorithm.Variables;
 using System;
 using System.Collections.Generic;
 
@@ -97,15 +98,15 @@ public static class PathFinder
         return false;
     }
 
-    public static bool IsAPathBetweenDoors(RoomContents[,] roomMatrix)
+    public static bool IsAPathBetweenDoors(RoomContents[,] roomMatrix, Position[] doorPositions)
     {
         int[,] matrix = TransformRoomForCountPaths(roomMatrix, IsPassable);
          
-        for (int i = 0; i < GeneticAlgorithmConstants.ROOM.DoorPositions.Length; i++)
+        for (int i = 0; i < doorPositions.Length; i++)
         {
-            for (int j = i + 1; j < GeneticAlgorithmConstants.ROOM.DoorPositions.Length; j++)
+            for (int j = i + 1; j < doorPositions.Length; j++)
             {
-                if (!HasPathBetweenPositions(matrix, GeneticAlgorithmConstants.ROOM.DoorPositions[i], GeneticAlgorithmConstants.ROOM.DoorPositions[j]))
+                if (!HasPathBetweenPositions(matrix, doorPositions[i], doorPositions[j]))
                 {
                     return false;
                 }
@@ -115,7 +116,7 @@ public static class PathFinder
         return true;
     }
 
-    public static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix)
+    public static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, Position[] doorPositions)
     {
         if (roomMatrix.EnemiesPositions.Count == 0)
         {
@@ -126,9 +127,9 @@ public static class PathFinder
 
         // so preciso ver de uma porta pra todos os inimigos, pq se tiver de uma tem da outra, ja que eu conto os caminhos de uma porta a outra
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
-        foreach (Position enemiePosition in roomMatrix.EnemiesPositions)
+        foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
-            if (!HasPathBetweenPositions(matriz, GeneticAlgorithmConstants.ROOM.DoorPositions[0], enemiePosition))
+            if (!HasPathBetweenPositions(matriz, doorPositions[0], enemyPosition))
             {
                 return false;
             }

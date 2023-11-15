@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -85,7 +84,7 @@ public class RoomObjectSpawner : MonoBehaviour
     /// </summary>
     /// <param name="room">The room containing information about the objects to spawn.</param>
     /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
-    public void SpawnRoomObjects(Room room, GameObject roomObject)
+    public void SpawnRoomObjects(RoomSkeleton room, GameObject roomObject)
     {
         for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
         {

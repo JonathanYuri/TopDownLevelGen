@@ -1,7 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using RoomGeneticAlgorithm.Run;
 
 [RequireComponent(typeof(LevelGenerator))]
 [RequireComponent(typeof(RoomObjectSpawner))]
@@ -47,7 +46,7 @@ public class RoomGenerator : MonoBehaviour
         GameObject roomObject = GenerateRoomGameObject(roomPosition);
         RoomData roomData = GetRoomData(roomPosition);
 
-        Room room = new(roomData);
+        RoomSkeleton room = new(roomData);
         
         if (generateObjectsInRoom)
         {
@@ -70,7 +69,7 @@ public class RoomGenerator : MonoBehaviour
         roomObjectSpawner.SpawnRoomObjects(room, roomObject);
     }
 
-    RoomContents[,] GenerateRoomWithGeneticAlgorithm(Room room)
+    RoomContents[,] GenerateRoomWithGeneticAlgorithm(RoomSkeleton room)
     {
         GeneticRoomGenerator geneticRoomGenerator = new(room);
         return geneticRoomGenerator.GeneticLooping();

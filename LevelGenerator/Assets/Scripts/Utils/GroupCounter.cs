@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// A static class that provides methods for counting groups of connected positions in a matrix.

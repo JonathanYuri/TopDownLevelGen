@@ -103,9 +103,9 @@ public static class Utils
         return combinedPositions;
     }
 
-    public static bool IsAObstacle(RoomContents content) => GeneticAlgorithmConstants.ROOM.Obstacles.Contains(content);
+    public static bool IsAObstacle(RoomContents[] obstacles, RoomContents content) => obstacles.Contains(content);
 
-    public static bool IsAEnemy(RoomContents content) => GeneticAlgorithmConstants.ROOM.Enemies.Contains(content);
+    public static bool IsAEnemy(RoomContents[] enemies, RoomContents content) => enemies.Contains(content);
 
     public static int CalculateDistance(Position position1, Position position2) => ManhattanDistance(position1, position2);
 
