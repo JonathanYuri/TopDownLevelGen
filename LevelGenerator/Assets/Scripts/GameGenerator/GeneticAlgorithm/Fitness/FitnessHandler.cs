@@ -50,27 +50,32 @@ namespace RoomGeneticAlgorithm.Fitness
             for (int i = 0; i < numberOfFitnessVariables; i++) // pra cada variavel do fitness
             {
                 (int max, int min) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
+                Range varBound = new() { max = max, min = min };
 
                 if (i < boundsOfFitnessVars.Count) // se tiver elementos naquela posicao
                 {
-                    if (max > boundsOfFitnessVars[i].max)
-                    {
-                        boundsOfFitnessVars[i].max = max;
-                        boundsModified = true;
-                    }
-                    if (min < boundsOfFitnessVars[i].min)
-                    {
-                        boundsOfFitnessVars[i].min = min;
-                        boundsModified = true;
-                    }
+                    UpdateExistingBound(i, varBound, ref boundsModified);
                 }
                 else
                 {
-                    boundsOfFitnessVars.Add(new Range { max = max, min = min });
+                    boundsOfFitnessVars.Add(varBound);
                 }
             }
-
             areBoundsModified = boundsModified;
+        }
+
+        static void UpdateExistingBound(int boundIndex, Range varBound, ref bool boundsModified)
+        {
+            if (varBound.max > boundsOfFitnessVars[boundIndex].max)
+            {
+                boundsOfFitnessVars[boundIndex].max = varBound.max;
+                boundsModified = true;
+            }
+            if (varBound.min < boundsOfFitnessVars[boundIndex].min)
+            {
+                boundsOfFitnessVars[boundIndex].min = varBound.min;
+                boundsModified = true;
+            }
         }
 
         /// <summary>
@@ -99,7 +104,7 @@ namespace RoomGeneticAlgorithm.Fitness
             int[] vars = new int[numberOfFitnessVariables];
             vars[(int)FitnessVariable.NumGroups] = -groups.Count; // minimizar a quantidade de grupos
             vars[(int)FitnessVariable.EnemiesPerGroupAverage] = -(int)media; // minimizar a media de inimigos por grupos
-            vars[(int)FitnessVariable.EnemyDoorDistance] = (int)value; // maximizar o value
+            vars[(int)FitnessVariable.EnemyDoorDistance] = (int)value; // maximizar a interpolacao da distancia entre os inimigos e as portas
             return vars;
         }
 

@@ -40,6 +40,7 @@ namespace RoomGeneticAlgorithm.Run
     public class GeneticRoomGenerator
     {
         RoomIndividual[] population;
+        RoomIndividual best;
 
         /// <summary>
         /// Initializes a new instance of the GeneticRoomGenerator class.
@@ -71,30 +72,16 @@ namespace RoomGeneticAlgorithm.Run
             GeneratePopulation();
             FitnessHandler.EvaluatePopulation(population);
 
-            RoomIndividual best = new(population.MaxBy(individual => individual.Value));
+            best = new(population.MaxBy(individual => individual.Value));
 
             int iterationsWithoutImprovement = 0;
             int iterations = 0;
-            while (ShouldContinueLooping(iterationsWithoutImprovement, best))
+            while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
                 RoomIndividual bestInGeneration = population.MaxBy(individual => individual.Value);
-
                 Debug.Log("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + best.Value);
-                if (bestInGeneration.Value > best.Value)
-                {
-                    iterationsWithoutImprovement = 0;
-                    best = new(bestInGeneration);
-                }
-                else
-                {
-                    iterationsWithoutImprovement++;
-                }
-
-                population = Reproduction.PerformReproduction(population);
-                Mutation.MutatePopulation(population);
-                FitnessHandler.EvaluatePopulation(population);
-                FitnessCalculator.Evaluate(best);
-
+                UpdateBestIndividual(bestInGeneration, ref iterationsWithoutImprovement);
+                PerformGeneticOperations();
                 iterations++;
             }
 
@@ -113,13 +100,34 @@ namespace RoomGeneticAlgorithm.Run
             return best.RoomMatrix.Values;
         }
 
+        void UpdateBestIndividual(RoomIndividual bestInGeneration, ref int iterationsWithoutImprovement)
+        {
+            if (bestInGeneration.Value > best.Value)
+            {
+                iterationsWithoutImprovement = 0;
+                best = new(bestInGeneration);
+            }
+            else
+            {
+                iterationsWithoutImprovement++;
+            }
+        }
+
+        void PerformGeneticOperations()
+        {
+            population = Reproduction.PerformReproduction(population);
+            Mutation.MutatePopulation(population);
+            FitnessHandler.EvaluatePopulation(population);
+            FitnessCalculator.Evaluate(best);
+        }
+
         /// <summary>
         /// Determines whether the genetic algorithm should continue the loop.
         /// </summary>
         /// <param name="iterationsWithoutImprovement">The number of iterations without improvement.</param>
         /// <param name="best">The best individual found so far.</param>
         /// <returns><c>true</c> if the loop should continue; otherwise, <c>false</c>.</returns>
-        bool ShouldContinueLooping(int iterationsWithoutImprovement, RoomIndividual best)
+        bool ShouldContinueLooping(int iterationsWithoutImprovement)
         {
             if (iterationsWithoutImprovement < GeneticAlgorithmConstants.ITERATIONS_WITHOUT_IMPROVEMENT)
             {

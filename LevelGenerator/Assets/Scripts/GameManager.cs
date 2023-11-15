@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         uiMapGenerator.CreateUIMap();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         if (player != null)
         {

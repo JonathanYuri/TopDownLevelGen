@@ -18,7 +18,7 @@ public class RoomGenerator : MonoBehaviour
         roomObjectSpawner = GetComponent<RoomObjectSpawner>();
     }
 
-    private void Start()
+    void Start()
     {
         levelDataManager = FindObjectOfType<LevelDataManager>();
     }

@@ -9,44 +9,6 @@ namespace RoomGeneticAlgorithm.GeneticOperations
     public static class Reproduction
     {
         /// <summary>
-        /// Places room contents in the child individual by combining the contents from the father and mother individuals.
-        /// </summary>
-        /// <param name="child">The child individual to place the contents in.</param>
-        /// <param name="contentsPositionsInParent1">A dictionary of room contents positions in the father individual.</param>
-        /// <param name="contentsPositionsInParent2">A dictionary of room contents positions in the mother individual.</param>
-        /// <param name="avaliablePositions">A list of available positions in the room for placing contents.</param>
-        static void PlaceContentsInChild(
-            RoomIndividual child,
-            Dictionary<RoomContents, List<Position>> contentsPositionsInParent1,
-            Dictionary<RoomContents, List<Position>> contentsPositionsInParent2,
-            List<Position> avaliablePositions)
-        {
-            foreach (RoomContents key in contentsPositionsInParent1.Keys)
-            {
-                HashSet<Position> combinedPositions = Utils.CombinePositions(contentsPositionsInParent1[key], contentsPositionsInParent2[key]);
-                combinedPositions = combinedPositions.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
-                Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(contentsPositionsInParent1[key].Count);
-
-                foreach (Position pos in chosenPositions)
-                {
-                    child.RoomMatrix.PutContentInPosition(key, pos);
-                    avaliablePositions.Remove(pos);
-                }
-
-                // nao colocou todos, colocar o resto aleatoriamente no que eu tenho
-                int missing = contentsPositionsInParent1[key].Count - chosenPositions.Length;
-                if (missing == 0) continue;
-
-                Position[] positions = avaliablePositions.SelectRandomDistinctElements(missing);
-                foreach (Position pos in positions)
-                {
-                    child.RoomMatrix.PutContentInPosition(key, pos);
-                    avaliablePositions.Remove(pos);
-                }
-            }
-        }
-
-        /// <summary>
         /// Performs crossover between a father individual and a mother individual to create a child individual.
         /// </summary>
         /// <param name="parent1">The father individual.</param>
@@ -65,10 +27,10 @@ namespace RoomGeneticAlgorithm.GeneticOperations
             if (enemiesPositionsInParent2.Keys.Count != enemiesPositionsInParent1.Keys.Count) throw new Exception("Inimigos diferentes no parent1 e no parent2");
             if (obstaclesPositionsInParent2.Keys.Count != obstaclesPositionsInParent1.Keys.Count) throw new Exception("Obstaculos diferentes no parent1 e no parent2");
 
-            List<Position> avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
+            ChildContentPlacement.avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
 
-            PlaceContentsInChild(child, enemiesPositionsInParent1, enemiesPositionsInParent2, avaliablePositions);
-            PlaceContentsInChild(child, obstaclesPositionsInParent1, obstaclesPositionsInParent2, avaliablePositions);
+            ChildContentPlacement.PlaceContentsInChild(child, enemiesPositionsInParent1, enemiesPositionsInParent2);
+            ChildContentPlacement.PlaceContentsInChild(child, obstaclesPositionsInParent1, obstaclesPositionsInParent2);
 
             if (child.RoomMatrix.EnemiesPositions.Count != parent1.RoomMatrix.EnemiesPositions.Count
                                             ||
