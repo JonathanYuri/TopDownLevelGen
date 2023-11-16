@@ -6,47 +6,25 @@ using System.Collections.Generic;
 public class Knapsack
 {
     /// <summary>
-    /// Resolves the Knapsack problem for selecting enemies based on their values and a capacity constraint.
+    /// Resolves the Knapsack problem for selecting contents based on their values and a capacity constraint.
     /// </summary>
-    /// <param name="enemies">The list of enemies to choose from.</param>
-    /// <param name="enemiesValues">The list of values associated with each enemy.</param>
-    /// <param name="enemiesCapacity">The maximum capacity for selecting enemies.</param>
-    /// <returns>An array of selected enemies based on the Knapsack problem solution.</returns>
-    public static RoomContents[] ResolveKnapsackEnemies(List<RoomContents> enemies, List<int> enemiesValues, int enemiesCapacity)
+    /// <param name="contents">The list of contents to choose from.</param>
+    /// <param name="contentsValues">The list of values associated with each content.</param>
+    /// <param name="contentsCapacity">The maximum capacity for selecting contents.</param>
+    /// <returns>An array of selected contents based on the Knapsack problem solution.</returns>
+    public static RoomContents[] ResolveKnapsack(List<RoomContents> contents, List<int> contentsValues, int contentsCapacity)
     {
-        List<int> chosenEnemiesIdx = ResolveKnapsack(enemiesValues, enemiesCapacity);
+        List<int> chosenContentsIdx = ResolveKnapsack(contentsValues, contentsCapacity);
 
-        RoomContents[] chosenEnemies = new RoomContents[chosenEnemiesIdx.Count];
-        for (int i = 0; i < chosenEnemiesIdx.Count; i++)
+        RoomContents[] chosenContents = new RoomContents[chosenContentsIdx.Count];
+        for (int i = 0; i < chosenContentsIdx.Count; i++)
         {
-            int idx = chosenEnemiesIdx[i];
-            chosenEnemies[i] = enemies[idx];
-        }
-
-        //Debug.Log("Inimigos escolhidos: " + string.Join(", ", chosenEnemies));
-        return chosenEnemies;
-    }
-
-    /// <summary>
-    /// Resolves the Knapsack problem for selecting obstacles based on their values and a capacity constraint.
-    /// </summary>
-    /// <param name="obstacles">The list of obstacles to choose from.</param>
-    /// <param name="obstaclesValues">The list of values associated with each obstacle.</param>
-    /// <param name="obstaclesCapacity">The maximum capacity for selecting obstacles.</param>
-    /// <returns>An array of selected obstacles based on the Knapsack problem solution.</returns>
-    public static RoomContents[] ResolveKnapsackObstacles(List<RoomContents> obstacles, List<int> obstaclesValues, int obstaclesCapacity)
-    {
-        List<int> chosenObstaclesIdx = ResolveKnapsack(obstaclesValues, obstaclesCapacity);
-
-        RoomContents[] chosenObstacles = new RoomContents[chosenObstaclesIdx.Count];
-        for (int i = 0; i < chosenObstaclesIdx.Count; i++)
-        {
-            int idx = chosenObstaclesIdx[i];
-            chosenObstacles[i] = obstacles[idx];
+            int idx = chosenContentsIdx[i];
+            chosenContents[i] = contents[idx];
         }
 
         //Debug.Log("Obstaculos escolhidos: " + string.Join(", ", chosenObstacles));
-        return chosenObstacles;
+        return chosenContents;
     }
 
     /// <summary>

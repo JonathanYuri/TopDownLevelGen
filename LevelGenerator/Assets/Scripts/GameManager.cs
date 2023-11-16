@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     void GenerateGame()
     {
+        levelDataManager.ResolveKnapsackForCurrentLevel();
         levelGenerator.Generate();
 
         if (player == null)
