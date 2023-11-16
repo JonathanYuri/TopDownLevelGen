@@ -1,10 +1,40 @@
 using System.Collections.Generic;
 
+public struct KnapsackSelectionResult
+{
+    public List<RoomContents> ChosenEnemies { get; set; }
+    public List<int> ChosenEnemiesDifficulty { get; set; }
+    public List<RoomContents> ChosenObstacles { get; set; }
+    public List<int> ChosenObstaclesDifficulty { get; set; }
+
+    public KnapsackSelectionResult(
+        List<RoomContents> chosenEnemies, List<int> chosenEnemiesDifficulty,
+        List<RoomContents> chosenObstacles, List<int> chosenObstaclesDifficulty)
+    {
+        ChosenEnemies = chosenEnemies;
+        ChosenEnemiesDifficulty = chosenEnemiesDifficulty;
+        ChosenObstacles = chosenObstacles;
+        ChosenObstaclesDifficulty = chosenObstaclesDifficulty;
+    }
+}
+
 /// <summary>
 /// A static class that provides methods for solving the Knapsack problem to select items.
 /// </summary>
-public class Knapsack
+public static class Knapsack
 {
+    public static KnapsackSelectionResult ChooseEnemiesAndObstaclesToKnapsack(
+        List<RoomContents> enemies, List<int> enemiesDifficulty,
+        List<RoomContents> obstacles, List<int> obstaclesDifficulty)
+    {
+        int[] chosenIdxEnemies = enemies.RandomlySelectDistinctIndexes();
+        int[] chosenIdxObstacles = obstacles.RandomlySelectDistinctIndexes();
+
+        return new KnapsackSelectionResult(
+            enemies.GetElementsByIndexes(chosenIdxEnemies), enemiesDifficulty.GetElementsByIndexes(chosenIdxEnemies),
+            obstacles.GetElementsByIndexes(chosenIdxObstacles), obstaclesDifficulty.GetElementsByIndexes(chosenIdxObstacles));
+    }
+
     /// <summary>
     /// Resolves the Knapsack problem for selecting contents based on their values and a capacity constraint.
     /// </summary>

@@ -1,27 +1,7 @@
-using System.Collections.Generic;
 using System;
-using Random = UnityEngine.Random;
+using System.Collections.Generic;
 using System.Linq;
-
-/// <summary>
-/// Provides extension methods for working with enums.
-/// </summary>
-public static class EnumExtensions
-{
-    /// <summary>
-    /// Gets a custom attribute of the specified type applied to an enum value.
-    /// </summary>
-    /// <typeparam name="T">The type of attribute to retrieve.</typeparam>
-    /// <param name="enumValue">The enum value.</param>
-    /// <returns>The attribute of the specified type applied to the enum value.</returns>
-    public static T GetAttribute<T>(this Enum enumValue) where T : Attribute
-    {
-        var type = enumValue.GetType();
-        var memberInfo = type.GetMember(enumValue.ToString());
-        var attributes = memberInfo[0].GetCustomAttributes(typeof(T), false);
-        return (T)attributes[0];
-    }
-}
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// Provides extension methods for working with IEnumerable collections.
@@ -73,6 +53,12 @@ public static class IEnumerableExtensions
             allelements.RemoveAt(k);
         }
 
+        return selectedElements;
+    }
+
+    public static List<T> GetElementsByIndexes<T>(this IEnumerable<T> allElements, IEnumerable<int> indexes)
+    {
+        List<T> selectedElements = indexes.Select(index => allElements.ElementAtOrDefault(index)).ToList();
         return selectedElements;
     }
 
@@ -195,45 +181,3 @@ public static class IEnumerableExtensions
     }
 }
 
-/// <summary>
-/// Provides extension methods for working with matrices.
-/// </summary>
-public static class MatrixExtensions
-{
-    /// <summary>
-    /// Checks whether a specified position is within the bounds of the matrix.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the matrix.</typeparam>
-    /// <param name="matrix">The matrix to check against.</param>
-    /// <param name="row">The row index of the position.</param>
-    /// <param name="col">The column index of the position.</param>
-    /// <returns>True if the position is within the matrix bounds; otherwise, false.</returns>
-    public static bool IsPositionWithinBounds<T>(this T[,] matrix, int row, int col)
-    {
-        return row >= 0 && row < matrix.GetLength(0) &&
-               col >= 0 && col < matrix.GetLength(1);
-    }
-
-    /// <summary>
-    /// Checks whether a specified position is within the bounds of the matrix.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the matrix.</typeparam>
-    /// <param name="matrix">The matrix to check against.</param>
-    /// <param name="position">The position to check.</param>
-    /// <returns>True if the position is within the matrix bounds; otherwise, false.</returns>
-    public static bool IsPositionWithinBounds<T>(this T[,] matrix, Position position) => IsPositionWithinBounds(matrix, position.X, position.Y);
-}
-
-public static class DictionaryExtensions
-{
-    public static Dictionary<TValue, TKey> InvertDictionary<TKey, TValue>(this Dictionary<TKey, TValue> originalDictionary)
-    {
-        Dictionary<TValue, TKey> invertedDictionary = new();
-        foreach (var kvp in originalDictionary)
-        {
-            invertedDictionary[kvp.Value] = kvp.Key;
-        }
-
-        return invertedDictionary;
-    }
-}

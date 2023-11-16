@@ -12,8 +12,12 @@ public class LevelDataManager : MonoBehaviour
     public List<LevelData> levels;
 
     public int RoomCount { get { return levels[indexCurrentLevel].roomCount; } }
-    public RoomContents[] Enemies { get; private set; }
-    public RoomContents[] Obstacles { get; private set; }
+    public List<RoomContents> Enemies { get { return levels[indexCurrentLevel].enemies; } }
+    public List<int> EnemiesDifficulty { get { return levels[indexCurrentLevel].enemiesDifficult; } }
+    public int EnemiesCapacity { get { return levels[indexCurrentLevel].enemiesCapacity; } }
+    public List<RoomContents> Obstacles { get { return levels[indexCurrentLevel].obstacles; } }
+    public List<int> ObstaclesDifficulty { get { return levels[indexCurrentLevel].obstaclesDifficult; } }
+    public int ObstaclesCapacity { get { return levels[indexCurrentLevel].obstaclesCapacity; } }
 
     /// <summary>
     /// Advances to the next level in the list of available levels, if there is one.
@@ -24,12 +28,5 @@ public class LevelDataManager : MonoBehaviour
         {
             indexCurrentLevel++;
         }
-    }
-
-    public void ResolveKnapsackForCurrentLevel()
-    {
-        LevelData currentLevelData = levels[indexCurrentLevel];
-        Enemies = Knapsack.ResolveKnapsack(currentLevelData.enemies, currentLevelData.enemiesDifficult, currentLevelData.enemiesCapacity);
-        Obstacles = Knapsack.ResolveKnapsack(currentLevelData.obstacles, currentLevelData.obstaclesDifficult, currentLevelData.obstaclesCapacity);
     }
 }

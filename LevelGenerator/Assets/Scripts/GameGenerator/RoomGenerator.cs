@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using RoomGeneticAlgorithm.Run;
+using System.Collections.Generic;
+using System.Linq;
 
 [RequireComponent(typeof(LevelGenerator))]
 [RequireComponent(typeof(RoomObjectSpawner))]
@@ -82,10 +84,15 @@ public class RoomGenerator : MonoBehaviour
         int distanceToInitialRoom = Utils.CalculateDistance(levelGenerator.InitialRoomPosition, roomPosition);
         float difficulty = (float)distanceToInitialRoom / (float)levelGenerator.DistanceFromInitialToFinalRoom;
 
+        KnapsackSelectionResult knapsackSelectionResult = Knapsack.ChooseEnemiesAndObstaclesToKnapsack(
+            levelDataManager.Enemies, levelDataManager.EnemiesDifficulty,
+            levelDataManager.Obstacles, levelDataManager.ObstaclesDifficulty
+        );
+
         return new(
                 MapUtility.GetDoorPositionsFromRoomPosition(roomPosition),
-                levelDataManager.Enemies,
-                levelDataManager.Obstacles,
+                Knapsack.ResolveKnapsack(knapsackSelectionResult.ChosenEnemies, knapsackSelectionResult.ChosenEnemiesDifficulty, levelDataManager.EnemiesCapacity),
+                Knapsack.ResolveKnapsack(knapsackSelectionResult.ChosenObstacles, knapsackSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesCapacity),
                 difficulty
             );
     }
