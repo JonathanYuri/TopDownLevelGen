@@ -1,0 +1,52 @@
+1. Introdução
+
+Contextualização do tema
+Justificativa da escolha do tema
+Objetivos do trabalho
+Relevância do estudo
+
+2. Fundamentação Teórica
+
+Definição de jogos top-down
+Algoritmos Genéticos: conceitos básicos e aplicações
+Revisão de trabalhos relacionados na geração de níveis em jogos
+
+3. Metodologia
+
+Explicação detalhada dos passos seguidos na implementação
+Escolha da linguagem de programação e ferramentas utilizadas
+Descrição da representação dos níveis no contexto dos algoritmos genéticos
+
+4. Geração de Níveis em Jogos Top-Down
+
+Discussão sobre as características desejadas nos níveis
+Apresentação do algoritmo genético específico para a geração de níveis
+Detalhes da implementação prática
+
+5. Avaliação e Resultados
+
+Métricas utilizadas para avaliar a qualidade dos níveis gerados
+Análise dos resultados obtidos
+Comparação com abordagens existentes, se aplicável
+
+6. Discussão
+
+Reflexão sobre os desafios encontrados durante a implementação
+Considerações sobre as limitações do estudo
+Sugestões para trabalhos futuros
+
+7. Conclusão
+
+Recapitulação dos principais pontos
+Contribuições do trabalho para a área
+Implicações práticas e potenciais aplicações
+
+8. Referências
+
+Citação de todas as fontes utilizadas no trabalho, incluindo artigos, livros e recursos online.
+
+9. Apêndices
+
+Código fonte (se aplicável)
+Detalhes adicionais sobre a implementação
+Gráficos, tabelas e outros materiais suplementares

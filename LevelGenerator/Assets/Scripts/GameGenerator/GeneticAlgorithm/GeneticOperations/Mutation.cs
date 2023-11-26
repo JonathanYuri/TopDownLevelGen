@@ -27,7 +27,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="positionsToMutate">The set of positions in which room contents should be mutated.</param>
         static void Mutate(RoomIndividual individual, HashSet<Position> positionsToMutate)
         {
-            Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(Random.Range(0, positionsToMutate.Count));
+            Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(Random.Range(0, positionsToMutate.Count + 1));
             foreach (Position position in positionsToChange)
             {
                 SwapRoomPositionsRandomly(individual, position);

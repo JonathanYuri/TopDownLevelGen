@@ -58,6 +58,19 @@ public static class RoomOperations
         return averagesDistances.Average();
     }
 
+    public static int DistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
+    {
+        int distance = 0;
+        foreach (Position doorPosition in doorPositions)
+        {
+            foreach (Position enemyPosition in enemiesPositions)
+            {
+                distance += Utils.CalculateDistance(doorPosition, enemyPosition);
+            }
+        }
+        return distance;
+    }
+
     public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
     {
         int minDistance = int.MaxValue;

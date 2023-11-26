@@ -90,10 +90,10 @@ public static class Utils
         {
             return 0.0;
         }
-        else
-        {
-            return ((value - min) / (max - min)) * 100.0f;
-        }
+
+        value = Mathf.Clamp((float)value, (float)min, (float)max);
+
+        return ((value - min) / (max - min)) * 100.0f;
     }
 
     public static HashSet<Position> CombinePositions(List<Position> positions1, List<Position> positions2)

@@ -88,11 +88,14 @@ namespace RoomGeneticAlgorithm.Fitness
             List<int> groups = GroupCounter.CountGroups(individual.RoomMatrix.Values, individual.RoomMatrix.EnemiesPositions);
             double media = groups.Average();
 
-            double averageDistanceFromDoorsToEnemies =
-                RoomOperations.AverageDistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions, GeneticAlgorithmConstants.ROOM.DoorPositions);
+            //double averageDistanceFromDoorsToEnemies =
+            //    RoomOperations.AverageDistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions, GeneticAlgorithmConstants.ROOM.DoorPositions);
 
-            float valueWhenDifficultyIsMinimal = (float)averageDistanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
-            float valueWhenDifficultyIsMaximal = (float)-averageDistanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
+            int distanceFromDoorsToEnemies =
+                RoomOperations.DistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions, GeneticAlgorithmConstants.ROOM.DoorPositions);
+
+            float valueWhenDifficultyIsMinimal = (float)distanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
+            float valueWhenDifficultyIsMaximal = (float)-distanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
 
             //double minimunDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(individual.RoomMatrix.EnemiesPositions);
             //float valueWhenDifficultyIsMinimal = (float)minimunDistanceFromDoorsToEnemies; // maximizar a minima distancia entre os inimigos e as portas
