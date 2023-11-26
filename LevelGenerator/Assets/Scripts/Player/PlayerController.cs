@@ -5,11 +5,12 @@ using UnityEngine;
 /// Controls the player's movement and interactions in the game.
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
-    [SerializeField] float movementSpeed;
-
     Rigidbody2D rb;
+
+    [SerializeField] int life = 100;
+    [SerializeField] float movementSpeed;
 
     public EventHandler<DoorEventArgs> PassedThroughTheDoorEvent;
     public event Action OnLevelComplete;
@@ -43,5 +44,22 @@ public class PlayerController : MonoBehaviour
         {
             OnLevelComplete.Invoke();
         }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (life - damage <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            life -= damage;
+        }
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
     }
 }

@@ -11,6 +11,8 @@ namespace SpawnRoomObjects.SpawnAll
     public class RoomObjectSpawner : MonoBehaviour
     {
         [SerializeField] GameObject enemy;
+        [SerializeField] GameObject skeleton;
+
         [SerializeField] GameObject obstacle;
         [SerializeField] GameObject levelEnd;
 
@@ -59,7 +61,7 @@ namespace SpawnRoomObjects.SpawnAll
                 { RoomContents.Obstacle3, obstacle },
 
                 { RoomContents.Enemy1, enemy },
-                { RoomContents.Enemy2, enemy },
+                { RoomContents.Enemy2, skeleton },
                 { RoomContents.Enemy3, enemy },
 
                 { RoomContents.LevelEnd, levelEnd },
