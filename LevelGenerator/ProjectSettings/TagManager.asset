@@ -6,6 +6,7 @@ TagManager:
   tags:
   - OpenDoor
   - LevelPortal
+  - RoomObjects
   layers:
   - Default
   - TransparentFX

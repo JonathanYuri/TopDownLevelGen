@@ -299,6 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemy: {fileID: 6056213582785261799, guid: 522e4dd0b395aad46bce46fc67a00757, type: 3}
+  skeleton: {fileID: 6056213582785261799, guid: 3bb1be591582b8d4c98557125827a369, type: 3}
   obstacle: {fileID: 6056213582785261799, guid: 5466bd5675fffc24dab69ae0db3c36e4, type: 3}
   levelEnd: {fileID: 4874131849379363410, guid: 0292f0fcba1e73240877de8f72f26d52, type: 3}
   doors:

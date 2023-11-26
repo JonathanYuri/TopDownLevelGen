@@ -73,6 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   reloadTimeAttack: 10
+  targetTag: RoomObjects
 --- !u!1 &8160742769307612322
 GameObject:
   m_ObjectHideFlags: 0
