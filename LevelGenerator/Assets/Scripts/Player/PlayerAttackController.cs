@@ -52,7 +52,7 @@ public class PlayerAttackController : MonoBehaviour
 
         GameObject thrownKnife = Instantiate(knife, this.transform.position + directionToThrowKnife, Quaternion.identity);
         Knife thrownKnifeScript = thrownKnife.GetComponent<Knife>();
-        thrownKnifeScript.SetRotationBasedOnDirection(directionToThrowKnife);
+        thrownKnifeScript.SetInitialParams(directionToThrowKnife);
     }
 
     IEnumerator WaitToAttackAgain()
