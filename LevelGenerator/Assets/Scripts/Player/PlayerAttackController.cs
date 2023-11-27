@@ -51,7 +51,8 @@ public class PlayerAttackController : MonoBehaviour
         StartCoroutine(WaitToAttackAgain());
 
         GameObject thrownKnife = Instantiate(knife, this.transform.position + directionToThrowKnife, Quaternion.identity);
-        thrownKnife.GetComponent<Knife>().DirectionToMove = directionToThrowKnife;
+        Knife thrownKnifeScript = thrownKnife.GetComponent<Knife>();
+        thrownKnifeScript.SetRotationBasedOnDirection(directionToThrowKnife);
     }
 
     IEnumerator WaitToAttackAgain()

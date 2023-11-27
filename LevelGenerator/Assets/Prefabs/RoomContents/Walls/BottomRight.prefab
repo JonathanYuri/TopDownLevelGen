@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3760849055845828144}
   m_Layer: 0
   m_Name: BottomRight
-  m_TagString: Untagged
+  m_TagString: RoomObjects
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1266511559
-  m_SortingLayer: 4
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -1267959961, guid: c2698c626f2e28446ab47ec3d1680d92, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

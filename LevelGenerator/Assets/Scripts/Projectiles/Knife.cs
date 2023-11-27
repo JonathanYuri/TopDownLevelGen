@@ -12,7 +12,8 @@ public class Knife : MonoBehaviour
     [SerializeField] float movimentVelocity = 2.0f;
     [SerializeField] float timeToAutoDestroy = 4.0f;
 
-    public Vector2 DirectionToMove { get; set; }
+    public Vector2 directionToMove;
+    public bool rotateClockwise;
 
     void Awake()
     {
@@ -28,12 +29,24 @@ public class Knife : MonoBehaviour
 
     void Update()
     {
-        this.transform.Rotate(-Vector3.forward, rotationVelocity * Time.deltaTime);
+        Rotate();
+    }
+
+    void Rotate()
+    {
+        if (rotateClockwise)
+        {
+            this.transform.Rotate(-Vector3.forward, rotationVelocity * Time.deltaTime);
+        }
+        else
+        {
+            this.transform.Rotate(Vector3.forward, rotationVelocity * Time.deltaTime);
+        }
     }
 
     void FixedUpdate()
     {
-        Vector2 moviment = movimentVelocity * Time.fixedDeltaTime * DirectionToMove;
+        Vector2 moviment = movimentVelocity * Time.fixedDeltaTime * directionToMove;
         rb.MovePosition((Vector2)this.transform.position + moviment);
     }
 
@@ -57,5 +70,24 @@ public class Knife : MonoBehaviour
     void CollisionOccured()
     {
         Destroy(gameObject);
+    }
+
+    public void SetRotationBasedOnDirection(Vector2 direction)
+    {
+        directionToMove = direction;
+
+        if (direction == Vector2.left || direction == Vector2.down)
+        {
+            rotateClockwise = false;
+            GetComponent<SpriteRenderer>().flipX = true;
+        }
+        else if (direction == Vector2.up)
+        {
+            rotateClockwise = false;
+        }
+        else if (direction == Vector2.right)
+        {
+            rotateClockwise = true;
+        }
     }
 }
