@@ -88,12 +88,15 @@ public class RoomGenerator : MonoBehaviour
             levelDataManager.Obstacles, levelDataManager.ObstaclesDifficulty
         );
 
+        KnapsackParams enemyKnapsackParams = new(knapsackSelectionResult.ChosenEnemies, knapsackSelectionResult.ChosenEnemiesDifficulty, levelDataManager.EnemiesCapacity);
+        KnapsackParams obstacleKnapsackParams = new(knapsackSelectionResult.ChosenObstacles, knapsackSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesCapacity);
+
         return new(
-                MapUtility.GetDoorPositionsFromRoomPosition(roomPosition),
-                Knapsack.ResolveKnapsack(knapsackSelectionResult.ChosenEnemies, knapsackSelectionResult.ChosenEnemiesDifficulty, levelDataManager.EnemiesCapacity),
-                Knapsack.ResolveKnapsack(knapsackSelectionResult.ChosenObstacles, knapsackSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesCapacity),
-                difficulty
-            );
+            MapUtility.GetDoorPositionsFromRoomPosition(roomPosition),
+            Knapsack.ResolveKnapsack(enemyKnapsackParams, "enemy"),
+            Knapsack.ResolveKnapsack(obstacleKnapsackParams, "obstacle"),
+            difficulty
+        );
     }
 }
 
