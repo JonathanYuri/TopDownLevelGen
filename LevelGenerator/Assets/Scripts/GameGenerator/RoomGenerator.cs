@@ -93,8 +93,8 @@ public class RoomGenerator : MonoBehaviour
 
         return new(
             MapUtility.GetDoorPositionsFromRoomPosition(roomPosition),
-            Knapsack.ResolveKnapsack(enemyKnapsackParams, "enemy"),
-            Knapsack.ResolveKnapsack(obstacleKnapsackParams, "obstacle"),
+            Knapsack.ResolveKnapsack(enemyKnapsackParams),
+            Knapsack.ResolveKnapsack(obstacleKnapsackParams),
             difficulty
         );
     }
