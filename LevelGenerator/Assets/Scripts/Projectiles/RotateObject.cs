@@ -27,7 +27,21 @@ public class RotateObject : MonoBehaviour
     public void SetInitialRotationBasedOnMovementDirection(Vector2 movementDirection)
     {
         rotateClockwise = movementDirection.x >= 0;
-        float angleRotation = Vector2.Angle(Vector2.right, movementDirection);
+        float angleRotation = Mathf.Min(Vector2.Angle(Vector2.right, movementDirection), Vector2.Angle(Vector2.left, movementDirection));
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (movementDirection.x < 0)
+        {
+            angleRotation = -angleRotation;
+            spriteRenderer.flipX = true;
+        }
+
+        if (movementDirection.y < 0)
+        {
+            spriteRenderer.flipY = true;
+        }
+
         Quaternion rotation = Quaternion.Euler(0, 0, angleRotation);
         this.transform.rotation = rotation;
     }
