@@ -116,7 +116,7 @@ public static class Knapsack
     /// <returns>An array of selected contents based on the Knapsack problem solution.</returns>
     public static RoomContents[] ResolveKnapsack(KnapsackParams knapsackParams, string identifier)
     {
-        RoomContents[] solutionKnown = Knapsack.GetSolutionKnown(knapsackParams, identifier);
+        RoomContents[] solutionKnown = GetSolutionKnown(knapsackParams, identifier);
         if (solutionKnown != null)
         {
             return solutionKnown;
