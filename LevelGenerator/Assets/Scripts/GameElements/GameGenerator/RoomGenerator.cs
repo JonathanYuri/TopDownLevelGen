@@ -42,7 +42,7 @@ public class RoomGenerator : MonoBehaviour
     /// <param name="roomPosition">The position of the room to be generated.</param>
     /// <param name="generateObjectsInRoom">Determines whether to generate objects in the room (default: true).</param>
     /// <returns>An IEnumerator for asynchronous room generation.</returns>
-    public IEnumerator GenerateRoom(Position roomPosition, bool generateObjectsInRoom = true)
+    public void GenerateRoom(Position roomPosition, bool generateObjectsInRoom = true)
     {
         GameObject roomObject = GenerateRoomGameObject(roomPosition);
         RoomData roomData = GetRoomData(roomPosition);
@@ -54,7 +54,6 @@ public class RoomGenerator : MonoBehaviour
             float startTime = Time.realtimeSinceStartup;
 
             room.Values = GenerateRoomWithGeneticAlgorithm(room);
-            yield return null;
 
             float endTime = Time.realtimeSinceStartup;
 

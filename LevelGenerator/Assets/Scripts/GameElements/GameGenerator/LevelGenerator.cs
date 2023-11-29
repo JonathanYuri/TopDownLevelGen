@@ -99,8 +99,8 @@ public class LevelGenerator : MonoBehaviour
 
         DistanceFromInitialToFinalRoom = Utils.CalculateDistance(InitialRoomPosition, FinalRoomPosition);
 
-        StartCoroutine(roomGenerator.GenerateRoom(InitialRoomPosition, false)); // gerar so o esqueleto
-        StartCoroutine(roomGenerator.GenerateRoom(FinalRoomPosition, false));  // gerar so o esqueleto
+        roomGenerator.GenerateRoom(InitialRoomPosition, false); // gerar so o esqueleto
+        roomGenerator.GenerateRoom(FinalRoomPosition, false);  // gerar so o esqueleto
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ public class LevelGenerator : MonoBehaviour
         foreach (Position roomPosition in remainingRooms)
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
-            StartCoroutine(roomGenerator.GenerateRoom(roomPosition));
+            roomGenerator.GenerateRoom(roomPosition);
         }
     }
 }

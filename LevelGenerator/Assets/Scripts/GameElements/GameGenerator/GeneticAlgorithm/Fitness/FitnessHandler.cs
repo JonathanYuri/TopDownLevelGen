@@ -36,6 +36,18 @@ namespace RoomGeneticAlgorithm.Fitness
 
         static FitnessHandler()
         {
+            // initialize allFitness
+            for (int i = 0; i < numberOfFitnessVariables; i++)
+            {
+                allFitness.Add(i, Enumerable.Repeat(int.MinValue, GeneticAlgorithmConstants.POPULATION_SIZE).ToArray());
+            }
+
+            // initialize bounds
+            for (int i = 0; i < numberOfFitnessVariables; i++)
+            {
+                boundsOfFitnessVars.Add(new Range() { max = int.MinValue, min = int.MaxValue });
+            }
+
             numGroupsImportance = Mathf.Clamp(numGroupsImportance, 0f, 1f);
             enemiesPerGroupAverageImportance = Mathf.Clamp(enemiesPerGroupAverageImportance, 0f, 1f);
             enemyDoorDistanceImportance = Mathf.Clamp(enemyDoorDistanceImportance, 0f, 1f);
@@ -52,14 +64,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 (int max, int min) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
                 Range varBound = new() { max = max, min = min };
 
-                if (i < boundsOfFitnessVars.Count) // se tiver elementos naquela posicao
-                {
-                    UpdateExistingBound(i, varBound, ref boundsModified);
-                }
-                else
-                {
-                    boundsOfFitnessVars.Add(varBound);
-                }
+                UpdateExistingBound(i, varBound, ref boundsModified);
             }
             areBoundsModified = boundsModified;
         }
