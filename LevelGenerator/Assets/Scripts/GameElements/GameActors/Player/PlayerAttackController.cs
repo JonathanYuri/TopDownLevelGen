@@ -22,6 +22,8 @@ public class PlayerAttackController : MonoBehaviour
 
     bool canAttack = true;
 
+    int angle = 0;
+
     void Update()
     {
         if (canAttack)
@@ -43,6 +45,9 @@ public class PlayerAttackController : MonoBehaviour
                 SpawnKnife(Vector2.right);
             }
         }
+
+        SpawnKnife(Quaternion.Euler(0, 0, angle) * Vector2.right);
+        angle++;
     }
 
     void SpawnKnife(Vector3 directionToThrowKnife)

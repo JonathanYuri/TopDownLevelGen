@@ -7,19 +7,12 @@ public class TriggerDamage : MonoBehaviour
     [SerializeField] int damage;
     [SerializeField] float reloadTimeAttack;
 
-    [SerializeField] string targetTag;
     bool isColliding = false;
 
     public event Action CollisionOccured;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // so vai colidir com quem quer colidir, por exemplo nao quero que o ataque do player afete o player
-        if (!collision.gameObject.CompareTag(targetTag))
-        {
-            return;
-        }
-
         if (collision.TryGetComponent(out IDamageable damageable))
         {
             isColliding = true;

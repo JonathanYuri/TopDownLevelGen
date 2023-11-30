@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8160742768609347893}
   - component: {fileID: 8160742768609347891}
   - component: {fileID: 8160742768609347892}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Damage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   reloadTimeAttack: 10
-  targetTag: RoomObjects
+  targetTag: 
 --- !u!1 &8160742769307612322
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 8160742769307612333}
   - component: {fileID: 8160742769307612334}
   - component: {fileID: 3164390737416572208}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Knife
   m_TagString: Untagged
   m_Icon: {fileID: 0}
