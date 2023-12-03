@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public struct KnapsackSelectionResult
 {
@@ -57,7 +59,7 @@ public static class Knapsack
     /// <returns>An array of selected contents based on the Knapsack problem solution.</returns>
     public static RoomContents[] ResolveKnapsack(KnapsackParams knapsackParams)
     {
-        List<int> chosenContentsIdx = ResolveKnapsack(knapsackParams.ContentsValues, knapsackParams.ContentsCapacity);
+        List<int> chosenContentsIdx = ResolveKnapsack(knapsackParams.ContentsValues, knapsackParams.ContentsCapacity, BestAndRandomCriteria);
 
         RoomContents[] chosenContents = new RoomContents[chosenContentsIdx.Count];
         for (int i = 0; i < chosenContentsIdx.Count; i++)
@@ -76,7 +78,7 @@ public static class Knapsack
     /// <param name="values">The list of values associated with each item.</param>
     /// <param name="capacity">The maximum capacity for selecting items.</param>
     /// <returns>A list of indices representing the selected items based on the Knapsack problem solution.</returns>
-    public static List<int> ResolveKnapsack(in List<int> values, in int capacity)
+    public static List<int> ResolveKnapsack(in List<int> values, in int capacity, Func<int, int, List<int>, List<int>, bool> criteria)
     {
         int n = values.Count;
         int[] dp = new int[capacity + 1];
@@ -97,7 +99,7 @@ public static class Knapsack
                 {
                     int newValue = dp[w - values[i]] + values[i];
                     // se o valor for melhor ou se o valor for igual e tiver menos itens, eu coloco
-                    if (newValue > maxValue || (newValue == maxValue && chosenItems[w - values[i]].Count + 1 < chosenItem.Count))
+                    if (criteria(newValue, maxValue, chosenItems[w - values[i]], chosenItem))
                     {
                         maxValue = newValue;
                         chosenItem = new List<int>(chosenItems[w - values[i]]) { i };
@@ -110,5 +112,25 @@ public static class Knapsack
         }
 
         return chosenItems[capacity];
+    }
+
+    static bool BestAndSmallerCriteria(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
+    {
+        int chosenItemsWithNewValue = chosenItemsWithRemainingCapacity.Count + 1;
+
+        return BestCriteria(newValue, maxValue, chosenItemsWithRemainingCapacity, chosenItems) ||
+            (newValue == maxValue && chosenItemsWithNewValue < chosenItems.Count);
+    }
+
+    static bool BestCriteria(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
+    {
+        return newValue > maxValue;
+    }
+
+    static bool BestAndRandomCriteria(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
+    {
+        bool random = Random.Range(0, 2) == 0;
+        return BestCriteria(newValue, maxValue, chosenItemsWithRemainingCapacity, chosenItems) ||
+            (newValue == maxValue && random);
     }
 }

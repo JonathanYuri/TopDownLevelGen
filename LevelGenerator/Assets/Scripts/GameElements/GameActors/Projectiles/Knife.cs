@@ -59,6 +59,6 @@ public class Knife : MonoBehaviour
     public void SetInitialParams(Vector2 movementDirection)
     {
         this.movementDirection = movementDirection;
-        rotateObject.SetInitialRotationBasedOnMovementDirection(movementDirection);
+        rotateObject.StartRotation(movementDirection);
     }
 }

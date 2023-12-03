@@ -46,8 +46,8 @@ public class PlayerAttackController : MonoBehaviour
             }
         }
 
-        SpawnKnife(Quaternion.Euler(0, 0, angle) * Vector2.right);
-        angle++;
+        //SpawnKnife(Quaternion.Euler(0, 0, angle) * Vector2.right);
+        //angle++;
     }
 
     void SpawnKnife(Vector3 directionToThrowKnife)

@@ -298,8 +298,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e9e021ea4c537248907365b5efa14da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 6056213582785261799, guid: 522e4dd0b395aad46bce46fc67a00757, type: 3}
-  skeleton: {fileID: 6056213582785261799, guid: 3bb1be591582b8d4c98557125827a369, type: 3}
+  enemies:
+  - {fileID: 6056213582785261799, guid: bf87ebbe3daed1342b261d2fa2773471, type: 3}
+  - {fileID: 6056213582785261799, guid: 3bb1be591582b8d4c98557125827a369, type: 3}
+  - {fileID: 6056213582785261799, guid: 3699bd81ead9e9f43ac43f00119f3675, type: 3}
   obstacle: {fileID: 6056213582785261799, guid: 5466bd5675fffc24dab69ae0db3c36e4, type: 3}
   levelEnd: {fileID: 4874131849379363410, guid: 0292f0fcba1e73240877de8f72f26d52, type: 3}
   doors:

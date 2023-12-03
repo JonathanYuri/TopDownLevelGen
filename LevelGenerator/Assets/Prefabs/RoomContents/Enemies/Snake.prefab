@@ -11,11 +11,12 @@ GameObject:
   - component: {fileID: 5506338303680429713}
   - component: {fileID: 6957752916923792148}
   - component: {fileID: 4725738449373342728}
-  - component: {fileID: 3030883783467190354}
-  - component: {fileID: 6042307813416905462}
-  - component: {fileID: 1995448799583246862}
+  - component: {fileID: -596854242487627998}
+  - component: {fileID: -894263875212210169}
+  - component: {fileID: -5826643816547822481}
+  - component: {fileID: -1432404201653774547}
   m_Layer: 8
-  m_Name: Skeleton
+  m_Name: Snake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,12 +78,12 @@ SpriteRenderer:
   m_SortingLayerID: -1420120027
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d2444de15baccd04c89240e63374c3f4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e0a57dd310fa5904b8f6da9ef084ec01, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -106,7 +107,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 0.32, y: 0.32}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -114,7 +115,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!50 &3030883783467190354
+--- !u!50 &-596854242487627998
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -135,7 +136,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &6042307813416905462
+--- !u!114 &-894263875212210169
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,11 +145,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6056213582785261799}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50288b2ce547f4d4aabf5956aa66a959, type: 3}
+  m_Script: {fileID: 11500000, guid: 65f1c38967df4634dbc82e0a0aa51aac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   life: 20
---- !u!114 &1995448799583246862
+--- !u!114 &-5826643816547822481
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,4 +162,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTo: {x: 0, y: 0, z: 0}
+  move: 0
   velocity: 2
+  threshold: 0.1
+--- !u!114 &-1432404201653774547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6056213582785261799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ec493ff09009114bae57cae3916016f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

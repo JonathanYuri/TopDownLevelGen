@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 5506338303680429713}
   - component: {fileID: 6957752916923792148}
   - component: {fileID: 4725738449373342728}
-  - component: {fileID: 3030883783467190354}
-  - component: {fileID: 6042307813416905462}
-  - component: {fileID: 1995448799583246862}
+  - component: {fileID: -1674641807476952432}
+  - component: {fileID: -3241152050810332825}
+  - component: {fileID: 4040768933428566889}
   m_Layer: 8
-  m_Name: Skeleton
+  m_Name: Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: -1420120027
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d2444de15baccd04c89240e63374c3f4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 761049760ce9feb4390cff15ff9ae7af, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -114,7 +114,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!50 &3030883783467190354
+--- !u!50 &-1674641807476952432
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -135,7 +135,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &6042307813416905462
+--- !u!114 &-3241152050810332825
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,11 +144,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6056213582785261799}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50288b2ce547f4d4aabf5956aa66a959, type: 3}
+  m_Script: {fileID: 11500000, guid: f0d37035c79ce1c459228c2f8563e3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   life: 20
---- !u!114 &1995448799583246862
+--- !u!114 &4040768933428566889
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
