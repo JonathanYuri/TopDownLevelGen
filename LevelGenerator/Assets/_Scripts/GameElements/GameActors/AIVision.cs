@@ -6,12 +6,28 @@ public class AIVision : MonoBehaviour
 {
     [SerializeField] Transform target;
     [SerializeField] float range;
+    [SerializeField] float memoryTime;
 
     [SerializeField] bool targetVisible;
+    bool forgetting = false;
 
     void Update()
     {
-        targetVisible = IsTargetVisible();
+        if (IsTargetVisible())
+        {
+            if (forgetting)
+            {
+                StopCoroutine(WaitToForgetEnemy());
+            }
+
+            forgetting = false;
+            targetVisible = true;
+        }
+        else if (targetVisible && !forgetting)
+        {
+            forgetting = true;
+            StartCoroutine(WaitToForgetEnemy());
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -34,5 +50,15 @@ public class AIVision : MonoBehaviour
         }
 
         return true;
+    }
+
+    IEnumerator WaitToForgetEnemy()
+    {
+        forgetting = true;
+        yield return new WaitForSeconds(memoryTime);
+
+        targetVisible = false;
+
+        forgetting = false;
     }
 }

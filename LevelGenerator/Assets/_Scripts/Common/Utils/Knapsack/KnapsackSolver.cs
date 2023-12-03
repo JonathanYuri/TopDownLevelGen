@@ -1,37 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Random = UnityEngine.Random;
-
-public struct KnapsackSelectionResult
-{
-    public List<RoomContents> ChosenEnemies { get; private set; }
-    public List<int> ChosenEnemiesDifficulty { get; private set; }
-    public List<RoomContents> ChosenObstacles { get; private set; }
-    public List<int> ChosenObstaclesDifficulty { get; private set; }
-
-    public KnapsackSelectionResult(
-        List<RoomContents> chosenEnemies, List<int> chosenEnemiesDifficulty,
-        List<RoomContents> chosenObstacles, List<int> chosenObstaclesDifficulty)
-    {
-        ChosenEnemies = chosenEnemies;
-        ChosenEnemiesDifficulty = chosenEnemiesDifficulty;
-        ChosenObstacles = chosenObstacles;
-        ChosenObstaclesDifficulty = chosenObstaclesDifficulty;
-    }
-}
-
-public struct KnapsackParams
-{
-    public List<RoomContents> Contents { get; private set; }
-    public List<int> ContentsValues { get; private set; }
-    public int ContentsCapacity { get; private set; }
-    public KnapsackParams(List<RoomContents> contents, List<int> contentsValues, int contentsCapacity)
-    {
-        Contents = contents;
-        ContentsValues = contentsValues;
-        ContentsCapacity = contentsCapacity;
-    }
-}
 
 /// <summary>
 /// A static class that provides methods for solving the Knapsack problem to select items.
@@ -59,7 +27,10 @@ public static class Knapsack
     /// <returns>An array of selected contents based on the Knapsack problem solution.</returns>
     public static RoomContents[] ResolveKnapsack(KnapsackParams knapsackParams)
     {
-        List<int> chosenContentsIdx = ResolveKnapsack(knapsackParams.ContentsValues, knapsackParams.ContentsCapacity, BestAndRandomCriteria);
+        List<int> chosenContentsIdx = ResolveKnapsack(
+            knapsackParams.ContentsValues,
+            knapsackParams.ContentsCapacity,
+            KnapsackCriteriaSet.BestAndRandomCriteria);
 
         RoomContents[] chosenContents = new RoomContents[chosenContentsIdx.Count];
         for (int i = 0; i < chosenContentsIdx.Count; i++)
@@ -112,25 +83,5 @@ public static class Knapsack
         }
 
         return chosenItems[capacity];
-    }
-
-    static bool BestAndSmallerCriteria(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
-    {
-        int chosenItemsWithNewValue = chosenItemsWithRemainingCapacity.Count + 1;
-
-        return BestCriteria(newValue, maxValue, chosenItemsWithRemainingCapacity, chosenItems) ||
-            (newValue == maxValue && chosenItemsWithNewValue < chosenItems.Count);
-    }
-
-    static bool BestCriteria(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
-    {
-        return newValue > maxValue;
-    }
-
-    static bool BestAndRandomCriteria(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
-    {
-        bool random = Random.Range(0, 2) == 0;
-        return BestCriteria(newValue, maxValue, chosenItemsWithRemainingCapacity, chosenItems) ||
-            (newValue == maxValue && random);
     }
 }

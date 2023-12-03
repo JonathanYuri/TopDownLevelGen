@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5724996218880467334}
   - component: {fileID: -1860820041612083285}
   - component: {fileID: 4601704244770677465}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Up
   m_TagString: OpenDoor
   m_Icon: {fileID: 0}

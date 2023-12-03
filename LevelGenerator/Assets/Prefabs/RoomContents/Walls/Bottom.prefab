@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 5219087857634170263}
   - component: {fileID: 5219087857634170262}
   - component: {fileID: 8777672412637790576}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Bottom
-  m_TagString: RoomObjects
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
