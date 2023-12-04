@@ -48,11 +48,10 @@ public class PlayerAttackController : MonoBehaviour
     void SpawnKnife(Vector3 directionToThrowKnife)
     {
         canAttack = false;
-        StartCoroutine(WaitToAttackAgain());
-
         GameObject thrownKnife = Instantiate(knife, this.transform.position + directionToThrowKnife, Quaternion.identity);
         Knife thrownKnifeScript = thrownKnife.GetComponent<Knife>();
         thrownKnifeScript.SetInitialParams(directionToThrowKnife);
+        StartCoroutine(WaitToAttackAgain());
     }
 
     IEnumerator WaitToAttackAgain()
