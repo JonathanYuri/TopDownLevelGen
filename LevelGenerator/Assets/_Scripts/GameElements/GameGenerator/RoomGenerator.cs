@@ -53,7 +53,7 @@ public class RoomGenerator : MonoBehaviour
         {
             float startTime = Time.realtimeSinceStartup;
 
-            room.Values = GenerateRoomWithGeneticAlgorithm(room);
+            room.Values = GeneticRoomGenerator.GeneticLooping(room);
 
             float endTime = Time.realtimeSinceStartup;
 
@@ -67,12 +67,6 @@ public class RoomGenerator : MonoBehaviour
         }
 
         roomObjectSpawner.SpawnRoomObjects(room, roomObject);
-    }
-
-    RoomContents[,] GenerateRoomWithGeneticAlgorithm(RoomSkeleton room)
-    {
-        GeneticRoomGenerator geneticRoomGenerator = new(room);
-        return geneticRoomGenerator.GeneticLooping();
     }
 
     bool IsFinalRoom(Position roomPosition) => levelGenerator.FinalRoomPosition != null && levelGenerator.FinalRoomPosition.Equals(roomPosition);
