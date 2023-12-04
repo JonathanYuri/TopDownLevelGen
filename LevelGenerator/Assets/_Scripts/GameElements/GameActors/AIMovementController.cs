@@ -20,6 +20,8 @@ public class AIMovementController : MonoBehaviour
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
 
+    public float Velocity { get => velocity; set => velocity = value; }
+
     void Awake()
     {
         movementDirectionHandler = GetComponent<MovementDirectionHandler>();
@@ -52,7 +54,7 @@ public class AIMovementController : MonoBehaviour
             else
             {
                 
-                Vector3 movement = velocity * Time.fixedDeltaTime * direction.normalized;
+                Vector3 movement = Velocity * Time.fixedDeltaTime * direction.normalized;
                 rb.MovePosition(this.transform.position + movement);
             }
         }
