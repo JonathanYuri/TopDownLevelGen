@@ -22,8 +22,8 @@ namespace RoomGeneticAlgorithm.Constants
         /// </summary>
         static GeneticAlgorithmConstants()
         {
-            CROSSOVER_PROBABILITY = Mathf.Clamp(CROSSOVER_PROBABILITY, 0f, 1f);
-            MUTATION_PROBABILITY = Mathf.Clamp(MUTATION_PROBABILITY, 0f, 1f);
+            CROSSOVER_PROBABILITY = Mathf.Clamp01(CROSSOVER_PROBABILITY);
+            MUTATION_PROBABILITY = Mathf.Clamp01(MUTATION_PROBABILITY);
         }
     }
 }

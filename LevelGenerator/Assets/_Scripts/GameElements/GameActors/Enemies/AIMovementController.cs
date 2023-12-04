@@ -53,7 +53,6 @@ public class AIMovementController : MonoBehaviour
             }
             else
             {
-                
                 Vector3 movement = Velocity * Time.fixedDeltaTime * direction.normalized;
                 rb.MovePosition(this.transform.position + movement);
             }

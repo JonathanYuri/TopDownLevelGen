@@ -16,12 +16,13 @@ public class Snake : MonoBehaviour, IDamageable
     [SerializeField] float dashVelocity;
 
     float timeWithoutDash = 0f;
-
+    float velocityWithoutDash;
     bool isDashing = false;
 
     void Awake()
     {
         movementController = GetComponent<AIMovementController>();
+        velocityWithoutDash = movementController.Velocity;
     }
 
     void Update()
@@ -52,7 +53,7 @@ public class Snake : MonoBehaviour, IDamageable
     {
         if (CanDash())
         {
-            StartCoroutine(Dash());
+            StartCoroutine(DashCoroutine());
         }
     }
 
@@ -61,15 +62,22 @@ public class Snake : MonoBehaviour, IDamageable
         return !isDashing && timeWithoutDash >= reloadTimeDash;
     }
 
-    IEnumerator Dash()
+    IEnumerator DashCoroutine()
     {
-        float normalVelocity = movementController.Velocity;
+        StartDash();
+        yield return new WaitForSeconds(durationDash);
+        EndDash();
+    }
+
+    void StartDash()
+    {
         movementController.Velocity = dashVelocity;
         isDashing = true;
+    }
 
-        yield return new WaitForSeconds(durationDash);
-
-        movementController.Velocity = normalVelocity;
+    void EndDash()
+    {
+        movementController.Velocity = velocityWithoutDash;
         timeWithoutDash = 0f;
         isDashing = false;
     }

@@ -48,9 +48,9 @@ namespace RoomGeneticAlgorithm.Fitness
                 boundsOfFitnessVars.Add(new Range() { max = int.MinValue, min = int.MaxValue });
             }
 
-            numGroupsImportance = Mathf.Clamp(numGroupsImportance, 0f, 1f);
-            enemiesPerGroupAverageImportance = Mathf.Clamp(enemiesPerGroupAverageImportance, 0f, 1f);
-            enemyDoorDistanceImportance = Mathf.Clamp(enemyDoorDistanceImportance, 0f, 1f);
+            numGroupsImportance = Mathf.Clamp01(numGroupsImportance);
+            enemiesPerGroupAverageImportance = Mathf.Clamp01(enemiesPerGroupAverageImportance);
+            enemyDoorDistanceImportance = Mathf.Clamp01(enemyDoorDistanceImportance);
         }
 
         /// <summary>

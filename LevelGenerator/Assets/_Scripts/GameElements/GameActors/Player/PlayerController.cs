@@ -1,32 +1,24 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// Controls the player's movement and interactions in the game.
 /// </summary>
-[RequireComponent(typeof(Rigidbody2D))]
-public class PlayerController : MonoBehaviour, IDamageable
+[RequireComponent(typeof(PlayerMovementController))]
+public class PlayerController : MonoBehaviour, IDamageable, ISlowable
 {
-    Rigidbody2D rb;
+    PlayerMovementController playerMovementController;
 
     [SerializeField] int life = 100;
-    [SerializeField] float movementSpeed;
 
     public EventHandler<DoorEventArgs> PassedThroughTheDoorEvent;
     public event Action OnLevelComplete;
 
-    void Start()
+    void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
-    void FixedUpdate()
-    {
-        float movimentoHorizontal = Input.GetAxis("Horizontal");
-        float movimentoVertical = Input.GetAxis("Vertical");
-
-        Vector3 movimento = movementSpeed * Time.fixedDeltaTime * new Vector3(movimentoHorizontal, movimentoVertical);
-        rb.MovePosition(this.transform.position + movimento);
+        playerMovementController = GetComponent<PlayerMovementController>();
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -61,5 +53,32 @@ public class PlayerController : MonoBehaviour, IDamageable
     void Die()
     {
         Destroy(gameObject);
+    }
+
+    public void TakeSlowness(float percentSlow, float timeSlow)
+    {
+        StartCoroutine(TakeSlownessCoroutine(percentSlow, timeSlow));
+    }
+
+    IEnumerator TakeSlownessCoroutine(float percentSlow, float timeSlow)
+    {
+        percentSlow = Mathf.Clamp01(percentSlow);
+        float velocityWithoutSlow = playerMovementController.Velocity;
+
+        StartSlowness(percentSlow);
+        yield return new WaitForSeconds(timeSlow);
+        EndSlowness(velocityWithoutSlow);
+    }
+
+    void StartSlowness(float percentSlow)
+    {
+        // se eu quero um slow de 0.3, eu quero que minha velocity seja multiplicada por 0.7
+        float velocityMultiplier = 1 - percentSlow;
+        playerMovementController.Velocity *= velocityMultiplier;
+    }
+
+    void EndSlowness(float velocityWithoutSlow)
+    {
+        playerMovementController.Velocity = velocityWithoutSlow;
     }
 }
