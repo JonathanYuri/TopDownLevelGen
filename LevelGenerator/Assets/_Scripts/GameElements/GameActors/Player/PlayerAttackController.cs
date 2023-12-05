@@ -18,9 +18,23 @@ public static class AttackButtonsConstants
 public class PlayerAttackController : MonoBehaviour
 {
     [SerializeField] GameObject knife;
-    [SerializeField] float timeBetweenAttacks = 0.5f;
+    Timer attackTimer;
 
     bool canAttack = true;
+
+    void Awake()
+    {
+        attackTimer = GetComponentInChildren<Timer>();
+        attackTimer.OnTimerExpired += OnAttackTimerExpired;
+    }
+
+    void OnDestroy()
+    {
+        if (attackTimer != null)
+        {
+            attackTimer.OnTimerExpired -= OnAttackTimerExpired;
+        }
+    }
 
     void Update()
     {
@@ -48,15 +62,15 @@ public class PlayerAttackController : MonoBehaviour
     void SpawnKnife(Vector3 directionToThrowKnife)
     {
         canAttack = false;
+        attackTimer.StartTimer();
+
         GameObject thrownKnife = Instantiate(knife, this.transform.position + directionToThrowKnife, Quaternion.identity);
         Knife thrownKnifeScript = thrownKnife.GetComponent<Knife>();
         thrownKnifeScript.SetInitialParams(directionToThrowKnife);
-        StartCoroutine(WaitToAttackAgain());
     }
 
-    IEnumerator WaitToAttackAgain()
+    void OnAttackTimerExpired()
     {
-        yield return new WaitForSeconds(timeBetweenAttacks);
         canAttack = true;
     }
 }

@@ -6,30 +6,41 @@ using UnityEngine;
 public class Snake : MonoBehaviour, IDamageable
 {
     AIMovementController movementController;
+    Timer dashTimer;
 
     [SerializeField] int life = 20;
 
     [Header("Dash")]
 
+    bool canDashByTimerDash = true;
+    bool isDashing = false;
+
     [SerializeField] float durationDash;
-    [SerializeField] float reloadTimeDash;
     [SerializeField] float dashVelocity;
 
-    float timeWithoutDash = 0f;
     float velocityWithoutDash;
-    bool isDashing = false;
 
     void Awake()
     {
         movementController = GetComponent<AIMovementController>();
         velocityWithoutDash = movementController.Velocity;
+
+        dashTimer = GetComponentInChildren<Timer>();
+        dashTimer.OnTimerExpired += OnDashTimerExpired;
     }
 
     void Update()
     {
-        timeWithoutDash += Time.deltaTime;
-
+        Debug.Log(movementController.Velocity);
         TryDash();
+    }
+
+    void OnDestroy()
+    {
+        if (dashTimer != null)
+        {
+            dashTimer.OnTimerExpired -= OnDashTimerExpired;
+        }
     }
 
     public void TakeDamage(int damage)
@@ -57,9 +68,14 @@ public class Snake : MonoBehaviour, IDamageable
         }
     }
 
+    void OnDashTimerExpired()
+    {
+        canDashByTimerDash = true;
+    }
+
     bool CanDash()
     {
-        return !isDashing && timeWithoutDash >= reloadTimeDash;
+        return !isDashing && canDashByTimerDash;
     }
 
     IEnumerator DashCoroutine()
@@ -72,13 +88,14 @@ public class Snake : MonoBehaviour, IDamageable
     void StartDash()
     {
         movementController.Velocity = dashVelocity;
+        canDashByTimerDash = false;
         isDashing = true;
     }
 
     void EndDash()
     {
         movementController.Velocity = velocityWithoutDash;
-        timeWithoutDash = 0f;
         isDashing = false;
+        dashTimer.StartTimer();
     }
 }
