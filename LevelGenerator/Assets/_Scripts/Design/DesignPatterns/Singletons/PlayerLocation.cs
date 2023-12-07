@@ -26,7 +26,7 @@ public class PlayerLocation : Singleton<PlayerLocation>
     public void SetPlayerToInitialRoom(Camera camera)
     {
         camera.transform.position = new Vector3(0, 0, camera.transform.position.z);
-        SetPlayerToRoom(Map.Instance.RoomPositions.ElementAt(0), new Vector3(0, 0));
+        SetPlayerToRoom(GameMapManager.Instance.RoomPositions.ElementAt(0), new Vector3(0, 0));
     }
 
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)

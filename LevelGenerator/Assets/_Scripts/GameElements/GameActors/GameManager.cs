@@ -26,23 +26,6 @@ public class GameManager : MonoBehaviour
         GenerateGame();
     }
 
-    void GenerateGame()
-    {
-        levelGenerator.Generate();
-
-        if (player == null)
-        {
-            PlayerLocation.Instance.SpawnPlayer(playerPrefab);
-            player = PlayerLocation.Instance.Player;
-
-            player.PassedThroughTheDoorEvent += Player_PassedThroughTheDoor;
-            player.OnLevelComplete += Player_OnLevelComplete;
-        }
-
-        PlayerLocation.Instance.SetPlayerToInitialRoom(sceneCamera);
-        uiMapGenerator.CreateUIMap();
-    }
-
     void OnDestroy()
     {
         if (player != null)
@@ -50,6 +33,31 @@ public class GameManager : MonoBehaviour
             player.PassedThroughTheDoorEvent -= Player_PassedThroughTheDoor;
             player.OnLevelComplete -= Player_OnLevelComplete;
         }
+    }
+
+    void GenerateGame()
+    {
+        levelGenerator.Generate();
+
+        if (player == null)
+        {
+            CreatePlayer();
+        }
+        PlayerLocation.Instance.SetPlayerToInitialRoom(sceneCamera);
+
+        uiMapGenerator.CreateUIMap();
+
+        GameMapManager.Instance.ConfigureAStar();
+        GameMapManager.Instance.SetEnemiesTargetPlayer(player.transform);
+    }
+
+    void CreatePlayer()
+    {
+        PlayerLocation.Instance.SpawnPlayer(playerPrefab);
+        player = PlayerLocation.Instance.Player;
+
+        player.PassedThroughTheDoorEvent += Player_PassedThroughTheDoor;
+        player.OnLevelComplete += Player_OnLevelComplete;
     }
 
     void Player_OnLevelComplete()

@@ -2,18 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MovementDirectionHandler))]
 public class AIMovementController : MonoBehaviour
 {
-    MovementDirectionHandler movementDirectionHandler;
+    [SerializeField] MovementDirectionHandler movementDirectionHandler;
 
     [SerializeField] Rigidbody2D rb;
 
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Vector3 moveTo;
     [SerializeField] bool move;
-    
-    bool firstMove = true;
 
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
@@ -32,7 +29,11 @@ public class AIMovementController : MonoBehaviour
             Debug.LogError("Rigidbody not assign");
         }
 
-        movementDirectionHandler = GetComponent<MovementDirectionHandler>();
+        if (movementDirectionHandler == null)
+        {
+            Debug.LogError("Movement Direction Handler not assign");    
+        }
+
         moveTo = this.transform.position;
     }
 
@@ -43,19 +44,10 @@ public class AIMovementController : MonoBehaviour
             Vector3 direction = moveTo - this.transform.position;
             float distanceToTarget = direction.magnitude;
 
-            if (firstMove)
-            {
-                movementDirectionHandler.SetInitialRotationBasedOnMovementDirection(direction);
-                firstMove = false;
-            }
-
             if (distanceToTarget <= threshold)
             {
                 move = false;
-                firstMove = true;
-                movementDirectionHandler.SetInitialRotationBasedOnMovementDirection(Vector2.right);
-                spriteRenderer.flipX = false;
-                spriteRenderer.flipY = false;
+                ResetMovementOrientation();
             }
             else
             {
@@ -63,11 +55,25 @@ public class AIMovementController : MonoBehaviour
                 rb.MovePosition(this.transform.position + movement);
             }
         }
+        else
+        {
+            ResetMovementOrientation();
+        }
+    }
+
+    void ResetMovementOrientation()
+    {
+        movementDirectionHandler.SetRotationBasedOnMovementDirection(Vector2.right);
+        spriteRenderer.flipX = false;
+        spriteRenderer.flipY = false;
     }
 
     public void SetMovement(Vector2 moveTo)
     {
         this.moveTo = moveTo;
         move = true;
+
+        Vector2 direction = moveTo - (Vector2)transform.position;
+        movementDirectionHandler.SetRotationBasedOnMovementDirection(direction);
     }
 }

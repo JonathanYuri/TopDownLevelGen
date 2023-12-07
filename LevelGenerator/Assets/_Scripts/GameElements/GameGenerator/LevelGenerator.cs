@@ -46,7 +46,7 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void DestroyAllPastObjects()
     {
-        Map.Instance.RoomPositions.Clear();
+        GameMapManager.Instance.RoomPositions.Clear();
         for (int i = 0; i < Rooms.childCount; i++)
         {
             Destroy(Rooms.GetChild(i).gameObject);
@@ -85,7 +85,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        Map.Instance.RoomPositions = map;
+        GameMapManager.Instance.RoomPositions = map;
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public class LevelGenerator : MonoBehaviour
     Position ChooseFinalRoomPosition()
     {
         Position[] selectedRoom = { InitialRoomPosition };
-        Position[] withoutInitialPosition = Map.Instance.RoomPositions.Except(selectedRoom).ToArray();
+        Position[] withoutInitialPosition = GameMapManager.Instance.RoomPositions.Except(selectedRoom).ToArray();
 
         return withoutInitialPosition.MaxBy(position => Utils.CalculateDistance(position, InitialRoomPosition));
     }
@@ -121,7 +121,7 @@ public class LevelGenerator : MonoBehaviour
     void GenerateRemainingRooms()
     {
         Position[] selectedRooms = {InitialRoomPosition, FinalRoomPosition};
-        var remainingRooms = Map.Instance.RoomPositions.Except(selectedRooms);
+        var remainingRooms = GameMapManager.Instance.RoomPositions.Except(selectedRooms);
 
         foreach (Position roomPosition in remainingRooms)
         {

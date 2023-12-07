@@ -11,6 +11,9 @@ public class AIVision : MonoBehaviour
     [SerializeField] bool targetVisible;
     bool forgetting = false;
 
+    public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
+    public Transform Target { get => target; set => target = value; }
+
     void Update()
     {
         if (IsTargetVisible())
@@ -21,9 +24,9 @@ public class AIVision : MonoBehaviour
             }
 
             forgetting = false;
-            targetVisible = true;
+            TargetVisible = true;
         }
-        else if (targetVisible && !forgetting)
+        else if (TargetVisible && !forgetting)
         {
             forgetting = true;
             StartCoroutine(WaitToForgetEnemy());
@@ -38,12 +41,12 @@ public class AIVision : MonoBehaviour
 
     bool IsTargetVisible()
     {
-        if (target == null)
+        if (Target == null)
         {
             return false;
         }
 
-        Vector2 toTarget = target.position - transform.position;
+        Vector2 toTarget = Target.position - transform.position;
         if (toTarget.magnitude > range)
         {
             return false;
@@ -57,7 +60,7 @@ public class AIVision : MonoBehaviour
         forgetting = true;
         yield return new WaitForSeconds(memoryTime);
 
-        targetVisible = false;
+        TargetVisible = false;
 
         forgetting = false;
     }

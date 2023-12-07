@@ -2,43 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Snake : MonoBehaviour, IDamageable
+public class Snake : Enemy, IDamageable
 {
-    AIMovementController movementController;
-    Timer dashTimer;
+    DashController dashController;
 
     [SerializeField] int life = 20;
 
-    [Header("Dash")]
-
-    bool canDashByTimerDash = true;
-    bool isDashing = false;
-
-    [SerializeField] float durationDash;
-    [SerializeField] float dashVelocity;
-
-    float velocityWithoutDash;
-
     void Awake()
     {
-        movementController = GetComponentInChildren<AIMovementController>();
-        velocityWithoutDash = movementController.Velocity;
-
-        dashTimer = GetComponentInChildren<Timer>();
-        dashTimer.OnTimerExpired += OnDashTimerExpired;
+        dashController = GetComponentInChildren<DashController>();
+        aiPathController = GetComponentInChildren<AIPathController>();
+        aiVision = GetComponentInChildren<AIVision>();
     }
 
     void Update()
     {
-        TryDash();
-    }
-
-    void OnDestroy()
-    {
-        if (dashTimer != null)
-        {
-            dashTimer.OnTimerExpired -= OnDashTimerExpired;
-        }
+        // dashController.TryDash();
     }
 
     public void TakeDamage(int damage)
@@ -56,44 +35,5 @@ public class Snake : MonoBehaviour, IDamageable
     void Die()
     {
         Destroy(gameObject);
-    }
-
-    void TryDash()
-    {
-        if (CanDash())
-        {
-            StartCoroutine(DashCoroutine());
-        }
-    }
-
-    void OnDashTimerExpired()
-    {
-        canDashByTimerDash = true;
-    }
-
-    bool CanDash()
-    {
-        return !isDashing && canDashByTimerDash;
-    }
-
-    IEnumerator DashCoroutine()
-    {
-        StartDash();
-        yield return new WaitForSeconds(durationDash);
-        EndDash();
-    }
-
-    void StartDash()
-    {
-        movementController.Velocity = dashVelocity;
-        canDashByTimerDash = false;
-        isDashing = true;
-    }
-
-    void EndDash()
-    {
-        movementController.Velocity = velocityWithoutDash;
-        isDashing = false;
-        dashTimer.StartTimer();
     }
 }

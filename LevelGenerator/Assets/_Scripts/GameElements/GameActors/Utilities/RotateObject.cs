@@ -35,6 +35,6 @@ public class RotateObject : MonoBehaviour
     public void StartRotation(Vector2 movementDirection)
     {
         rotateClockwise = movementDirection.x >= 0;
-        movementDirectionHandler.SetInitialRotationBasedOnMovementDirection(movementDirection);
+        movementDirectionHandler.SetRotationBasedOnMovementDirection(movementDirection);
     }
 }

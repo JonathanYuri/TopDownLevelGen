@@ -61,7 +61,7 @@ public class UIMapGenerator : MonoBehaviour
     /// <returns>The size of the game map.</returns>
     int CalculateMapSize()
     {
-        HashSet<Position> map = Map.Instance.RoomPositions;
+        HashSet<Position> map = GameMapManager.Instance.RoomPositions;
 
         int maxX = map.Max(room => room.X);
         int maxY = map.Max(room => room.Y);
@@ -106,7 +106,7 @@ public class UIMapGenerator : MonoBehaviour
     /// <param name="initialRoomPosition">The initial position of the first room panel.</param>
     void CreateRoomPanels(int mapSize, float roomSize, Vector2 roomScale, Vector2 initialRoomPosition)
     {
-        HashSet<Position> map = Map.Instance.RoomPositions;
+        HashSet<Position> map = GameMapManager.Instance.RoomPositions;
         float horizontalRoomPosition = initialRoomPosition.x;
         float verticalRoomPosition = initialRoomPosition.y;
 
@@ -150,7 +150,7 @@ public class UIMapGenerator : MonoBehaviour
             return playerInRoomPanel;
         }
 
-        if (Map.Instance.RoomPositions.Contains(position))
+        if (GameMapManager.Instance.RoomPositions.Contains(position))
         {
             return roomPanelPrefab;
         }

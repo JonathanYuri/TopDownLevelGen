@@ -2,19 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class MovementDirectionHandler : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer spriteRenderer;
+    SpriteRenderer spriteRenderer;
 
-    void Start()
+    void Awake()
     {
-        if (spriteRenderer == null)
-        {
-            Debug.LogError("Sprite renderer not assign");
-        }
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void SetInitialRotationBasedOnMovementDirection(Vector2 movementDirection)
+    public void SetRotationBasedOnMovementDirection(Vector2 movementDirection)
     {
         bool moveRight = movementDirection.x >= 0;
 
@@ -25,6 +23,10 @@ public class MovementDirectionHandler : MonoBehaviour
         if (!moveRight)
         {
             spriteRenderer.flipX = true;
+        }
+        else
+        {
+            spriteRenderer.flipX = false;
         }
 
         if (spriteRenderer.flipX)

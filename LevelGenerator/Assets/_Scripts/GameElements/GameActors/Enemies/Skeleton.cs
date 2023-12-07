@@ -2,9 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skeleton : MonoBehaviour, IDamageable
+public class Skeleton : Enemy, IDamageable
 {
     [SerializeField] int life = 20;
+
+    void Awake()
+    {
+        aiPathController = GetComponentInChildren<AIPathController>();
+        aiVision = GetComponentInChildren<AIVision>();
+    }
 
     public void TakeDamage(int damage)
     {

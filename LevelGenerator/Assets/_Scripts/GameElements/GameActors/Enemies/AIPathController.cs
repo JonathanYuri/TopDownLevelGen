@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AIMovementController))]
+[RequireComponent(typeof(AIVision))]
 [RequireComponent(typeof(Seeker))]
 public class AIPathController : MonoBehaviour
 {
@@ -11,6 +11,7 @@ public class AIPathController : MonoBehaviour
     [SerializeField] float nextWaypointDistance = 0.2f;
 
     AIMovementController movementController;
+    AIVision aiVision;
 
     Path path;
     int currentWaypoint = 0;
@@ -18,28 +19,34 @@ public class AIPathController : MonoBehaviour
 
     Seeker seeker;
 
+    public Transform Target { get => target; set => target = value; }
+
     void Awake()
     {
         seeker = GetComponent<Seeker>();
-        movementController = GetComponent<AIMovementController>();
+        aiVision = GetComponent<AIVision>();
+        movementController = GetComponentInChildren<AIMovementController>();
         InvokeRepeating(nameof(UpdatePath), .0f, .5f);
     }
 
     void Update()
     {
-        FollowThePath();
+        if (aiVision.TargetVisible)
+        {
+            FollowThePath();
+        }
     }
 
     void UpdatePath()
     {
-        if (target == null)
+        if (Target == null)
         {
             return;
         }
 
         if (seeker.IsDone())
         {
-            seeker.StartPath(transform.position, target.position, OnPathComplete);
+            seeker.StartPath(transform.position, Target.position, OnPathComplete);
         }
     }
 

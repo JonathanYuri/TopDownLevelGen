@@ -128,7 +128,7 @@ public static class MapUtility
         foreach (Direction direction in Enum.GetValues(typeof(Direction)).Cast<Direction>())
         {
             Position adjacentPosition = roomPosition.Move(direction);
-            if (Map.Instance.RoomPositions.Contains(adjacentPosition))
+            if (GameMapManager.Instance.RoomPositions.Contains(adjacentPosition))
             {
                 doorsPositions.Add(GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION[direction]);
             }
