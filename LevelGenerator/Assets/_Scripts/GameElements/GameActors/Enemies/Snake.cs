@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AIMovementController))]
 public class Snake : MonoBehaviour, IDamageable
 {
     AIMovementController movementController;
@@ -22,7 +21,7 @@ public class Snake : MonoBehaviour, IDamageable
 
     void Awake()
     {
-        movementController = GetComponent<AIMovementController>();
+        movementController = GetComponentInChildren<AIMovementController>();
         velocityWithoutDash = movementController.Velocity;
 
         dashTimer = GetComponentInChildren<Timer>();
@@ -31,7 +30,6 @@ public class Snake : MonoBehaviour, IDamageable
 
     void Update()
     {
-        Debug.Log(movementController.Velocity);
         TryDash();
     }
 

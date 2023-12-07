@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MovementDirectionHandler))]
-[RequireComponent(typeof(SpriteRenderer))]
 public class MovementDirectionHandler : MonoBehaviour
 {
-    SpriteRenderer spriteRenderer;
+    [SerializeField] SpriteRenderer spriteRenderer;
 
-    void Awake()
+    void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("Sprite renderer not assign");
+        }
     }
 
     public void SetInitialRotationBasedOnMovementDirection(Vector2 movementDirection)

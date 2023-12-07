@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(MovementDirectionHandler))]
-[RequireComponent(typeof(SpriteRenderer))]
 public class AIMovementController : MonoBehaviour
 {
     MovementDirectionHandler movementDirectionHandler;
 
-    Rigidbody2D rb;
-    SpriteRenderer spriteRenderer;
+    [SerializeField] Rigidbody2D rb;
 
+    [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Vector3 moveTo;
     [SerializeField] bool move;
     
@@ -22,11 +20,19 @@ public class AIMovementController : MonoBehaviour
 
     public float Velocity { get => velocity; set => velocity = value; }
 
-    void Awake()
+    void Start()
     {
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("Sprite renderer not assign");
+        }
+
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody not assign");
+        }
+
         movementDirectionHandler = GetComponent<MovementDirectionHandler>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        rb = GetComponent<Rigidbody2D>();
         moveTo = this.transform.position;
     }
 
@@ -57,5 +63,11 @@ public class AIMovementController : MonoBehaviour
                 rb.MovePosition(this.transform.position + movement);
             }
         }
+    }
+
+    public void SetMovement(Vector2 moveTo)
+    {
+        this.moveTo = moveTo;
+        move = true;
     }
 }
