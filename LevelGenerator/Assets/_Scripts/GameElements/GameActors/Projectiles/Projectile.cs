@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(RotateObject))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Knife : MonoBehaviour
+public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb;
     TriggerDamage triggerDamage;
@@ -40,6 +40,8 @@ public class Knife : MonoBehaviour
         {
             triggerDamage.CollisionOccured -= CollisionOccured;
         }
+
+        StopAllCoroutines();
     }
 
     IEnumerator AutoDestroy()
@@ -56,7 +58,7 @@ public class Knife : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void SetInitialParams(Vector2 movementDirection)
+    public void InitializeProjectile(Vector2 movementDirection)
     {
         this.movementDirection = movementDirection;
         rotateObject.StartRotation(movementDirection);

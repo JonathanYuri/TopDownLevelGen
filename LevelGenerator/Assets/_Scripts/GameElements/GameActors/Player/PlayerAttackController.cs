@@ -42,31 +42,37 @@ public class PlayerAttackController : MonoBehaviour
         {
             if (AttackButtonsConstants.IsUpAttackPressed())
             {
-                SpawnKnife(Vector2.up);
+                Attack(Vector2.up);
             }
             else if (AttackButtonsConstants.IsDownAttackPressed())
             {
-                SpawnKnife(Vector3.down);
+                Attack(Vector3.down);
             }
             else if (AttackButtonsConstants.IsLeftAttackPressed())
             {
-                SpawnKnife(Vector2.left);
+                Attack(Vector2.left);
             }
             else if (AttackButtonsConstants.IsRightAttackPressed())
             {
-                SpawnKnife(Vector2.right);
+                Attack(Vector2.right);
             }
         }
     }
 
-    void SpawnKnife(Vector3 directionToThrowKnife)
+    void Attack(Vector3 directionToAttack)
     {
         canAttack = false;
-        attackTimer.StartTimer();
 
+        SpawnKnife(directionToAttack);
+
+        attackTimer.StartTimer();
+    }
+
+    void SpawnKnife(Vector3 directionToThrowKnife)
+    {
         GameObject thrownKnife = Instantiate(knife, this.transform.position + directionToThrowKnife, Quaternion.identity);
-        Knife thrownKnifeScript = thrownKnife.GetComponent<Knife>();
-        thrownKnifeScript.SetInitialParams(directionToThrowKnife);
+        Projectile thrownKnifeScript = thrownKnife.GetComponent<Projectile>();
+        thrownKnifeScript.InitializeProjectile(directionToThrowKnife);
     }
 
     void OnAttackTimerExpired()

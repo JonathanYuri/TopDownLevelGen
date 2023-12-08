@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Timer))]
+[RequireComponent(typeof(Collider2D))]
 public class TriggerDamage : MonoBehaviour
 {
     Timer damageTimer;
