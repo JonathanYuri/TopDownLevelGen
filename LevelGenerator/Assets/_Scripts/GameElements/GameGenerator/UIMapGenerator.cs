@@ -142,7 +142,7 @@ public class UIMapGenerator : MonoBehaviour
     /// <returns>The selected room panel GameObject.</returns>
     GameObject ChoosePanelToPosition(Position position)
     {
-        if (PlayerLocation.Instance.AtRoom.Equals(position))
+        if (PlayerLocation.Instance.Location.RoomPosition.Equals(position))
         {
             return playerInRoomPanel;
         }
@@ -162,6 +162,6 @@ public class UIMapGenerator : MonoBehaviour
     public void UpdateUIMap(Position playerOldPosition)
     {
         uiMap[playerOldPosition].color = roomPanelImage.color;
-        uiMap[PlayerLocation.Instance.AtRoom].color = playerInRoomImage.color;
+        uiMap[PlayerLocation.Instance.Location.RoomPosition].color = playerInRoomImage.color;
     }
 }

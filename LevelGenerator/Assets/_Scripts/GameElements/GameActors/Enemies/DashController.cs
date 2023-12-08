@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Timer))]
 public class DashController : MonoBehaviour
 {
     [SerializeField] AIMovementController movementController;
@@ -23,7 +24,7 @@ public class DashController : MonoBehaviour
         }
         velocityWithoutDash = movementController.Velocity;
 
-        dashTimer = GetComponentInChildren<Timer>();
+        dashTimer = GetComponent<Timer>();
         dashTimer.OnTimerExpired += OnDashTimerExpired;
     }
 

@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerLocation : Singleton<PlayerLocation>
+[RequireComponent(typeof(Location))]
+public class PlayerLocation : SingletonMonoBehaviour<PlayerLocation>
 {
     static readonly Dictionary<Vector3, Vector2> directionToPositionInRoomMatrix = new()
     {
@@ -14,11 +15,16 @@ public class PlayerLocation : Singleton<PlayerLocation>
     };
 
     public PlayerController Player { get; private set; }
-    public Position AtRoom { get; set; }
+    public Location Location { get; private set; }
+
+    void Start()
+    {
+        Location = GetComponent<Location>();
+    }
 
     public void SpawnPlayer(GameObject playerPrefab)
     {
-        GameObject playerObject = GameObject.Instantiate(playerPrefab);
+        GameObject playerObject = Instantiate(playerPrefab);
         PlayerController playerController = playerObject.GetComponent<PlayerController>();
         Player = playerController;
     }
@@ -32,7 +38,7 @@ public class PlayerLocation : Singleton<PlayerLocation>
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)
     {
         Player.transform.position = positionInRoomMatrix;
-        AtRoom = roomPosition;
+        Location.RoomPosition = roomPosition;
     }
 
     /// <summary>
@@ -44,8 +50,8 @@ public class PlayerLocation : Singleton<PlayerLocation>
     {
         Position roomPosition = new()
         {
-            X = AtRoom.X + (int)direction.x,
-            Y = AtRoom.Y + (int)direction.y
+            X = Location.RoomPosition.X + (int)direction.x,
+            Y = Location.RoomPosition.Y + (int)direction.y
         };
 
         Vector2 roomInUnity = Utils.TransformAMapPositionIntoAUnityPosition(roomPosition);

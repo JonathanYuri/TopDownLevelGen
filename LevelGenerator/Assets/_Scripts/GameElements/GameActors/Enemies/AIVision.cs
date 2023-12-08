@@ -17,6 +17,7 @@ public class AIVision : MonoBehaviour
 
     public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
     public Transform Target { get => target; set => target = value; }
+    public Location TargetLocation { get => targetLocation; set => targetLocation = value; }
 
     void Start()
     {
@@ -55,12 +56,12 @@ public class AIVision : MonoBehaviour
             return false;
         }
 
-        if (targetLocation == null)
+        if (TargetLocation == null)
         {
             return false;
         }
 
-        if (!targetLocation.RoomPosition.Equals(myLocation.RoomPosition))
+        if (!TargetLocation.RoomPosition.Equals(myLocation.RoomPosition))
         {
             return false;
         }

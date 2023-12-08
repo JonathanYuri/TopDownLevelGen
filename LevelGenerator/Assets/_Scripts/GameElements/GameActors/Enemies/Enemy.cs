@@ -11,5 +11,6 @@ public class Enemy : MonoBehaviour
     {
         aiPathController.Target = target;
         aiVision.Target = target;
+        aiVision.TargetLocation = PlayerLocation.Instance.Location;
     }
 }

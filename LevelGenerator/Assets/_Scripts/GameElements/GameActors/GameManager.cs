@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     void Player_PassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
     {
-        Position playerOldPosition = PlayerLocation.Instance.AtRoom;
+        Position playerOldPosition = PlayerLocation.Instance.Location.RoomPosition;
         PlayerLocation.Instance.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection, sceneCamera);
 
         uiMapGenerator.UpdateUIMap(playerOldPosition);
