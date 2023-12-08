@@ -34,13 +34,13 @@ public class GameMapManager : SingletonMonoBehaviour<GameMapManager>
         }
     }
 
-    public void SetEnemiesTargetPlayer(Transform player)
+    public void SetEnemiesTargetPlayer(Transform player, Location playerLocation)
     {
         Enemy[] enemies = FindObjectsOfType<Enemy>();
 
         foreach (Enemy enemy in enemies)
         {
-            enemy.SetTargetPlayer(player);
+            enemy.SetTargetPlayer(player, playerLocation);
         }
     }
 }

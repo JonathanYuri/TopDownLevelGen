@@ -18,6 +18,8 @@ public class UIMapGenerator : MonoBehaviour
 
     Dictionary<Position, Image> uiMap;
 
+    Location playerLocation;
+
     void Awake()
     {
         uiMap = new();
@@ -40,8 +42,9 @@ public class UIMapGenerator : MonoBehaviour
     /// <summary>
     /// Creates the UI map to represent the game map with room panels and player's current position.
     /// </summary>
-    public void CreateUIMap()
+    public void CreateUIMap(Location playerLocation)
     {
+        this.playerLocation = playerLocation;
         DestroyPastUIMap();
 
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
@@ -142,7 +145,7 @@ public class UIMapGenerator : MonoBehaviour
     /// <returns>The selected room panel GameObject.</returns>
     GameObject ChoosePanelToPosition(Position position)
     {
-        if (PlayerLocation.Instance.Location.RoomPosition.Equals(position))
+        if (playerLocation.RoomPosition.Equals(position))
         {
             return playerInRoomPanel;
         }
@@ -159,9 +162,9 @@ public class UIMapGenerator : MonoBehaviour
     /// Updates the UI map by changing the color of room panels to indicate the player's movement.
     /// </summary>
     /// <param name="playerOldPosition">The previous position of the player.</param>
-    public void UpdateUIMap(Position playerOldPosition)
+    public void UpdateUIMap(Position playerOldPosition, Position playerNewPosition)
     {
         uiMap[playerOldPosition].color = roomPanelImage.color;
-        uiMap[PlayerLocation.Instance.Location.RoomPosition].color = playerInRoomImage.color;
+        uiMap[playerNewPosition].color = playerInRoomImage.color;
     }
 }

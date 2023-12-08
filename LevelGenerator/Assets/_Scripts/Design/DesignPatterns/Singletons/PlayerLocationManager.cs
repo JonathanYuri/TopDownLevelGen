@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Location))]
-public class PlayerLocation : SingletonMonoBehaviour<PlayerLocation>
+public class PlayerLocationManager : MonoBehaviour
 {
     static readonly Dictionary<Vector3, Vector2> directionToPositionInRoomMatrix = new()
     {
@@ -17,7 +17,7 @@ public class PlayerLocation : SingletonMonoBehaviour<PlayerLocation>
     public PlayerController Player { get; private set; }
     public Location Location { get; private set; }
 
-    void Start()
+    void Awake()
     {
         Location = GetComponent<Location>();
     }
