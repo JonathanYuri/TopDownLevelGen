@@ -7,7 +7,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb;
-    TriggerDamage triggerDamage;
+    CollisionEffects triggerEffect;
     RotateObject rotateObject;
 
     [SerializeField] float movimentVelocity = 2.0f;
@@ -19,8 +19,8 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rotateObject = GetComponent<RotateObject>();
-        triggerDamage = GetComponentInChildren<TriggerDamage>();
-        triggerDamage.CollisionOccured += CollisionOccured;
+        triggerEffect = GetComponentInChildren<CollisionEffects>();
+        triggerEffect.CollisionOccured += CollisionOccured;
     }
 
     void Start()
@@ -36,9 +36,9 @@ public class Projectile : MonoBehaviour
 
     void OnDestroy()
     {
-        if (triggerDamage != null)
+        if (triggerEffect != null)
         {
-            triggerDamage.CollisionOccured -= CollisionOccured;
+            triggerEffect.CollisionOccured -= CollisionOccured;
         }
 
         StopAllCoroutines();

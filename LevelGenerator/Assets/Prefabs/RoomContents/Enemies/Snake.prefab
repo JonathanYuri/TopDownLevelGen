@@ -435,6 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetManager: {fileID: 8743796044381433544}
+  aiVision: {fileID: 7141659908848299429}
   life: 20
 --- !u!114 &5883983589104860115
 MonoBehaviour:

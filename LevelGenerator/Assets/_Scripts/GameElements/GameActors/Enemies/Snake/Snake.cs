@@ -5,6 +5,7 @@ using UnityEngine;
 public class Snake : Enemy, IDamageable
 {
     DashController dashController;
+    [SerializeField] AIVision aiVision;
 
     [SerializeField] int life = 20;
 
@@ -13,9 +14,20 @@ public class Snake : Enemy, IDamageable
         dashController = GetComponentInChildren<DashController>();
     }
 
+    void Start()
+    {
+        if (aiVision == null)
+        {
+            Debug.LogError("AIVision not assign");
+        }
+    }
+
     void Update()
     {
-        // dashController.TryDash();
+        if (aiVision.TargetVisible)
+        {
+            dashController.TryDash();
+        }
     }
 
     public void TakeDamage(int damage)

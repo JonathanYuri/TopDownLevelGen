@@ -1,16 +1,15 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Timer))]
-[RequireComponent(typeof(Collider2D))]
-public class TriggerDamage : CollisionEffects
+public class TriggerSlowness : CollisionEffects
 {
-    [SerializeField] int damage;
+    [SerializeField] float percentSlow;
+    [SerializeField] float timeSlow;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IDamageable>(out var _))
+        if (collision.TryGetComponent<ISlowable>(out var _))
         {
             isColliding = true;
             objectInCollision = collision.gameObject;
@@ -23,7 +22,7 @@ public class TriggerDamage : CollisionEffects
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IDamageable>(out var _))
+        if (collision.TryGetComponent<ISlowable>(out var _))
         {
             ResetColision();
         }
@@ -31,6 +30,6 @@ public class TriggerDamage : CollisionEffects
 
     protected override void ApplyEffect()
     {
-        objectInCollision.GetComponent<IDamageable>().TakeDamage(damage);
+        objectInCollision.GetComponent<ISlowable>().TakeSlowness(percentSlow, timeSlow);
     }
 }

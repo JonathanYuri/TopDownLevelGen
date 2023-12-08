@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3850374386982024898}
   - component: {fileID: 4730749082979012950}
   - component: {fileID: 3242299956573973406}
-  - component: {fileID: 8028623308058278637}
+  - component: {fileID: 2576439141111250933}
   m_Layer: 9
-  m_Name: Damage
+  m_Name: Slowness
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,10 +44,10 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.002443269, y: 0.0012216754}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -58,7 +58,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3745084, y: 0.24989882}
   m_EdgeRadius: 0
 --- !u!114 &3242299956573973406
 MonoBehaviour:
@@ -73,7 +73,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerDuration: 10
---- !u!114 &8028623308058278637
+--- !u!114 &2576439141111250933
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,10 +82,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1502769438723351118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 225d243f5b7f7ba48b1c027b0d27a5da, type: 3}
+  m_Script: {fileID: 11500000, guid: a162df14ca80e0042b6120bd3ca14408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 0
+  percentSlow: 0.5
+  timeSlow: 2
 --- !u!1 &4165000192845457706
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,4 +235,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movimentVelocity: 2
-  timeToAutoDestroy: 4
+  timeToAutoDestroy: 2

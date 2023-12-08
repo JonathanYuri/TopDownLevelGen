@@ -120,6 +120,67 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+--- !u!1 &3264007349447032403
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8425105622888728243}
+  - component: {fileID: 1345995216060365832}
+  - component: {fileID: 9158104915460835325}
+  m_Layer: 8
+  m_Name: AttackManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8425105622888728243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3264007349447032403}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5506338303680429713}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1345995216060365832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3264007349447032403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerDuration: 2
+--- !u!114 &9158104915460835325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3264007349447032403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394d1691ed27d03478393630f1b67a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aiVision: {fileID: 3934491202559572554}
+  targetManager: {fileID: 7014183382443654903}
+  slimeBall: {fileID: 4165000192845457706, guid: 239ca9005fbcf1e46b40195eea4240cd, type: 3}
 --- !u!1 &6056213582785261799
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,6 +217,7 @@ Transform:
   - {fileID: 3386435205690465912}
   - {fileID: 1575837734285475158}
   - {fileID: 4702567538710994866}
+  - {fileID: 8425105622888728243}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -326,7 +388,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 1709947275017443658}
   moveTo: {x: 0, y: 0, z: 0}
   move: 0
-  velocity: 2
+  velocity: 0.2
   threshold: 0.1
 --- !u!114 &3934491202559572554
 MonoBehaviour:
@@ -341,7 +403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetManager: {fileID: 7014183382443654903}
-  range: 1
+  range: 10
   memoryTime: 3
   targetVisible: 0
 --- !u!114 &4574331923122609609
