@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMapManager : SingletonMonoBehaviour<GameMapManager>
+public class GameMapManager : MonoBehaviour
 {
     public HashSet<Position> RoomPositions { get; set; } = new();
 

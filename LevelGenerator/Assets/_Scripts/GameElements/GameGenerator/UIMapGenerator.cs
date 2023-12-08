@@ -17,6 +17,7 @@ public class UIMapGenerator : MonoBehaviour
     [SerializeField] GameObject blankSpacePrefab;
 
     Dictionary<Position, Image> uiMap;
+    HashSet<Position> map;
 
     Location playerLocation;
 
@@ -42,9 +43,10 @@ public class UIMapGenerator : MonoBehaviour
     /// <summary>
     /// Creates the UI map to represent the game map with room panels and player's current position.
     /// </summary>
-    public void CreateUIMap(Location playerLocation)
+    public void CreateUIMap(HashSet<Position> map, Location playerLocation)
     {
         this.playerLocation = playerLocation;
+        this.map = map;
         DestroyPastUIMap();
 
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
@@ -64,8 +66,6 @@ public class UIMapGenerator : MonoBehaviour
     /// <returns>The size of the game map.</returns>
     int CalculateMapSize()
     {
-        HashSet<Position> map = GameMapManager.Instance.RoomPositions;
-
         (int maxX, int minX) = map.MaxAndMin(room => room.X);
         (int maxY, int minY) = map.MaxAndMin(room => room.Y);
 
@@ -106,7 +106,6 @@ public class UIMapGenerator : MonoBehaviour
     /// <param name="initialRoomPosition">The initial position of the first room panel.</param>
     void CreateRoomPanels(int mapSize, float roomSize, Vector2 roomScale, Vector2 initialRoomPosition)
     {
-        HashSet<Position> map = GameMapManager.Instance.RoomPositions;
         float horizontalRoomPosition = initialRoomPosition.x;
         float verticalRoomPosition = initialRoomPosition.y;
 
@@ -150,7 +149,7 @@ public class UIMapGenerator : MonoBehaviour
             return playerInRoomPanel;
         }
 
-        if (GameMapManager.Instance.RoomPositions.Contains(position))
+        if (map.Contains(position))
         {
             return roomPanelPrefab;
         }

@@ -14,6 +14,8 @@ public class LevelGenerator : MonoBehaviour
 
     [SerializeField] Transform rooms;
 
+    HashSet<Position> map;
+
     public Position InitialRoomPosition { get; private set; }
     public Position FinalRoomPosition { get; private set; }
     public int DistanceFromInitialToFinalRoom { get; private set; }
@@ -33,12 +35,13 @@ public class LevelGenerator : MonoBehaviour
     /// Generates a level, including its map.
     /// </summary>
     /// <returns>A collection of positions representing the generated map.</returns>
-    public void Generate()
+    public HashSet<Position> Generate()
     {
         DestroyAllPastObjects();
-        GenerateMap();
+        map = GenerateMap();
         GenerateInitialAndFinalRoom();
         GenerateRemainingRooms();
+        return map;
     }
 
     /// <summary>
@@ -46,7 +49,6 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     void DestroyAllPastObjects()
     {
-        GameMapManager.Instance.RoomPositions.Clear();
         for (int i = 0; i < Rooms.childCount; i++)
         {
             Destroy(Rooms.GetChild(i).gameObject);
@@ -56,7 +58,7 @@ public class LevelGenerator : MonoBehaviour
     /// <summary>
     /// Generates a map of positions for the level layout based on a random and dynamic room generation algorithm.
     /// </summary>
-    void GenerateMap()
+    HashSet<Position> GenerateMap()
     {
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
@@ -85,7 +87,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        GameMapManager.Instance.RoomPositions = map;
+        return map;
     }
 
     /// <summary>
@@ -99,8 +101,8 @@ public class LevelGenerator : MonoBehaviour
 
         DistanceFromInitialToFinalRoom = Utils.CalculateDistance(InitialRoomPosition, FinalRoomPosition);
 
-        roomGenerator.GenerateRoom(InitialRoomPosition, false); // gerar so o esqueleto
-        roomGenerator.GenerateRoom(FinalRoomPosition, false);  // gerar so o esqueleto
+        roomGenerator.GenerateRoom(InitialRoomPosition, map, false); // gerar so o esqueleto
+        roomGenerator.GenerateRoom(FinalRoomPosition, map, false);  // gerar so o esqueleto
     }
 
     /// <summary>
@@ -110,7 +112,7 @@ public class LevelGenerator : MonoBehaviour
     Position ChooseFinalRoomPosition()
     {
         Position[] selectedRoom = { InitialRoomPosition };
-        Position[] withoutInitialPosition = GameMapManager.Instance.RoomPositions.Except(selectedRoom).ToArray();
+        Position[] withoutInitialPosition = map.Except(selectedRoom).ToArray();
 
         return withoutInitialPosition.MaxBy(position => Utils.CalculateDistance(position, InitialRoomPosition));
     }
@@ -121,12 +123,12 @@ public class LevelGenerator : MonoBehaviour
     void GenerateRemainingRooms()
     {
         Position[] selectedRooms = {InitialRoomPosition, FinalRoomPosition};
-        var remainingRooms = GameMapManager.Instance.RoomPositions.Except(selectedRooms);
+        var remainingRooms = map.Except(selectedRooms);
 
         foreach (Position roomPosition in remainingRooms)
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
-            roomGenerator.GenerateRoom(roomPosition);
+            roomGenerator.GenerateRoom(roomPosition, map);
         }
     }
 }

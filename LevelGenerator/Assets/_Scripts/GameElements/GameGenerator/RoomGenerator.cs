@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using RoomGeneticAlgorithm.Run;
 using SpawnRoomObjects.SpawnAll;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(LevelGenerator))]
 [RequireComponent(typeof(RoomObjectSpawner))]
@@ -43,10 +44,10 @@ public class RoomGenerator : MonoBehaviour
     /// <param name="roomPosition">The position of the room to be generated.</param>
     /// <param name="generateObjectsInRoom">Determines whether to generate objects in the room (default: true).</param>
     /// <returns>An IEnumerator for asynchronous room generation.</returns>
-    public void GenerateRoom(Position roomPosition, bool generateObjectsInRoom = true)
+    public void GenerateRoom(Position roomPosition, HashSet<Position> map, bool generateObjectsInRoom = true)
     {
         GameObject roomObject = GenerateRoomGameObject(roomPosition);
-        RoomData roomData = GetRoomData(roomPosition);
+        RoomData roomData = GetRoomData(roomPosition, map);
 
         RoomSkeleton room = new(roomData);
         
@@ -72,7 +73,7 @@ public class RoomGenerator : MonoBehaviour
 
     bool IsFinalRoom(Position roomPosition) => levelGenerator.FinalRoomPosition != null && levelGenerator.FinalRoomPosition.Equals(roomPosition);
 
-    RoomData GetRoomData(Position roomPosition)
+    RoomData GetRoomData(Position roomPosition, HashSet<Position> map)
     {
         int distanceToInitialRoom = Utils.CalculateDistance(levelGenerator.InitialRoomPosition, roomPosition);
         float difficulty = (float)distanceToInitialRoom / (float)levelGenerator.DistanceFromInitialToFinalRoom;
@@ -86,7 +87,7 @@ public class RoomGenerator : MonoBehaviour
         KnapsackParams obstacleKnapsackParams = new(knapsackSelectionResult.ChosenObstacles, knapsackSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesCapacity);
 
         return new(
-            MapUtility.GetDoorPositionsFromRoomPosition(roomPosition),
+            MapUtility.GetDoorPositionsFromRoomPosition(roomPosition, map),
             Knapsack.ResolveKnapsack(enemyKnapsackParams),
             Knapsack.ResolveKnapsack(obstacleKnapsackParams),
             difficulty

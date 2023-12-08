@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
 
     PlayerController player;
     PlayerLocationManager playerLocationManager;
+    GameMapManager gameMapManager;
 
     Camera sceneCamera;
 
@@ -25,6 +27,7 @@ public class GameManager : MonoBehaviour
         uiMapGenerator = FindObjectOfType<UIMapGenerator>();
         levelGenerator = FindObjectOfType<LevelGenerator>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
+        gameMapManager = FindObjectOfType<GameMapManager>();
         levelDataManager = GetComponent<LevelDataManager>();
         GenerateGame();
     }
@@ -40,18 +43,19 @@ public class GameManager : MonoBehaviour
 
     void GenerateGame()
     {
-        levelGenerator.Generate();
+        gameMapManager.RoomPositions.Clear();
+        gameMapManager.RoomPositions = levelGenerator.Generate();
 
         if (player == null)
         {
             CreatePlayer();
         }
-        playerLocationManager.SetPlayerToInitialRoom(sceneCamera);
+        playerLocationManager.SetPlayerToInitialRoom(sceneCamera, gameMapManager.RoomPositions.ElementAt(0));
 
-        uiMapGenerator.CreateUIMap(playerLocationManager.Location);
+        uiMapGenerator.CreateUIMap(gameMapManager.RoomPositions, playerLocationManager.Location);
 
-        GameMapManager.Instance.ConfigureAStar();
-        GameMapManager.Instance.SetEnemiesTargetPlayer(player.transform, playerLocationManager.Location);
+        gameMapManager.ConfigureAStar();
+        gameMapManager.SetEnemiesTargetPlayer(player.transform, playerLocationManager.Location);
     }
 
     void CreatePlayer()

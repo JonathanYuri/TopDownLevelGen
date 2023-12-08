@@ -29,10 +29,10 @@ public class PlayerLocationManager : MonoBehaviour
         Player = playerController;
     }
 
-    public void SetPlayerToInitialRoom(Camera camera)
+    public void SetPlayerToInitialRoom(Camera camera, Position initialPosition)
     {
         camera.transform.position = new Vector3(0, 0, camera.transform.position.z);
-        SetPlayerToRoom(GameMapManager.Instance.RoomPositions.ElementAt(0), new Vector3(0, 0));
+        SetPlayerToRoom(initialPosition, new Vector3(0, 0));
     }
 
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)
