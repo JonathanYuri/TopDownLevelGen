@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class AIVision : MonoBehaviour
 {
-    [SerializeField] Transform target;
-    [SerializeField] Location targetLocation;
+    [SerializeField] EnemyTargetManager targetManager;
 
     Location myLocation;
 
@@ -16,8 +15,6 @@ public class AIVision : MonoBehaviour
     bool forgetting = false;
 
     public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
-    public Transform Target { get => target; set => target = value; }
-    public Location TargetLocation { get => targetLocation; set => targetLocation = value; }
 
     void Start()
     {
@@ -51,22 +48,22 @@ public class AIVision : MonoBehaviour
 
     bool IsTargetVisible()
     {
-        if (Target == null)
+        if (targetManager.Target == null)
         {
             return false;
         }
 
-        if (TargetLocation == null)
+        if (targetManager.TargetLocation == null)
         {
             return false;
         }
 
-        if (!TargetLocation.RoomPosition.Equals(myLocation.RoomPosition))
+        if (!targetManager.TargetLocation.RoomPosition.Equals(myLocation.RoomPosition))
         {
             return false;
         }
 
-        Vector2 toTarget = Target.position - transform.position;
+        Vector2 toTarget = targetManager.Target.position - transform.position;
         if (toTarget.magnitude > range)
         {
             return false;

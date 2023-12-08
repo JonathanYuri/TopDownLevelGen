@@ -6,12 +6,6 @@ public class Slime : Enemy, IDamageable
 {
     [SerializeField] int life = 20;
 
-    void Awake()
-    {
-        aiPathController = GetComponentInChildren<AIPathController>();
-        aiVision = GetComponentInChildren<AIVision>();
-    }
-
     public void TakeDamage(int damage)
     {
         if (life - damage <= 0)

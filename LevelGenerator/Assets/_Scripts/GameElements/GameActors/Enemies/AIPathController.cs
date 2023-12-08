@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(Seeker))]
 public class AIPathController : MonoBehaviour
 {
-    [SerializeField] Transform target;
+    [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] float nextWaypointDistance = 0.2f;
 
     AIMovementController movementController;
@@ -18,8 +18,6 @@ public class AIPathController : MonoBehaviour
     bool reachedEndOfPath;
 
     Seeker seeker;
-
-    public Transform Target { get => target; set => target = value; }
 
     void Awake()
     {
@@ -39,14 +37,14 @@ public class AIPathController : MonoBehaviour
 
     void UpdatePath()
     {
-        if (Target == null)
+        if (targetManager.Target == null)
         {
             return;
         }
 
         if (seeker.IsDone())
         {
-            seeker.StartPath(transform.position, Target.position, OnPathComplete);
+            seeker.StartPath(transform.position, targetManager.Target.position, OnPathComplete);
         }
     }
 

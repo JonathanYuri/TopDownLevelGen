@@ -11,8 +11,6 @@ public class Snake : Enemy, IDamageable
     void Awake()
     {
         dashController = GetComponentInChildren<DashController>();
-        aiPathController = GetComponentInChildren<AIPathController>();
-        aiVision = GetComponentInChildren<AIVision>();
     }
 
     void Update()

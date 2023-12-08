@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    protected AIPathController aiPathController;
-    protected AIVision aiVision;
+    [SerializeField] EnemyTargetManager targetManager;
 
     public void SetTargetPlayer(Transform target, Location targetLocation)
     {
-        aiPathController.Target = target;
-        aiVision.Target = target;
-        aiVision.TargetLocation = targetLocation;
+        targetManager.Target = target;
+        targetManager.TargetLocation = targetLocation;
     }
 }
