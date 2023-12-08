@@ -63,11 +63,8 @@ public class UIMapGenerator : MonoBehaviour
     {
         HashSet<Position> map = GameMapManager.Instance.RoomPositions;
 
-        int maxX = map.Max(room => room.X);
-        int maxY = map.Max(room => room.Y);
-
-        int minX = map.Min(room => room.X);
-        int minY = map.Min(room => room.Y);
+        (int maxX, int minX) = map.MaxAndMin(room => room.X);
+        (int maxY, int minY) = map.MaxAndMin(room => room.Y);
 
         int mapWidth = maxY - minY;
         int mapHeight = maxX - minX;

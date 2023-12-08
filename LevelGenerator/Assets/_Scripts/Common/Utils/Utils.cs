@@ -74,7 +74,15 @@ public static class Utils
     /// <returns>A Unity Vector2 position for spawning rooms.</returns>
     public static Vector2 TransformAMapPositionIntoAUnityPosition(Position mapPosition)
     {
-        return new Vector2(mapPosition.X * GameConstants.ROOM_WIDTH + mapPosition.X, mapPosition.Y * GameConstants.ROOM_HEIGHT + mapPosition.Y);
+        return new Vector2(mapPosition.X * (GameConstants.ROOM_WIDTH + 1), mapPosition.Y * (GameConstants.ROOM_HEIGHT + 1));
+    }
+
+    public static Position TransformAUnityPositionIntoAMapPosition(Vector2 unityPosition)
+    {
+        int x = Mathf.FloorToInt(unityPosition.x / (GameConstants.ROOM_WIDTH + 1));
+        int y = Mathf.FloorToInt(unityPosition.y / (GameConstants.ROOM_HEIGHT + 1));
+
+        return new Position() { X = x, Y = y };
     }
 
     /// <summary>

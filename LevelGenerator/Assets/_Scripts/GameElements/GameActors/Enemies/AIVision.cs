@@ -5,6 +5,10 @@ using UnityEngine;
 public class AIVision : MonoBehaviour
 {
     [SerializeField] Transform target;
+    [SerializeField] Location targetLocation;
+
+    Location myLocation;
+
     [SerializeField] float range;
     [SerializeField] float memoryTime;
 
@@ -13,6 +17,11 @@ public class AIVision : MonoBehaviour
 
     public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
     public Transform Target { get => target; set => target = value; }
+
+    void Start()
+    {
+        myLocation = GetComponentInParent<Location>();
+    }
 
     void Update()
     {
@@ -42,6 +51,16 @@ public class AIVision : MonoBehaviour
     bool IsTargetVisible()
     {
         if (Target == null)
+        {
+            return false;
+        }
+
+        if (targetLocation == null)
+        {
+            return false;
+        }
+
+        if (!targetLocation.RoomPosition.Equals(myLocation.RoomPosition))
         {
             return false;
         }

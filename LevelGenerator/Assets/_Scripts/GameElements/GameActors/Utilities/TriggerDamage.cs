@@ -2,21 +2,41 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Timer))]
 public class TriggerDamage : MonoBehaviour
 {
+    Timer damageTimer;
+
     [SerializeField] int damage;
-    [SerializeField] float reloadTimeAttack;
 
     bool isColliding = false;
+    IDamageable damageableInCollision;
 
     public event Action CollisionOccured;
+
+    void Awake()
+    {
+        damageTimer = GetComponent<Timer>();
+        damageTimer.OnTimerExpired += OnDamageTimerExpired;
+    }
+
+    void OnDestroy()
+    {
+        if (damageTimer != null)
+        {
+            damageTimer.OnTimerExpired -= OnDamageTimerExpired;
+        }
+    }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out IDamageable damageable))
         {
             isColliding = true;
-            StartCoroutine(ApplyDamageOverTime(damageable));
+            damageableInCollision = damageable;
+            
+            ApplyDamage();
+            damageTimer.StartTimer();
         }
         CollisionOccured?.Invoke();
     }
@@ -25,22 +45,33 @@ public class TriggerDamage : MonoBehaviour
     {
         if (collision.TryGetComponent<IDamageable>(out var _))
         {
-            isColliding = false;
+            ResetColision();
         }
     }
 
-    IEnumerator ApplyDamageOverTime(IDamageable damageable)
+    void OnDamageTimerExpired()
     {
-        while (isColliding)
+        if (isColliding)
         {
-            if (damageable == null)
+            if (damageableInCollision == null)
             {
-                isColliding = false;
-                break;
+                ResetColision();
+                return;
             }
 
-            damageable.TakeDamage(damage);
-            yield return new WaitForSeconds(reloadTimeAttack);
+            ApplyDamage();
+            damageTimer.StartTimer();
         }
+    }
+
+    void ApplyDamage()
+    {
+        damageableInCollision.TakeDamage(damage);
+    }
+
+    void ResetColision()
+    {
+        isColliding = false;
+        damageableInCollision = null;
     }
 }

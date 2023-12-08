@@ -33,6 +33,7 @@ public class RoomGenerator : MonoBehaviour
     {
         Vector2 roomObjectPosition = Utils.TransformAMapPositionIntoAUnityPosition(roomPosition);
         GameObject roomObject = Instantiate(roomPrefab, roomObjectPosition, Quaternion.identity, levelGenerator.Rooms);
+        roomObject.GetComponent<Location>().RoomPosition = roomPosition;
         return roomObject;
     }
 
