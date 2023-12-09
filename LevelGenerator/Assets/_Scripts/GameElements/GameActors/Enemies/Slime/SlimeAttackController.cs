@@ -18,6 +18,14 @@ public class SlimeAttackController : MonoBehaviour
         attackTimer.OnTimerExpired += OnAttackTimerExpired;
     }
 
+    void OnDestroy()
+    {
+        if (attackTimer != null)
+        {
+            attackTimer.OnTimerExpired -= OnAttackTimerExpired;
+        }
+    }
+
     void Start()
     {
         if (aiVision == null)
@@ -28,14 +36,6 @@ public class SlimeAttackController : MonoBehaviour
         if (targetManager == null)
         {
             Debug.LogError("TargetManager not assign");
-        }
-    }
-
-    void OnDestroy()
-    {
-        if (attackTimer != null)
-        {
-            attackTimer.OnTimerExpired -= OnAttackTimerExpired;
         }
     }
 

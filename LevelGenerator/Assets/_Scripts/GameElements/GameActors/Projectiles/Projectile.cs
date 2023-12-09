@@ -23,6 +23,16 @@ public class Projectile : MonoBehaviour
         triggerEffect.CollisionOccured += CollisionOccured;
     }
 
+    void OnDestroy()
+    {
+        if (triggerEffect != null)
+        {
+            triggerEffect.CollisionOccured -= CollisionOccured;
+        }
+
+        StopAllCoroutines();
+    }
+
     void Start()
     {
         StartCoroutine(AutoDestroy());
@@ -32,16 +42,6 @@ public class Projectile : MonoBehaviour
     {
         Vector2 moviment = movimentVelocity * Time.fixedDeltaTime * movementDirection;
         rb.MovePosition((Vector2)this.transform.position + moviment);
-    }
-
-    void OnDestroy()
-    {
-        if (triggerEffect != null)
-        {
-            triggerEffect.CollisionOccured -= CollisionOccured;
-        }
-
-        StopAllCoroutines();
     }
 
     IEnumerator AutoDestroy()

@@ -28,6 +28,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
         slownessTimer.OnTimerExpired += OnSlownessTimerExpired;
     }
 
+    void OnDestroy()
+    {
+        if (slownessTimer != null)
+        {
+            slownessTimer.OnTimerExpired -= OnSlownessTimerExpired;
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("OpenDoor"))
