@@ -12,7 +12,7 @@ public class AIVision : MonoBehaviour
     [SerializeField] float memoryTime;
 
     [SerializeField] bool targetVisible;
-    bool forgetting = false;
+    Coroutine forgetEnemyCoroutine;
 
     public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
 
@@ -25,18 +25,16 @@ public class AIVision : MonoBehaviour
     {
         if (IsTargetVisible())
         {
-            if (forgetting)
+            if (forgetEnemyCoroutine != null)
             {
-                StopCoroutine(WaitToForgetEnemy());
+                StopCoroutine(forgetEnemyCoroutine);
             }
 
-            forgetting = false;
             TargetVisible = true;
         }
-        else if (TargetVisible && !forgetting)
+        else if (TargetVisible && (forgetEnemyCoroutine == null))
         {
-            forgetting = true;
-            StartCoroutine(WaitToForgetEnemy());
+            forgetEnemyCoroutine = StartCoroutine(WaitToForgetEnemy());
         }
     }
 
@@ -74,11 +72,7 @@ public class AIVision : MonoBehaviour
 
     IEnumerator WaitToForgetEnemy()
     {
-        forgetting = true;
         yield return new WaitForSeconds(memoryTime);
-
         TargetVisible = false;
-
-        forgetting = false;
     }
 }
