@@ -9,6 +9,7 @@ public class AIVision : MonoBehaviour
     Location myLocation;
 
     [SerializeField] float range;
+    [SerializeField] float angle;
     [SerializeField] float memoryTime;
 
     [SerializeField] bool targetVisible;
@@ -31,6 +32,7 @@ public class AIVision : MonoBehaviour
             }
 
             TargetVisible = true;
+            forgetEnemyCoroutine = StartCoroutine(WaitToForgetEnemy());
         }
         else if (TargetVisible && (forgetEnemyCoroutine == null))
         {
@@ -42,6 +44,11 @@ public class AIVision : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, range);
+
+        Vector3 rotatedVector1 = Quaternion.Euler(0, 0, angle / 2) * transform.right;
+        Vector3 rotatedVector2 = Quaternion.Euler(0, 0, -angle / 2) * transform.right;
+        Gizmos.DrawLine(transform.position, transform.position + rotatedVector1 * range);
+        Gizmos.DrawLine(transform.position, transform.position + rotatedVector2 * range);
     }
 
     bool IsTargetVisible()
@@ -63,6 +70,11 @@ public class AIVision : MonoBehaviour
 
         Vector2 toTarget = targetManager.Target.position - transform.position;
         if (toTarget.magnitude > range)
+        {
+            return false;
+        }
+
+        if (Vector2.Angle(transform.right, toTarget) > angle / 2)
         {
             return false;
         }

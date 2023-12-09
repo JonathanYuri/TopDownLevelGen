@@ -68,6 +68,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetManager: {fileID: 7324877665200866385}
   range: 2
+  angle: 360
   memoryTime: 2
   targetVisible: 0
 --- !u!114 &960051703032710505

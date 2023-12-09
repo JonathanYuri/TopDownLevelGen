@@ -91,7 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementController: {fileID: 9217778847408348446}
   durationDash: 2
-  dashVelocity: 3
+  dashVelocity: 2
 --- !u!114 &7657687954719889565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 6675631255662904958}
   moveTo: {x: 0, y: 0, z: 0}
   move: 0
-  velocity: 2
+  velocity: 1
   threshold: 0.1
 --- !u!114 &7141659908848299429
 MonoBehaviour:
@@ -173,7 +173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetManager: {fileID: 8743796044381433544}
   range: 2
-  memoryTime: 2
+  angle: 90
+  memoryTime: 0.5
   targetVisible: 0
 --- !u!114 &8108525909922972460
 MonoBehaviour:

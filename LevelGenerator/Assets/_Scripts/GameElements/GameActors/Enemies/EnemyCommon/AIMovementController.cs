@@ -64,8 +64,7 @@ public class AIMovementController : MonoBehaviour
     void ResetMovementOrientation()
     {
         movementDirectionHandler.SetRotationBasedOnMovementDirection(Vector2.right);
-        spriteRenderer.flipX = false;
-        spriteRenderer.flipY = false;
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, 0f, transform.rotation.eulerAngles.z);
     }
 
     public void SetMovement(Vector2 moveTo)

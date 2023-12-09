@@ -404,6 +404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetManager: {fileID: 7014183382443654903}
   range: 10
+  angle: 360
   memoryTime: 3
   targetVisible: 0
 --- !u!114 &4574331923122609609
