@@ -10,6 +10,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IDamageable, ISlowable
 {
     PlayerMovementController playerMovementController;
+    Timer slownessTimer;
+
+    float velocityWithoutSlow;
 
     [SerializeField] int life = 100;
 
@@ -19,6 +22,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
     void Awake()
     {
         playerMovementController = GetComponent<PlayerMovementController>();
+        velocityWithoutSlow = playerMovementController.Velocity;
+
+        slownessTimer = GetComponentInChildren<Timer>();
+        slownessTimer.OnTimerExpired += OnSlownessTimerExpired;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -57,27 +64,27 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
 
     public void TakeSlowness(float percentSlow, float timeSlow)
     {
-        StartCoroutine(TakeSlownessCoroutine(percentSlow, timeSlow));
-    }
-
-    IEnumerator TakeSlownessCoroutine(float percentSlow, float timeSlow)
-    {
         percentSlow = Mathf.Clamp01(percentSlow);
-        float velocityWithoutSlow = playerMovementController.Velocity;
 
-        StartSlowness(percentSlow);
-        yield return new WaitForSeconds(timeSlow);
-        EndSlowness(velocityWithoutSlow);
+        StartSlowness(percentSlow, timeSlow);
     }
 
-    void StartSlowness(float percentSlow)
+    void OnSlownessTimerExpired()
+    {
+        EndSlowness();
+    }
+
+    void StartSlowness(float percentSlow, float timeSlow)
     {
         // se eu quero um slow de 0.3, eu quero que minha velocity seja multiplicada por 0.7
         float velocityMultiplier = 1 - percentSlow;
         playerMovementController.Velocity *= velocityMultiplier;
+
+        slownessTimer.TimerDuration = timeSlow;
+        slownessTimer.StartTimer();
     }
 
-    void EndSlowness(float velocityWithoutSlow)
+    void EndSlowness()
     {
         playerMovementController.Velocity = velocityWithoutSlow;
     }

@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Timer))]
 public class DashController : MonoBehaviour
 {
     [SerializeField] AIMovementController movementController;
-    Timer dashTimer;
+    [SerializeField] Timer dashDuration;
+    [SerializeField] Timer dashCooldown;
 
-    bool canDashByTimerDash = true;
+    bool dashReady = true;
     bool isDashing = false;
 
-    [SerializeField] float durationDash;
     [SerializeField] float dashVelocity;
 
     float velocityWithoutDash;
@@ -22,49 +21,61 @@ public class DashController : MonoBehaviour
         {
             Debug.LogError("Movement controller not assign");
         }
+        if (dashDuration == null)
+        {
+            Debug.LogError("Dash duration not assign");
+        }
+        if (dashCooldown == null)
+        {
+            Debug.LogError("Dash cooldown not assign");
+        }
+
         velocityWithoutDash = movementController.Velocity;
 
-        dashTimer = GetComponent<Timer>();
-        dashTimer.OnTimerExpired += OnDashTimerExpired;
+        dashDuration.OnTimerExpired += OnDashDurationTimerExpired;
+        dashCooldown.OnTimerExpired += OnDashCooldownTimerExpired;
     }
 
     void OnDestroy()
     {
-        if (dashTimer != null)
+        if (dashDuration != null)
         {
-            dashTimer.OnTimerExpired -= OnDashTimerExpired;
+            dashDuration.OnTimerExpired -= OnDashDurationTimerExpired;
+        }
+        if (dashCooldown != null)
+        {
+            dashCooldown.OnTimerExpired -= OnDashCooldownTimerExpired;
         }
     }
 
-    void OnDashTimerExpired()
+    void OnDashDurationTimerExpired()
     {
-        canDashByTimerDash = true;
+        EndDash();
+    }
+
+    void OnDashCooldownTimerExpired()
+    {
+        dashReady = true;
     }
 
     public void TryDash()
     {
         if (CanDash())
         {
-            StartCoroutine(DashCoroutine());
+            StartDash();
+            dashDuration.StartTimer();
         }
     }
 
     bool CanDash()
     {
-        return !isDashing && canDashByTimerDash;
-    }
-
-    IEnumerator DashCoroutine()
-    {
-        StartDash();
-        yield return new WaitForSeconds(durationDash);
-        EndDash();
+        return !isDashing && dashReady;
     }
 
     void StartDash()
     {
         movementController.Velocity = dashVelocity;
-        canDashByTimerDash = false;
+        dashReady = false;
         isDashing = true;
     }
 
@@ -72,6 +83,6 @@ public class DashController : MonoBehaviour
     {
         movementController.Velocity = velocityWithoutDash;
         isDashing = false;
-        dashTimer.StartTimer();
+        dashCooldown.StartTimer();
     }
 }

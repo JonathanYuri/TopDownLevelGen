@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Timer))]
-[RequireComponent(typeof(Collider2D))]
 public class TriggerDamage : CollisionEffects
 {
     [SerializeField] int damage;
@@ -16,7 +14,7 @@ public class TriggerDamage : CollisionEffects
             objectInCollision = collision.gameObject;
 
             ApplyEffect();
-            effectTimer.StartTimer();
+            effectCooldown.StartTimer();
         }
         InvokeCollisionEvent();
     }

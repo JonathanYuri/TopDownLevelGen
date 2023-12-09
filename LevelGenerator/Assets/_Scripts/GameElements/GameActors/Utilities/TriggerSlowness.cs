@@ -15,7 +15,7 @@ public class TriggerSlowness : CollisionEffects
             objectInCollision = collision.gameObject;
 
             ApplyEffect();
-            effectTimer.StartTimer();
+            effectCooldown.StartTimer();
         }
         InvokeCollisionEvent();
     }

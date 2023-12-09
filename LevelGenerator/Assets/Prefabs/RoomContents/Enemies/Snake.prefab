@@ -1,5 +1,140 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &279495210679058973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6610102458545296612}
+  - component: {fileID: 4144368573789058566}
+  m_Layer: 0
+  m_Name: DamageCooldown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6610102458545296612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279495210679058973}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2501329138116085925}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4144368573789058566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279495210679058973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerDuration: 2
+--- !u!1 &800131707491015944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5374000404193054345}
+  - component: {fileID: 6453263574159101040}
+  m_Layer: 8
+  m_Name: DashDuration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5374000404193054345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800131707491015944}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9002576897121002642}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6453263574159101040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800131707491015944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerDuration: 2
+--- !u!1 &892652911800291631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5271564866941963235}
+  - component: {fileID: 3861252495959929608}
+  m_Layer: 8
+  m_Name: EnemyMemoryTimer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5271564866941963235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892652911800291631}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5350410127921806526}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3861252495959929608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892652911800291631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerDuration: 2
 --- !u!1 &1342121351796624511
 GameObject:
   m_ObjectHideFlags: 0
@@ -54,7 +189,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9002576897121002642}
   - component: {fileID: 3677121069923688478}
-  - component: {fileID: 7657687954719889565}
   m_Layer: 8
   m_Name: Dash
   m_TagString: Untagged
@@ -73,7 +207,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5374000404193054345}
+  - {fileID: 5723590186693419089}
   m_Father: {fileID: 5506338303680429713}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -90,21 +226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementController: {fileID: 9217778847408348446}
-  durationDash: 2
+  dashDuration: {fileID: 6453263574159101040}
+  dashCooldown: {fileID: 8680199590020206155}
   dashVelocity: 2
---- !u!114 &7657687954719889565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1877137431109540566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timerDuration: 2
 --- !u!1 &2291158960825880178
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,7 +260,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5271564866941963235}
   m_Father: {fileID: 5506338303680429713}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -174,7 +299,6 @@ MonoBehaviour:
   targetManager: {fileID: 8743796044381433544}
   range: 2
   angle: 90
-  memoryTime: 0.5
   targetVisible: 0
 --- !u!114 &8108525909922972460
 MonoBehaviour:
@@ -218,6 +342,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetManager: {fileID: 8743796044381433544}
   nextWaypointDistance: 0.2
+--- !u!1 &3901554914058653275
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5723590186693419089}
+  - component: {fileID: 8680199590020206155}
+  m_Layer: 8
+  m_Name: DashCooldown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5723590186693419089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3901554914058653275}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9002576897121002642}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8680199590020206155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3901554914058653275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerDuration: 3
 --- !u!1 &4900438414212118908
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,7 +397,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2501329138116085925}
   - component: {fileID: 2865196939178200125}
-  - component: {fileID: 5527972079641169028}
   - component: {fileID: 131022817140852362}
   m_Layer: 0
   m_Name: CollisionDamage
@@ -248,7 +416,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6610102458545296612}
   m_Father: {fileID: 5506338303680429713}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -268,19 +437,6 @@ CapsuleCollider2D:
   m_Offset: {x: -0.022250589, y: 0.05006344}
   m_Size: {x: 0.95550036, y: 0.5104967}
   m_Direction: 1
---- !u!114 &5527972079641169028
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4900438414212118908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timerDuration: 2
 --- !u!114 &131022817140852362
 MonoBehaviour:
   m_ObjectHideFlags: 0

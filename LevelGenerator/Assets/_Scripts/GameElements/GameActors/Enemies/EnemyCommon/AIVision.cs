@@ -5,17 +5,31 @@ using UnityEngine;
 public class AIVision : MonoBehaviour
 {
     [SerializeField] EnemyTargetManager targetManager;
+    Timer memoryTimer;
 
     Location myLocation;
 
     [SerializeField] float range;
     [SerializeField] float angle;
-    [SerializeField] float memoryTime;
 
     [SerializeField] bool targetVisible;
-    Coroutine forgetEnemyCoroutine;
+    bool forgetting;
 
     public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
+
+    void Awake()
+    {
+        memoryTimer = GetComponentInChildren<Timer>();
+        memoryTimer.OnTimerExpired += OnMemoryTimerExpired;
+    }
+
+    void OnDestroy()
+    {
+        if (memoryTimer != null)
+        {
+            memoryTimer.OnTimerExpired -= OnMemoryTimerExpired;
+        }
+    }
 
     void Start()
     {
@@ -24,20 +38,7 @@ public class AIVision : MonoBehaviour
 
     void Update()
     {
-        if (IsTargetVisible())
-        {
-            if (forgetEnemyCoroutine != null)
-            {
-                StopCoroutine(forgetEnemyCoroutine);
-            }
-
-            TargetVisible = true;
-            forgetEnemyCoroutine = StartCoroutine(WaitToForgetEnemy());
-        }
-        else if (TargetVisible && (forgetEnemyCoroutine == null))
-        {
-            forgetEnemyCoroutine = StartCoroutine(WaitToForgetEnemy());
-        }
+        HandleTargetVisibility();
     }
 
     void OnDrawGizmosSelected()
@@ -49,6 +50,23 @@ public class AIVision : MonoBehaviour
         Vector3 rotatedVector2 = Quaternion.Euler(0, 0, -angle / 2) * transform.right;
         Gizmos.DrawLine(transform.position, transform.position + rotatedVector1 * range);
         Gizmos.DrawLine(transform.position, transform.position + rotatedVector2 * range);
+    }
+
+    void HandleTargetVisibility()
+    {
+        if (IsTargetVisible())
+        {
+            TargetVisible = true;
+            forgetting = false;
+            memoryTimer.StopTimer();
+        }
+        else
+        {
+            if (TargetVisible && !forgetting)
+            {
+                StartForgetting();
+            }
+        }
     }
 
     bool IsTargetVisible()
@@ -82,9 +100,14 @@ public class AIVision : MonoBehaviour
         return true;
     }
 
-    IEnumerator WaitToForgetEnemy()
+    void StartForgetting()
     {
-        yield return new WaitForSeconds(memoryTime);
+        forgetting = true;
+        memoryTimer.StartTimer();
+    }
+
+    void OnMemoryTimerExpired()
+    {
         TargetVisible = false;
     }
 }

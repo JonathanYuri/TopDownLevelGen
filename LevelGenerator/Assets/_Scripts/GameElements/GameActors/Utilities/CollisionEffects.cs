@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public abstract class CollisionEffects : MonoBehaviour
 {
-    protected Timer effectTimer;
+    protected Timer effectCooldown;
 
     protected bool isColliding = false;
     protected GameObject objectInCollision;
@@ -16,15 +17,15 @@ public abstract class CollisionEffects : MonoBehaviour
 
     void Awake()
     {
-        effectTimer = GetComponent<Timer>();
-        effectTimer.OnTimerExpired += OnEffectTimerExpired;
+        effectCooldown = GetComponentInChildren<Timer>();
+        effectCooldown.OnTimerExpired += OnEffectTimerExpired;
     }
 
     void OnDestroy()
     {
-        if (effectTimer != null)
+        if (effectCooldown != null)
         {
-            effectTimer.OnTimerExpired -= OnEffectTimerExpired;
+            effectCooldown.OnTimerExpired -= OnEffectTimerExpired;
         }
     }
 
@@ -39,7 +40,7 @@ public abstract class CollisionEffects : MonoBehaviour
             }
 
             ApplyEffect();
-            effectTimer.StartTimer();
+            effectCooldown.StartTimer();
         }
     }
 
