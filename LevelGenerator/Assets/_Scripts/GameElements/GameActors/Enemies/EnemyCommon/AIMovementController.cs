@@ -34,6 +34,8 @@ public class AIMovementController : MonoBehaviour
         {
             Debug.LogError("Movement Direction Handler not assign");    
         }
+
+        moveTo = this.transform.position;
     }
 
     void FixedUpdate()
