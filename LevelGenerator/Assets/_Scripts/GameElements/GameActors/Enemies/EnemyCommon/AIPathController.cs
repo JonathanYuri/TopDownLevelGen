@@ -7,8 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(Seeker))]
 public class AIPathController : MonoBehaviour
 {
-    EnemyTargetManager targetManager;
-
     [SerializeField] Timer updatePathTimer;
     [SerializeField] float nextWaypointDistance = 0.2f;
 
@@ -20,16 +18,13 @@ public class AIPathController : MonoBehaviour
 
     Seeker seeker;
 
-    public EnemyTargetManager TargetManager { get => targetManager; set => targetManager = value; }
+    public EnemyTargetManager TargetManager { get; set; }
 
     void Awake()
     {
         seeker = GetComponent<Seeker>();
         movementController = GetComponent<AIMovementController>();
-    }
 
-    void Start()
-    {
         if (updatePathTimer == null)
         {
             Debug.LogError("Update Path Timer not assign");
@@ -38,10 +33,7 @@ public class AIPathController : MonoBehaviour
         updatePathTimer.OnTimerExpired += OnUpdatePathTimerExpired;
         updatePathTimer.StartTimer();
 
-        if (TargetManager.Target != null)
-        {
-            UpdatePath();
-        }
+        UpdatePath();
     }
 
     void Update()
@@ -66,7 +58,7 @@ public class AIPathController : MonoBehaviour
     {
         updatePathTimer.StartTimer();
 
-        if (TargetManager.Target == null)
+        if (TargetManager == null || TargetManager.Target == null)
         {
             return;
         }
@@ -96,8 +88,8 @@ public class AIPathController : MonoBehaviour
 
     void Move()
     {
-        Vector3 currentWaypointPosition = path.vectorPath[currentWaypoint];
-        movementController.SetMovement(currentWaypointPosition);
+        Vector2 currentWaypointPosition = path.vectorPath[currentWaypoint];
+        movementController.SetDestination(currentWaypointPosition);
         Debug.DrawLine(transform.position, currentWaypointPosition, Color.red);
 
         float distanceToWaypoint = Vector2.Distance(transform.position, currentWaypointPosition);

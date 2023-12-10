@@ -4,17 +4,23 @@ using UnityEngine;
 
 public class AIVision : MonoBehaviour
 {
-    EnemyTargetManager targetManager;
     [SerializeField] Timer memoryTimer;
     [SerializeField] float range;
     [SerializeField] float angle;
-
-    [SerializeField] bool playerVisible;
     bool forgetting;
 
-    public bool PlayerVisible { get => playerVisible; set => playerVisible = value; }
-    public EnemyTargetManager TargetManager { get => targetManager; set => targetManager = value; }
+    public bool PlayerVisible { get; set; }
+    public EnemyTargetManager TargetManager { get; set; }
     public EnemyLocation Location { get; set; }
+
+    void Awake()
+    {
+        if (memoryTimer == null)
+        {
+            Debug.LogError("Memory timer not assign");
+        }
+        memoryTimer.OnTimerExpired += OnMemoryTimerExpired;
+    }
 
     void OnDestroy()
     {
@@ -22,15 +28,6 @@ public class AIVision : MonoBehaviour
         {
             memoryTimer.OnTimerExpired -= OnMemoryTimerExpired;
         }
-    }
-
-    void Start()
-    {
-        if (memoryTimer == null)
-        {
-            Debug.LogError("Memory timer not assign");
-        }
-        memoryTimer.OnTimerExpired += OnMemoryTimerExpired;
     }
 
     void Update()
@@ -53,27 +50,32 @@ public class AIVision : MonoBehaviour
     {
         if (IsPlayerVisible())
         {
-            PlayerVisible = true;
-            forgetting = false;
-            memoryTimer.StopTimer();
+            HandlePlayerVisible();
         }
         else
         {
-            if (PlayerVisible && !forgetting)
-            {
-                StartForgetting();
-            }
+            HandlePlayerNotVisible();
+        }
+    }
+
+    void HandlePlayerVisible()
+    {
+        PlayerVisible = true;
+        forgetting = false;
+        memoryTimer.StopTimer();
+    }
+
+    void HandlePlayerNotVisible()
+    {
+        if (PlayerVisible && !forgetting)
+        {
+            StartForgetting();
         }
     }
 
     bool IsPlayerVisible()
     {
-        if (TargetManager.Player == null)
-        {
-            return false;
-        }
-
-        if (TargetManager.PlayerLocation == null)
+        if (TargetManager.Player == null || TargetManager.PlayerLocation == null)
         {
             return false;
         }

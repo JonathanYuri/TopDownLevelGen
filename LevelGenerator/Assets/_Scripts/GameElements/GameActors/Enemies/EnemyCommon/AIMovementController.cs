@@ -5,20 +5,18 @@ using UnityEngine;
 public class AIMovementController : MonoBehaviour
 {
     [SerializeField] MovementDirectionHandler movementDirectionHandler;
-
     [SerializeField] Rigidbody2D rb;
-
     [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Vector3 moveTo;
-    [SerializeField] bool arrivedAtDestination = true;
 
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
+    
+    Vector3 destination;
 
     public float Velocity { get => velocity; set => velocity = value; }
-    public bool ArrivedAtDestination { get => arrivedAtDestination; set => arrivedAtDestination = value; }
+    public bool ArrivedAtDestination { get; set; } = true;
 
-    void Start()
+    void Awake()
     {
         if (spriteRenderer == null)
         {
@@ -34,46 +32,43 @@ public class AIMovementController : MonoBehaviour
         {
             Debug.LogError("Movement Direction Handler not assign");    
         }
-
-        moveTo = this.transform.position;
     }
 
     void FixedUpdate()
     {
         if (!ArrivedAtDestination)
         {
-            Vector3 direction = moveTo - this.transform.position;
-            float distanceToTarget = direction.magnitude;
-
-            if (distanceToTarget <= threshold)
-            {
-                ArrivedAtDestination = true;
-            }
-            else
-            {
-                Vector3 movement = Velocity * Time.fixedDeltaTime * direction.normalized;
-                rb.MovePosition(this.transform.position + movement);
-            }
+            MoveTowardsDestination();
         }
     }
 
-    void ResetMovementOrientation()
+    void MoveTowardsDestination()
     {
-        movementDirectionHandler.SetRotationBasedOnMovementDirection(Vector2.right);
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, 0f, transform.rotation.eulerAngles.z);
+        Vector3 direction = destination - this.transform.position;
+        float distanceToTarget = direction.magnitude;
+
+        if (distanceToTarget <= threshold)
+        {
+            ArrivedAtDestination = true;
+        }
+        else
+        {
+            Vector2 movement = Velocity * Time.fixedDeltaTime * direction.normalized;
+            rb.MovePosition((Vector2)this.transform.position + movement);
+        }
     }
 
-    public void SetMovement(Vector2 moveTo)
+    public void SetDestination(Vector2 destination)
     {
-        if (Vector2.Distance(transform.position, moveTo) < threshold)
+        if (Vector2.Distance(transform.position, destination) < threshold)
         {
             return;
         }
 
-        this.moveTo = moveTo;
+        this.destination = destination;
         ArrivedAtDestination = false;
 
-        Vector2 direction = moveTo - (Vector2)transform.position;
+        Vector2 direction = destination - (Vector2)transform.position;
         movementDirectionHandler.SetRotationBasedOnMovementDirection(direction);
     }
 }
