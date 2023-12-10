@@ -7,10 +7,10 @@ using UnityEngine;
 [RequireComponent(typeof(Seeker))]
 public class AIPathController : MonoBehaviour
 {
-    [SerializeField] EnemyTargetManager targetManager;
-    [SerializeField] float nextWaypointDistance = 0.2f;
+    EnemyTargetManager targetManager;
 
     [SerializeField] Timer updatePathTimer;
+    [SerializeField] float nextWaypointDistance = 0.2f;
 
     AIMovementController movementController;
 
@@ -19,6 +19,8 @@ public class AIPathController : MonoBehaviour
     bool reachedEndOfPath;
 
     Seeker seeker;
+
+    public EnemyTargetManager TargetManager { get => targetManager; set => targetManager = value; }
 
     void Awake()
     {
@@ -36,7 +38,7 @@ public class AIPathController : MonoBehaviour
         updatePathTimer.OnTimerExpired += OnUpdatePathTimerExpired;
         updatePathTimer.StartTimer();
 
-        if (targetManager.Target != null)
+        if (TargetManager.Target != null)
         {
             UpdatePath();
         }
@@ -64,14 +66,14 @@ public class AIPathController : MonoBehaviour
     {
         updatePathTimer.StartTimer();
 
-        if (targetManager.Target == null)
+        if (TargetManager.Target == null)
         {
             return;
         }
 
         if (seeker.IsDone())
         {
-            seeker.StartPath(transform.position, targetManager.Target.position, OnPathComplete);
+            seeker.StartPath(transform.position, TargetManager.Target.position, OnPathComplete);
         }
     }
 
@@ -89,7 +91,11 @@ public class AIPathController : MonoBehaviour
             reachedEndOfPath = false;
         }
 
-        // Move
+        Move();
+    }
+
+    void Move()
+    {
         Vector3 currentWaypointPosition = path.vectorPath[currentWaypoint];
         movementController.SetMovement(currentWaypointPosition);
         Debug.DrawLine(transform.position, currentWaypointPosition, Color.red);

@@ -8,13 +8,17 @@ using UnityEngine;
 public class PatrolController : MonoBehaviour
 {
     GameMapManager gameMapManager;
-    [SerializeField] EnemyTargetManager targetManager;
-    Location location;
+    EnemyTargetManager targetManager;
+
+    EnemyLocation location;
 
     [SerializeField] Timer patrolTimer;
     [SerializeField] float patrolRange;
 
     bool canPatrol = true;
+
+    public EnemyTargetManager TargetManager { get => targetManager; set => targetManager = value; }
+    public EnemyLocation Location { get => location; set => location = value; }
 
     void Awake()
     {
@@ -22,17 +26,12 @@ public class PatrolController : MonoBehaviour
         {
             Debug.LogError("Patrol Timer not assign");
         }
-        if (targetManager == null)
-        {
-            Debug.LogError("Enemy Target Manager not assign");
-        }
         patrolTimer.OnTimerExpired += OnPatrolTimerExpired;
     }
 
     void Start()
     {
         gameMapManager = FindObjectOfType<GameMapManager>();
-        location = GetComponentInParent<Location>();
     }
 
     public void TryPatrol()
@@ -45,26 +44,29 @@ public class PatrolController : MonoBehaviour
 
     void Patrol()
     {
-        Transform patrolTarget;
-        // choose floor to go
-
-        if (gameMapManager.EachRoomFloors.TryGetValue(location.RoomPosition, out List<GameObject> floors))
-        {
-            List<GameObject> floorsChosen = floors.FindAll(floor => Vector2.Distance(floor.transform.position, transform.position) <= patrolRange);
-            if (floorsChosen.Count == 0)
-            {
-                return;
-            }
-            patrolTarget = floorsChosen[Random.Range(0, floorsChosen.Count)].transform;
-        }
-        else
-        {
-            return;
-        }
-
-        targetManager.ChaseTarget(patrolTarget);
         canPatrol = false;
         patrolTimer.StartTimer();
+
+        Transform patrolTarget = ChooseFloorToGo();
+        if (patrolTarget != null)
+        {
+            TargetManager.ChaseTarget(patrolTarget);
+        }
+    }
+
+    Transform ChooseFloorToGo()
+    {
+        if (!gameMapManager.EachRoomFloors.TryGetValue(Location.RoomPosition, out List<GameObject> floors))
+        {
+            return null;
+        }
+
+        List<GameObject> floorsChosen = floors.FindAll(floor => Vector2.Distance(floor.transform.position, transform.position) <= patrolRange);
+        if (floorsChosen.Count == 0)
+        {
+            return null;
+        }
+        return floorsChosen[Random.Range(0, floorsChosen.Count)].transform;
     }
 
     void OnPatrolTimerExpired()

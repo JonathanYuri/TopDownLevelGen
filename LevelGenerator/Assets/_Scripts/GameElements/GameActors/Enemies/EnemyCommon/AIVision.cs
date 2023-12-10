@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class AIVision : MonoBehaviour
 {
-    [SerializeField] EnemyTargetManager targetManager;
+    EnemyTargetManager targetManager;
     [SerializeField] Timer memoryTimer;
-
-    Location myLocation;
-
     [SerializeField] float range;
     [SerializeField] float angle;
 
@@ -16,6 +13,8 @@ public class AIVision : MonoBehaviour
     bool forgetting;
 
     public bool PlayerVisible { get => playerVisible; set => playerVisible = value; }
+    public EnemyTargetManager TargetManager { get => targetManager; set => targetManager = value; }
+    public EnemyLocation Location { get; set; }
 
     void OnDestroy()
     {
@@ -32,7 +31,6 @@ public class AIVision : MonoBehaviour
             Debug.LogError("Memory timer not assign");
         }
         memoryTimer.OnTimerExpired += OnMemoryTimerExpired;
-        myLocation = GetComponentInParent<Location>();
     }
 
     void Update()
@@ -70,22 +68,22 @@ public class AIVision : MonoBehaviour
 
     bool IsPlayerVisible()
     {
-        if (targetManager.Player == null)
+        if (TargetManager.Player == null)
         {
             return false;
         }
 
-        if (targetManager.PlayerLocation == null)
+        if (TargetManager.PlayerLocation == null)
         {
             return false;
         }
 
-        if (!targetManager.PlayerLocation.RoomPosition.Equals(myLocation.RoomPosition))
+        if (!Location.IsInPlayerRoom(TargetManager.PlayerLocation.RoomPosition))
         {
             return false;
         }
 
-        Vector2 toTarget = targetManager.Player.position - transform.position;
+        Vector2 toTarget = TargetManager.Player.position - transform.position;
         if (toTarget.magnitude > range)
         {
             return false;

@@ -65,6 +65,11 @@ public class AIMovementController : MonoBehaviour
 
     public void SetMovement(Vector2 moveTo)
     {
+        if (Vector2.Distance(transform.position, moveTo) < threshold)
+        {
+            return;
+        }
+
         this.moveTo = moveTo;
         ArrivedAtDestination = false;
 

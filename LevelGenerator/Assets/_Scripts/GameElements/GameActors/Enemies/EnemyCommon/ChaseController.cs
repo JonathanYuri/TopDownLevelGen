@@ -6,10 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(AIVision))]
 public class ChaseController : MonoBehaviour
 {
-    [SerializeField] EnemyTargetManager targetManager;
+    EnemyTargetManager targetManager;
+
+    public EnemyTargetManager TargetManager { get => targetManager; set => targetManager = value; }
 
     public void TryChaseTarget()
     {
-        targetManager.ChasePlayer();
+        TargetManager.ChasePlayer();
     }
 }
