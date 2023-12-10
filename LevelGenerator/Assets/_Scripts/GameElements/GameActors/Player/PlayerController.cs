@@ -10,6 +10,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IDamageable, ISlowable
 {
     PlayerMovementController playerMovementController;
+    HealthBarController playerHealthBarController;
     Timer slownessTimer;
 
     float velocityWithoutSlow;
@@ -17,11 +18,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
     [SerializeField] int life = 100;
 
     public EventHandler<DoorEventArgs> PassedThroughTheDoorEvent;
+
     public event Action OnLevelComplete;
 
     void Awake()
     {
         playerMovementController = GetComponent<PlayerMovementController>();
+        playerHealthBarController = FindObjectOfType<HealthBarController>();
         velocityWithoutSlow = playerMovementController.Velocity;
 
         slownessTimer = GetComponentInChildren<Timer>();
@@ -63,6 +66,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
         {
             life -= damage;
         }
+        playerHealthBarController.UpdateLife(life);
     }
 
     void Die()
@@ -73,6 +77,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
     public void TakeSlowness(float percentSlow, float timeSlow)
     {
         percentSlow = Mathf.Clamp01(percentSlow);
+
+        // se ele ja estava lento
+        slownessTimer.StopTimer();
+        EndSlowness();
 
         StartSlowness(percentSlow, timeSlow);
     }

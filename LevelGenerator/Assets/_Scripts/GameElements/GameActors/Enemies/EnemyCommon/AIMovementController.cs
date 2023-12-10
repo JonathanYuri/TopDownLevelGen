@@ -47,17 +47,12 @@ public class AIMovementController : MonoBehaviour
             if (distanceToTarget <= threshold)
             {
                 move = false;
-                ResetMovementOrientation();
             }
             else
             {
                 Vector3 movement = Velocity * Time.fixedDeltaTime * direction.normalized;
                 rb.MovePosition(this.transform.position + movement);
             }
-        }
-        else
-        {
-            ResetMovementOrientation();
         }
     }
 
