@@ -10,12 +10,13 @@ public class AIMovementController : MonoBehaviour
 
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Vector3 moveTo;
-    [SerializeField] bool move;
+    [SerializeField] bool arrivedAtDestination = true;
 
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
 
     public float Velocity { get => velocity; set => velocity = value; }
+    public bool ArrivedAtDestination { get => arrivedAtDestination; set => arrivedAtDestination = value; }
 
     void Start()
     {
@@ -39,14 +40,14 @@ public class AIMovementController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (move)
+        if (!ArrivedAtDestination)
         {
             Vector3 direction = moveTo - this.transform.position;
             float distanceToTarget = direction.magnitude;
 
             if (distanceToTarget <= threshold)
             {
-                move = false;
+                ArrivedAtDestination = true;
             }
             else
             {
@@ -65,7 +66,7 @@ public class AIMovementController : MonoBehaviour
     public void SetMovement(Vector2 moveTo)
     {
         this.moveTo = moveTo;
-        move = true;
+        ArrivedAtDestination = false;
 
         Vector2 direction = moveTo - (Vector2)transform.position;
         movementDirectionHandler.SetRotationBasedOnMovementDirection(direction);

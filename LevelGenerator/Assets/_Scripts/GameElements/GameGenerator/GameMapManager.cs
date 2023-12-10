@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameMapManager : MonoBehaviour
 {
     public HashSet<Position> RoomPositions { get; set; } = new();
+    public Dictionary<Position, List<GameObject>> EachRoomFloors { get; set; } = new();
 
     public void ConfigureAStar()
     {

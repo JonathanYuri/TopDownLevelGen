@@ -57,16 +57,19 @@ namespace SpawnRoomObjects.SpawnFloor
             return spritesFloor[^1];
         }
 
-        internal void SpawnAllFloors(GameObject roomObject)
+        internal Dictionary<Position, GameObject> SpawnAllFloors(GameObject roomObject)
         {
+            Dictionary<Position, GameObject> allFloorsPlaced = new();
             for (int i = 1; i < GameConstants.ROOM_WIDTH - 1; i++)
             {
                 for (int j = 1; j < GameConstants.ROOM_HEIGHT - 1; j++)
                 {
                     floorSpriteRenderer.sprite = ChooseFloorSprite();
-                    roomObjectSpawner.InstantiateRoomContentObject(floor, roomObject, new Position() { X = i, Y = j });
+                    GameObject floorPlaced = roomObjectSpawner.InstantiateRoomContentObject(floor, roomObject, new Position() { X = i, Y = j });
+                    allFloorsPlaced.Add(new Position() { X = i, Y = j }, floorPlaced);
                 }
             }
+            return allFloorsPlaced;
         }
     }
 }

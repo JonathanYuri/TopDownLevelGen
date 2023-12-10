@@ -4,9 +4,21 @@ using UnityEngine;
 
 public class EnemyTargetManager : MonoBehaviour
 {
+    Transform player;
     Transform target;
-    Location targetLocation;
+    Location playerLocation;
 
+    public Transform Player { get => player; set => player = value; }
+    public Location PlayerLocation { get => playerLocation; set => playerLocation = value; }
     public Transform Target { get => target; set => target = value; }
-    public Location TargetLocation { get => targetLocation; set => targetLocation = value; }
+
+    public void ChasePlayer()
+    {
+        Target = player;
+    }
+
+    public void ChaseTarget(Transform target)
+    {
+        this.Target = target;
+    }
 }

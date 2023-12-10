@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SpawnRoomObjects.SpawnFloor;
+using System.Linq;
 
 namespace SpawnRoomObjects.SpawnAll
 {
@@ -10,6 +11,8 @@ namespace SpawnRoomObjects.SpawnAll
     /// </summary>
     public class RoomObjectSpawner : MonoBehaviour
     {
+        GameMapManager gameMapManager;
+
         [SerializeField] GameObject[] enemies;
 
         [SerializeField] GameObject obstacle;
@@ -83,14 +86,19 @@ namespace SpawnRoomObjects.SpawnAll
             };
         }
 
+        void Start()
+        {
+            gameMapManager = FindObjectOfType<GameMapManager>();
+        }
+
         /// <summary>
         /// Spawns room objects within the given room.
         /// </summary>
         /// <param name="room">The room containing information about the objects to spawn.</param>
         /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
-        public void SpawnRoomObjects(RoomSkeleton room, GameObject roomObject)
+        public void SpawnRoomObjects(RoomSkeleton room, Position roomPosition, GameObject roomObject)
         {
-            floorSpawner.SpawnAllFloors(roomObject);
+            Dictionary<Position, GameObject> allFloorsPlaced = floorSpawner.SpawnAllFloors(roomObject);
 
             for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
             {
@@ -105,11 +113,15 @@ namespace SpawnRoomObjects.SpawnAll
                     }
 
                     InstantiateRoomContentObject(tilePrefab, roomObject, positionRoomContent);
+                    // se chegou a instanciar o objeto nao eh um chao
+                    allFloorsPlaced.Remove(positionRoomContent);
                 }
             }
+
+            gameMapManager.EachRoomFloors.Add(roomPosition, allFloorsPlaced.Values.ToList());
         }
 
-        internal void InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent)
+        internal GameObject InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent)
         {
             GameObject tileResult = Instantiate(tilePrefab, roomObject.transform);
             tileResult.transform.rotation = tilePrefab.transform.rotation;
@@ -119,6 +131,8 @@ namespace SpawnRoomObjects.SpawnAll
 
             // new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) pra colocar o (0, 0) que eh o canto inferior esquerdo para a coordenada -7, -4
             // new Vector2(positionRoomContent.X, positionRoomContent.Y); para colocar todos os objetos nas posicoes certas da matriz
+
+            return tileResult;
         }
 
         /// <summary>

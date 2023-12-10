@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AIVision))]
+[RequireComponent(typeof(AIMovementController))]
 [RequireComponent(typeof(Seeker))]
 public class AIPathController : MonoBehaviour
 {
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] float nextWaypointDistance = 0.2f;
 
+    [SerializeField] Timer updatePathTimer;
+
     AIMovementController movementController;
-    AIVision aiVision;
 
     Path path;
     int currentWaypoint = 0;
@@ -22,21 +23,47 @@ public class AIPathController : MonoBehaviour
     void Awake()
     {
         seeker = GetComponent<Seeker>();
-        aiVision = GetComponent<AIVision>();
-        movementController = GetComponentInChildren<AIMovementController>();
-        InvokeRepeating(nameof(UpdatePath), .0f, .5f);
+        movementController = GetComponent<AIMovementController>();
+    }
+
+    void Start()
+    {
+        if (updatePathTimer == null)
+        {
+            Debug.LogError("Update Path Timer not assign");
+        }
+
+        updatePathTimer.OnTimerExpired += OnUpdatePathTimerExpired;
+        updatePathTimer.StartTimer();
+
+        if (targetManager.Target != null)
+        {
+            UpdatePath();
+        }
     }
 
     void Update()
     {
-        if (aiVision.TargetVisible)
+        FollowThePath();
+    }
+
+    void OnDestroy()
+    {
+        if (updatePathTimer != null)
         {
-            FollowThePath();
+            updatePathTimer.OnTimerExpired -= OnUpdatePathTimerExpired;
         }
+    }
+
+    void OnUpdatePathTimerExpired()
+    {
+        UpdatePath();
     }
 
     void UpdatePath()
     {
+        updatePathTimer.StartTimer();
+
         if (targetManager.Target == null)
         {
             return;

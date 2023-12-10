@@ -68,7 +68,7 @@ public class RoomGenerator : MonoBehaviour
             room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
         }
 
-        roomObjectSpawner.SpawnRoomObjects(room, roomObject);
+        roomObjectSpawner.SpawnRoomObjects(room, roomPosition, roomObject);
     }
 
     bool IsFinalRoom(Position roomPosition) => levelGenerator.FinalRoomPosition != null && levelGenerator.FinalRoomPosition.Equals(roomPosition);

@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
 
     public void SetTargetPlayer(Transform target, Location targetLocation)
     {
-        targetManager.Target = target;
-        targetManager.TargetLocation = targetLocation;
+        targetManager.Player = target;
+        targetManager.PlayerLocation = targetLocation;
     }
 }

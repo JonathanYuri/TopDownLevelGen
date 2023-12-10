@@ -5,23 +5,17 @@ using UnityEngine;
 public class AIVision : MonoBehaviour
 {
     [SerializeField] EnemyTargetManager targetManager;
-    Timer memoryTimer;
+    [SerializeField] Timer memoryTimer;
 
     Location myLocation;
 
     [SerializeField] float range;
     [SerializeField] float angle;
 
-    [SerializeField] bool targetVisible;
+    [SerializeField] bool playerVisible;
     bool forgetting;
 
-    public bool TargetVisible { get => targetVisible; set => targetVisible = value; }
-
-    void Awake()
-    {
-        memoryTimer = GetComponentInChildren<Timer>();
-        memoryTimer.OnTimerExpired += OnMemoryTimerExpired;
-    }
+    public bool PlayerVisible { get => playerVisible; set => playerVisible = value; }
 
     void OnDestroy()
     {
@@ -33,6 +27,11 @@ public class AIVision : MonoBehaviour
 
     void Start()
     {
+        if (memoryTimer == null)
+        {
+            Debug.LogError("Memory timer not assign");
+        }
+        memoryTimer.OnTimerExpired += OnMemoryTimerExpired;
         myLocation = GetComponentInParent<Location>();
     }
 
@@ -54,39 +53,39 @@ public class AIVision : MonoBehaviour
 
     void HandleTargetVisibility()
     {
-        if (IsTargetVisible())
+        if (IsPlayerVisible())
         {
-            TargetVisible = true;
+            PlayerVisible = true;
             forgetting = false;
             memoryTimer.StopTimer();
         }
         else
         {
-            if (TargetVisible && !forgetting)
+            if (PlayerVisible && !forgetting)
             {
                 StartForgetting();
             }
         }
     }
 
-    bool IsTargetVisible()
+    bool IsPlayerVisible()
     {
-        if (targetManager.Target == null)
+        if (targetManager.Player == null)
         {
             return false;
         }
 
-        if (targetManager.TargetLocation == null)
+        if (targetManager.PlayerLocation == null)
         {
             return false;
         }
 
-        if (!targetManager.TargetLocation.RoomPosition.Equals(myLocation.RoomPosition))
+        if (!targetManager.PlayerLocation.RoomPosition.Equals(myLocation.RoomPosition))
         {
             return false;
         }
 
-        Vector2 toTarget = targetManager.Target.position - transform.position;
+        Vector2 toTarget = targetManager.Player.position - transform.position;
         if (toTarget.magnitude > range)
         {
             return false;
@@ -108,6 +107,6 @@ public class AIVision : MonoBehaviour
 
     void OnMemoryTimerExpired()
     {
-        TargetVisible = false;
+        PlayerVisible = false;
     }
 }

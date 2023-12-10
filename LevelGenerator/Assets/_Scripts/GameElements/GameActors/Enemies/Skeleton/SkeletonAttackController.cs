@@ -46,7 +46,7 @@ public class SkeletonAttackController : MonoBehaviour
 
     void TryAttack()
     {
-        if (aiVision.TargetVisible && canAttack)
+        if (aiVision.PlayerVisible && canAttack)
         {
             Attack();
         }
@@ -54,14 +54,14 @@ public class SkeletonAttackController : MonoBehaviour
 
     void Attack()
     {
-        if (targetManager.Target == null)
+        if (targetManager.Player == null)
         {
             return;
         }
 
         canAttack = false;
 
-        Vector2 directionToTarget = targetManager.Target.position - this.transform.position;
+        Vector2 directionToTarget = targetManager.Player.position - this.transform.position;
         SpawnBone(directionToTarget.normalized);
 
         attackTimer.StartTimer();

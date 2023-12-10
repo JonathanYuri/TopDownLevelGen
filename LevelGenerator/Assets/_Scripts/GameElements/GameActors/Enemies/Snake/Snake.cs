@@ -24,7 +24,7 @@ public class Snake : Enemy, IDamageable
 
     void Update()
     {
-        if (aiVision.TargetVisible)
+        if (aiVision.PlayerVisible)
         {
             dashController.TryDash();
         }
