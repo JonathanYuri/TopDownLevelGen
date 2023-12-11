@@ -12,10 +12,7 @@ public class Snake : Enemy, IDamageable
     void Awake()
     {
         dashController = GetComponentInChildren<DashController>();
-    }
 
-    void Start()
-    {
         if (aiVision == null)
         {
             Debug.LogError("AIVision not assign");

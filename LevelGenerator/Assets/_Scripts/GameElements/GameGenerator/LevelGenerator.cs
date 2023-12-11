@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public class MapCreatedEventArgs : EventArgs
+{
+    public HashSet<Position> map;
+}
+
 /// <summary>
 /// Generates and manages levels using a room-based approach.
 /// </summary>
@@ -15,6 +20,8 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] Transform rooms;
 
     HashSet<Position> map;
+
+    public EventHandler<MapCreatedEventArgs> OnMapCreated;
 
     public Position InitialRoomPosition { get; private set; }
     public Position FinalRoomPosition { get; private set; }
@@ -35,13 +42,12 @@ public class LevelGenerator : MonoBehaviour
     /// Generates a level, including its map.
     /// </summary>
     /// <returns>A collection of positions representing the generated map.</returns>
-    public HashSet<Position> Generate()
+    public void Generate()
     {
         DestroyAllPastObjects();
-        map = GenerateMap();
+        GenerateMap();
         GenerateInitialAndFinalRoom();
         GenerateRemainingRooms();
-        return map;
     }
 
     /// <summary>
@@ -58,7 +64,7 @@ public class LevelGenerator : MonoBehaviour
     /// <summary>
     /// Generates a map of positions for the level layout based on a random and dynamic room generation algorithm.
     /// </summary>
-    HashSet<Position> GenerateMap()
+    void GenerateMap()
     {
         Queue<Position> queue = new();
         queue.Enqueue(new Position { X = 0, Y = 0 });
@@ -87,7 +93,11 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        return map;
+        MapCreatedEventArgs mapCreatedEventArgs = new()
+        {
+            map = map,
+        };
+        OnMapCreated?.Invoke(this, mapCreatedEventArgs);
     }
 
     /// <summary>

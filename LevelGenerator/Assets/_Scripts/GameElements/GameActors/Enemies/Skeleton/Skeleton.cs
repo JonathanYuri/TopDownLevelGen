@@ -6,8 +6,6 @@ public class Skeleton : Enemy, IDamageable
 {
     [SerializeField] int life = 20;
 
-
-
     public void TakeDamage(int damage)
     {
         if (life - damage <= 0)
