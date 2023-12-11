@@ -446,7 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetManager: {fileID: 7014183382443654903}
-  life: 20
+  life: 70
 --- !u!114 &4602692104869820121
 MonoBehaviour:
   m_ObjectHideFlags: 0

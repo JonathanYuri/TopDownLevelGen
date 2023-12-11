@@ -118,7 +118,7 @@ namespace SpawnRoomObjects.SpawnAll
                 }
             }
 
-            gameMapManager.EachRoomFloors.Add(roomPosition, allFloorsPlaced.Values.ToList());
+            gameMapManager.EachRoomFloors[roomPosition] = allFloorsPlaced.Values.ToList();
         }
 
         internal GameObject InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent)
