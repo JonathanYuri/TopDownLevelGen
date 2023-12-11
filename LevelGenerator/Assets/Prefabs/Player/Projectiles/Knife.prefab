@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movimentVelocity: 2
-  timeToAutoDestroy: 5
+  timeToAutoDestroy: 2
 --- !u!114 &3164390737416572208
 MonoBehaviour:
   m_ObjectHideFlags: 0

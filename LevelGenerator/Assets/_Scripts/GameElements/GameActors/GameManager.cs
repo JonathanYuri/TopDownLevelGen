@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     UIMapGenerator uiMapGenerator;
     LevelGenerator levelGenerator;
 
-    int level = 0;
     LevelDataManager levelDataManager;
 
     void Start()
@@ -60,16 +59,22 @@ public class GameManager : MonoBehaviour
 
     void CreatePlayer()
     {
-        playerLocationManager.SpawnPlayer(playerPrefab);
-        player = playerLocationManager.Player;
+        SpawnPlayer();
+        playerLocationManager.Player = player;
 
         player.PassedThroughTheDoorEvent += Player_PassedThroughTheDoor;
         player.OnLevelComplete += Player_OnLevelComplete;
     }
 
+    public void SpawnPlayer()
+    {
+        GameObject playerObject = Instantiate(playerPrefab);
+        PlayerController playerController = playerObject.GetComponent<PlayerController>();
+        player = playerController;
+    }
+
     void Player_OnLevelComplete()
     {
-        level++;
         levelDataManager.NextLevel();
         GenerateGame();
     }
@@ -78,7 +83,6 @@ public class GameManager : MonoBehaviour
     {
         Position playerOldPosition = playerLocationManager.Location.RoomPosition;
         playerLocationManager.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection, sceneCamera);
-
         uiMapGenerator.UpdateUIMap(playerOldPosition, playerLocationManager.Location.RoomPosition);
     }
 }

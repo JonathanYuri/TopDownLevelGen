@@ -14,19 +14,12 @@ public class PlayerLocationManager : MonoBehaviour
         { Vector3.up, new Vector2(0, -GameConstants.ROOM_MIDDLE.Y + 1) }, // baixo meio, to vindo de baixo
     };
 
-    public PlayerController Player { get; private set; }
+    public PlayerController Player { get; set; }
     public Location Location { get; private set; }
 
     void Awake()
     {
         Location = GetComponent<Location>();
-    }
-
-    public void SpawnPlayer(GameObject playerPrefab)
-    {
-        GameObject playerObject = Instantiate(playerPrefab);
-        PlayerController playerController = playerObject.GetComponent<PlayerController>();
-        Player = playerController;
     }
 
     public void SetPlayerToInitialRoom(Camera camera, Position initialPosition)

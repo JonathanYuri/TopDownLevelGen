@@ -15,7 +15,7 @@ public class DashController : MonoBehaviour
 
     float velocityWithoutDash;
 
-    void Start()
+    void Awake()
     {
         if (movementController == null)
         {
@@ -29,7 +29,10 @@ public class DashController : MonoBehaviour
         {
             Debug.LogError("Dash cooldown not assign");
         }
+    }
 
+    void Start()
+    {
         velocityWithoutDash = movementController.Velocity;
 
         dashDuration.OnTimerExpired += OnDashDurationTimerExpired;

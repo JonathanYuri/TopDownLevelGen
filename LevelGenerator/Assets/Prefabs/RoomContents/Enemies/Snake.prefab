@@ -330,8 +330,6 @@ MonoBehaviour:
   movementDirectionHandler: {fileID: 5883983589104860115}
   rb: {fileID: -596854242487627998}
   spriteRenderer: {fileID: 6675631255662904958}
-  moveTo: {x: 0, y: 0, z: 0}
-  arrivedAtDestination: 1
   velocity: 1
   threshold: 0.1
 --- !u!114 &7141659908848299429
@@ -348,8 +346,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   memoryTimer: {fileID: 3861252495959929608}
   range: 2
-  angle: 90
-  playerVisible: 0
+  angle: 360
 --- !u!114 &8108525909922972460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,7 +401,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cc5800e1f8bfe448088e5260183a26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  location: {fileID: 4600576350118075242}
   patrolTimer: {fileID: 4408043489015210657}
   patrolRange: 1.5
 --- !u!114 &1049526105052625434
@@ -477,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timerDuration: 3
+  timerDuration: 2
 --- !u!1 &4900438414212118908
 GameObject:
   m_ObjectHideFlags: 0
