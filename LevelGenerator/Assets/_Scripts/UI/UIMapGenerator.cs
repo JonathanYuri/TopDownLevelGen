@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,69 +8,24 @@ using UnityEngine.UI;
 /// </summary>
 public class UIMapGenerator : MonoBehaviour
 {
+    [Header("UI")]
     [SerializeField] GameObject mapHolder;
-
     [SerializeField] GameObject roomPanelPrefab;
     Image roomPanelImage;
-
     [SerializeField] GameObject playerInRoomPanel;
     Image playerInRoomImage;
-
     [SerializeField] GameObject blankSpacePrefab;
 
-    LevelGenerator levelGenerator;
     Dictionary<Position, Image> uiMap;
     HashSet<Position> map;
 
     Location playerLocation;
-
-    public Location PlayerLocation { get => playerLocation; set => playerLocation = value; }
 
     void Awake()
     {
         uiMap = new();
         roomPanelImage = roomPanelPrefab.GetComponent<Image>();
         playerInRoomImage = playerInRoomPanel.GetComponent<Image>();
-    }
-
-    void Start()
-    {
-        levelGenerator = FindObjectOfType<LevelGenerator>();
-        levelGenerator.OnMapCreated += OnMapCreated;
-
-        playerLocation = FindObjectOfType<PlayerLocationManager>().Location;
-    }
-
-    void OnDestroy()
-    {
-        if (levelGenerator != null)
-        {
-            levelGenerator.OnMapCreated -= OnMapCreated;
-        }
-    }
-
-    void OnMapCreated(object sender, MapCreatedEventArgs e)
-    {
-        this.map = e.map;
-        CreateUIMap();
-    }
-
-    /// <summary>
-    /// Creates the UI map to represent the game map with room panels and player's current position.
-    /// </summary>
-    public void CreateUIMap()
-    {
-        DestroyPastUIMap();
-
-        RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
-
-        int mapSize = CalculateMapSize();
-        float roomSize = CalculateRoomSize(mapSize, mapHolderRect);
-        Vector2 roomScale = new(roomSize / mapHolderRect.rect.size.x, roomSize / mapHolderRect.rect.size.y);
-
-        Vector2 initialRoomPosition = CalculateInitialRoomPosition(mapHolderRect, roomSize);
-
-        CreateRoomPanels(mapSize, roomSize, roomScale, initialRoomPosition);
     }
 
     /// <summary>
@@ -84,6 +38,26 @@ public class UIMapGenerator : MonoBehaviour
         {
             Destroy(mapHolder.transform.GetChild(i).gameObject);
         }
+    }
+
+    /// <summary>
+    /// Creates the UI map to represent the game map with room panels and player's current position.
+    /// </summary>
+    public void CreateUIMap(HashSet<Position> map, Location playerLocation)
+    {
+        this.playerLocation = playerLocation;
+        this.map = map;
+        DestroyPastUIMap();
+
+        RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();
+
+        int mapSize = CalculateMapSize();
+        float roomSize = CalculateRoomSize(mapSize, mapHolderRect);
+        Vector2 roomScale = new(roomSize / mapHolderRect.rect.size.x, roomSize / mapHolderRect.rect.size.y);
+
+        Vector2 initialRoomPosition = CalculateInitialRoomPosition(mapHolderRect, roomSize);
+
+        CreateRoomPanels(mapSize, roomSize, roomScale, initialRoomPosition);
     }
 
     /// <summary>
@@ -170,7 +144,7 @@ public class UIMapGenerator : MonoBehaviour
     /// <returns>The selected room panel GameObject.</returns>
     GameObject ChoosePanelToPosition(Position position)
     {
-        if (PlayerLocation.RoomPosition.Equals(position))
+        if (playerLocation.RoomPosition.Equals(position))
         {
             return playerInRoomPanel;
         }

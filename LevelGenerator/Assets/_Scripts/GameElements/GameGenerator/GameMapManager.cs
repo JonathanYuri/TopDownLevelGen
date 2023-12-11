@@ -6,14 +6,15 @@ using UnityEngine;
 
 public class GameMapManager : MonoBehaviour
 {
+    public HashSet<Position> RoomPositions { get; set; } = new();
     public Dictionary<Position, List<GameObject>> EachRoomFloors { get; set; } = new();
 
-    public void ConfigureAStar(HashSet<Position> roomPositions)
+    public void ConfigureAStar()
     {
         GridGraph gridGraph = AstarPath.active.data.gridGraph;
 
-        (int maxX, int minX) = roomPositions.MaxAndMin(position => position.X);
-        (int maxY, int minY) = roomPositions.MaxAndMin(position => position.Y);
+        (int maxX, int minX) = RoomPositions.MaxAndMin(position => position.X);
+        (int maxY, int minY) = RoomPositions.MaxAndMin(position => position.Y);
 
         maxX = Mathf.Abs(maxX);
         minX = Mathf.Abs(minX);

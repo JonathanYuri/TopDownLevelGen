@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -28,8 +26,6 @@ public class GameManager : MonoBehaviour
         sceneCamera = FindObjectOfType<Camera>();
         uiMapGenerator = FindObjectOfType<UIMapGenerator>();
         levelGenerator = FindObjectOfType<LevelGenerator>();
-        levelGenerator.OnMapCreated += OnMapCreated;
-
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
         gameMapManager = FindObjectOfType<GameMapManager>();
         levelDataManager = GetComponent<LevelDataManager>();
@@ -43,26 +39,27 @@ public class GameManager : MonoBehaviour
             player.PassedThroughTheDoorEvent -= Player_PassedThroughTheDoor;
             player.OnLevelComplete -= Player_OnLevelComplete;
         }
-
-        if (levelGenerator != null)
-        {
-            levelGenerator.OnMapCreated -= OnMapCreated;
-        }
     }
 
     void GenerateGame()
     {
-        TryCreatePlayer();
+        gameMapManager.RoomPositions.Clear();
+        gameMapManager.RoomPositions = levelGenerator.Generate();
+
+        if (player == null)
+        {
+            CreatePlayer();
+        }
+        playerLocationManager.SetPlayerToInitialRoom(sceneCamera, gameMapManager.RoomPositions.ElementAt(0));
+
+        uiMapGenerator.CreateUIMap(gameMapManager.RoomPositions, playerLocationManager.Location);
+
+        gameMapManager.ConfigureAStar();
         gameMapManager.SetEnemiesTargetPlayer(player.transform, playerLocationManager.Location);
     }
 
-    void TryCreatePlayer()
+    void CreatePlayer()
     {
-        if (player != null)
-        {
-            return;
-        }
-
         playerLocationManager.SpawnPlayer(playerPrefab);
         player = playerLocationManager.Player;
 
@@ -81,12 +78,7 @@ public class GameManager : MonoBehaviour
     {
         Position playerOldPosition = playerLocationManager.Location.RoomPosition;
         playerLocationManager.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection, sceneCamera);
-        uiMapGenerator.UpdateUIMap(playerOldPosition, playerLocationManager.Location.RoomPosition);
-    }
 
-    void OnMapCreated(object sender, MapCreatedEventArgs e)
-    {
-        playerLocationManager.SetPlayerToInitialRoom(sceneCamera, e.map.ElementAt(0));
-        gameMapManager.ConfigureAStar(e.map);
+        uiMapGenerator.UpdateUIMap(playerOldPosition, playerLocationManager.Location.RoomPosition);
     }
 }

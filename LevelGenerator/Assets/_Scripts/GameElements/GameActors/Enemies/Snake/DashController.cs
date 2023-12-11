@@ -15,7 +15,7 @@ public class DashController : MonoBehaviour
 
     float velocityWithoutDash;
 
-    void Awake()
+    void Start()
     {
         if (movementController == null)
         {
@@ -48,6 +48,16 @@ public class DashController : MonoBehaviour
         }
     }
 
+    void OnDashDurationTimerExpired()
+    {
+        EndDash();
+    }
+
+    void OnDashCooldownTimerExpired()
+    {
+        dashReady = true;
+    }
+
     public void TryDash()
     {
         if (CanDash())
@@ -74,15 +84,5 @@ public class DashController : MonoBehaviour
         movementController.Velocity = velocityWithoutDash;
         isDashing = false;
         dashCooldown.StartTimer();
-    }
-
-    void OnDashDurationTimerExpired()
-    {
-        EndDash();
-    }
-
-    void OnDashCooldownTimerExpired()
-    {
-        dashReady = true;
     }
 }
