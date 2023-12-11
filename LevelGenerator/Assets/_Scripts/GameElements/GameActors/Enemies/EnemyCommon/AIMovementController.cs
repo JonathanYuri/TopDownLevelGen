@@ -54,6 +54,7 @@ public class AIMovementController : MonoBehaviour
         else
         {
             Vector2 movement = Velocity * Time.fixedDeltaTime * direction.normalized;
+            rb.velocity = Vector2.zero;
             rb.MovePosition((Vector2)this.transform.position + movement);
         }
     }
