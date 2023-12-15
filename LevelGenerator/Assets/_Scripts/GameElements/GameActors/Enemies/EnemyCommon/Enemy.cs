@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
     [SerializeField] int life;
     [SerializeField] EnemyTargetManager targetManager;
 
-    public event Action DamageTaken;
+    public event Action OnDamageTaken;
 
     public void SetTargetPlayer(Transform target, Location targetLocation)
     {
@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
         else
         {
             life -= damage;
-            DamageTaken?.Invoke();
+            OnDamageTaken?.Invoke();
         }
     }
 

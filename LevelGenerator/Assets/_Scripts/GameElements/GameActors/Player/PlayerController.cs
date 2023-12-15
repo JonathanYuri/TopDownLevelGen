@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
         }
         else if (collision.CompareTag("LevelPortal"))
         {
-            OnLevelComplete.Invoke();
+            OnLevelComplete?.Invoke();
         }
     }
 

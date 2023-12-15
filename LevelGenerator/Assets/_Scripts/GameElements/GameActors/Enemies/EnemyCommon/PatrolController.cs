@@ -29,6 +29,11 @@ public class PatrolController : MonoBehaviour
         patrolTimer.OnTimerExpired += OnPatrolTimerExpired;
     }
 
+    void OnDestroy()
+    {
+        patrolTimer.OnTimerExpired -= OnPatrolTimerExpired;
+    }
+
     void Start()
     {
         gameMapManager = FindObjectOfType<GameMapManager>();

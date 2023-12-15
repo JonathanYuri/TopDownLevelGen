@@ -33,10 +33,21 @@ public class AIController : MonoBehaviour
         aiVision.TargetManager = targetManager;
         aiVision.Location = location;
 
-        enemy.DamageTaken += DamageTaken;
+        enemy.OnDamageTaken += OnDamageTaken;
         damageForgetTimer.OnTimerExpired += OnDamageForgetTimerExpired;
     }
 
+    void OnDestroy()
+    {
+        if (enemy != null)
+        {
+            enemy.OnDamageTaken -= OnDamageTaken;
+        }
+        if (damageForgetTimer != null)
+        {
+            damageForgetTimer.OnTimerExpired -= OnDamageForgetTimerExpired;
+        }
+    }
     void Update()
     {
         if (location.IsInPlayerRoom(targetManager.PlayerLocation.RoomPosition))
@@ -57,7 +68,7 @@ public class AIController : MonoBehaviour
         }
     }
 
-    void DamageTaken()
+    void OnDamageTaken()
     {
         targetDamagedMe = true;
         damageForgetTimer.StartTimer();
