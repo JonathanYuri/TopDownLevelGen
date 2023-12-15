@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
 {
     PlayerMovementController playerMovementController;
     HealthBarController playerHealthBarController;
-    Timer slownessTimer;
+    [SerializeField] Timer slownessTimer;
 
     float velocityWithoutSlow;
 
@@ -26,8 +26,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
         playerMovementController = GetComponent<PlayerMovementController>();
         playerHealthBarController = FindObjectOfType<HealthBarController>();
         velocityWithoutSlow = playerMovementController.Velocity;
-
-        slownessTimer = GetComponentInChildren<Timer>();
         slownessTimer.OnTimerExpired += OnSlownessTimerExpired;
     }
 

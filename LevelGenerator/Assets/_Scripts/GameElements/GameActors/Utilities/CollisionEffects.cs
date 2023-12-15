@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public abstract class CollisionEffects : MonoBehaviour
 {
-    protected Timer effectCooldown;
+    [SerializeField] protected Timer effectCooldown;
 
     protected bool isColliding = false;
     protected GameObject objectInCollision;
@@ -15,9 +15,8 @@ public abstract class CollisionEffects : MonoBehaviour
 
     protected abstract void ApplyEffect();
 
-    void Awake()
+    void Start()
     {
-        effectCooldown = GetComponentInChildren<Timer>();
         effectCooldown.OnTimerExpired += OnEffectTimerExpired;
     }
 

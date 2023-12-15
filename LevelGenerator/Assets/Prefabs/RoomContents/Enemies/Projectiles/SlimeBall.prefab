@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a162df14ca80e0042b6120bd3ca14408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effectCooldown: {fileID: 5116291648024591296}
   percentSlow: 0.5
   timeSlow: 2
 --- !u!1 &3031265075214919903
@@ -266,5 +267,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606a6c918fbf8154b8b429ed4ccded62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  triggerEffect: {fileID: 2576439141111250933}
   movimentVelocity: 4
   timeToAutoDestroy: 4

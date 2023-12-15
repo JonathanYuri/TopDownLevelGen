@@ -5,13 +5,17 @@ using UnityEngine;
 [RequireComponent(typeof(AIVision))]
 public class AIController : MonoBehaviour
 {
+    [SerializeField] Enemy enemy;
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] EnemyLocation location;
+    [SerializeField] Timer damageForgetTimer;
 
     PatrolController patrolController;
     ChaseController chaseController;
     AIVision aiVision;
     AIPathController aiPathController;
+
+    bool targetDamagedMe;
 
     void Awake()
     {
@@ -28,6 +32,9 @@ public class AIController : MonoBehaviour
         aiVision = GetComponent<AIVision>();
         aiVision.TargetManager = targetManager;
         aiVision.Location = location;
+
+        enemy.DamageTaken += DamageTaken;
+        damageForgetTimer.OnTimerExpired += OnDamageForgetTimerExpired;
     }
 
     void Update()
@@ -40,7 +47,7 @@ public class AIController : MonoBehaviour
 
     void DecideEnemyAction()
     {
-        if (aiVision.PlayerVisible)
+        if (aiVision.PlayerVisible || targetDamagedMe)
         {
             chaseController.TryChaseTarget();
         }
@@ -48,5 +55,16 @@ public class AIController : MonoBehaviour
         {
             patrolController.TryPatrol();
         }
+    }
+
+    void DamageTaken()
+    {
+        targetDamagedMe = true;
+        damageForgetTimer.StartTimer();
+    }
+
+    void OnDamageForgetTimerExpired()
+    {
+        targetDamagedMe = false;
     }
 }

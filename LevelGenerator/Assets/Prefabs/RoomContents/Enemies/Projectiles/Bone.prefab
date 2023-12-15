@@ -192,6 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606a6c918fbf8154b8b429ed4ccded62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  triggerEffect: {fileID: 4748904361967094958}
   movimentVelocity: 3
   timeToAutoDestroy: 4
 --- !u!1 &6199567940823685006
@@ -240,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225d243f5b7f7ba48b1c027b0d27a5da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  effectCooldown: {fileID: 4364914818704876143}
   damage: 6
 --- !u!61 &4162451229491581072
 BoxCollider2D:

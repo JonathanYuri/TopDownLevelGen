@@ -7,7 +7,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb;
-    CollisionEffects triggerEffect;
+    [SerializeField] CollisionEffects triggerEffect;
     RotateObject rotateObject;
 
     [SerializeField] float movimentVelocity = 2.0f;
@@ -19,7 +19,6 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rotateObject = GetComponent<RotateObject>();
-        triggerEffect = GetComponentInChildren<CollisionEffects>();
         triggerEffect.CollisionOccured += CollisionOccured;
     }
 

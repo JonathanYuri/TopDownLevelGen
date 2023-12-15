@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1346259596179352330}
   - component: {fileID: 4148752337870011390}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PatrolColldownTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 2922351088196787626}
   - component: {fileID: 4873740101189739888}
   - component: {fileID: 8306904822291667586}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ Transform:
   - {fileID: 451367802308537293}
   - {fileID: 1346259596179352330}
   m_Father: {fileID: 5506338303680429713}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2232949225920676902
 MonoBehaviour:
@@ -198,8 +198,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8103998a1f428749b0758408bb9ffc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemy: {fileID: 6042307813416905462}
   targetManager: {fileID: 7324877665200866385}
   location: {fileID: 3970811768209648529}
+  damageForgetTimer: {fileID: 486322242890889319}
 --- !u!1 &3635678906205600835
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +232,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5506338303680429713}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3970811768209648529
 MonoBehaviour:
@@ -254,7 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6526303996361065384}
   - component: {fileID: 5996988955309681333}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EnemyMemoryTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3815660118359878758}
   - component: {fileID: 7192114014552698122}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: DamageCooldown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +347,7 @@ GameObject:
   - component: {fileID: 4556461857121094257}
   - component: {fileID: 8612523298999663278}
   - component: {fileID: 6387137868551184556}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AttackManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +367,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5506338303680429713}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8612523298999663278
 MonoBehaviour:
@@ -425,7 +427,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5506338303680429713}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7324877665200866385
 MonoBehaviour:
@@ -472,11 +474,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2079295631660457001}
   - {fileID: 4275499003668344396}
   - {fileID: 7047821879351234161}
   - {fileID: 4556461857121094257}
   - {fileID: 2728584651613659258}
+  - {fileID: 6781743967818133367}
+  - {fileID: 2079295631660457001}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -581,8 +584,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50288b2ce547f4d4aabf5956aa66a959, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetManager: {fileID: 7324877665200866385}
   life: 50
+  targetManager: {fileID: 7324877665200866385}
 --- !u!114 &7277807764853123077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,7 +608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 451367802308537293}
   - component: {fileID: 2111340639347111924}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: UpdatePathTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -640,6 +643,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerDuration: 1
+--- !u!1 &8368088976959781470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6781743967818133367}
+  - component: {fileID: 486322242890889319}
+  m_Layer: 8
+  m_Name: DamageForgetTimer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6781743967818133367
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8368088976959781470}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5506338303680429713}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &486322242890889319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8368088976959781470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerDuration: 1.5
 --- !u!1 &8498329170402388942
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,13 +699,13 @@ GameObject:
   - component: {fileID: 7047821879351234161}
   - component: {fileID: 1267306782016850176}
   - component: {fileID: 9184992361156771934}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: CollisionDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7047821879351234161
 Transform:
   m_ObjectHideFlags: 0
@@ -672,7 +720,7 @@ Transform:
   m_Children:
   - {fileID: 3815660118359878758}
   m_Father: {fileID: 5506338303680429713}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1267306782016850176
 CapsuleCollider2D:
@@ -702,4 +750,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225d243f5b7f7ba48b1c027b0d27a5da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 5
+  effectCooldown: {fileID: 7192114014552698122}
+  damage: 3

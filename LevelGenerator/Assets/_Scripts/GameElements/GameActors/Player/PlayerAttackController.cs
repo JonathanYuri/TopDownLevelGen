@@ -18,14 +18,28 @@ public static class AttackButtonsConstants
 public class PlayerAttackController : MonoBehaviour
 {
     [SerializeField] GameObject knife;
-    Timer attackTimer;
+    [SerializeField] Timer attackTimer;
+
+    [SerializeField] GameObject attackSpawnUp;
+    [SerializeField] GameObject attackSpawnDown;
+    [SerializeField] GameObject attackSpawnRight;
+    [SerializeField] GameObject attackSpawnLeft;
+
+    Dictionary<Vector2, GameObject> directionToAttackObject;
 
     bool canAttack = true;
 
     void Awake()
     {
-        attackTimer = GetComponentInChildren<Timer>();
         attackTimer.OnTimerExpired += OnAttackTimerExpired;
+
+        directionToAttackObject = new()
+        {
+            { Vector2.down, attackSpawnDown },
+            { Vector2.up, attackSpawnUp },
+            { Vector2.left, attackSpawnLeft },
+            { Vector2.right, attackSpawnRight },
+        };
     }
 
     void OnDestroy()
@@ -70,7 +84,8 @@ public class PlayerAttackController : MonoBehaviour
 
     void SpawnKnife(Vector3 directionToThrowKnife)
     {
-        GameObject thrownKnife = Instantiate(knife, this.transform.position + directionToThrowKnife, Quaternion.identity);
+        GameObject attackSpawn = directionToAttackObject[directionToThrowKnife];
+        GameObject thrownKnife = Instantiate(knife, attackSpawn.transform.position, Quaternion.identity);
         Projectile thrownKnifeScript = thrownKnife.GetComponent<Projectile>();
         thrownKnifeScript.InitializeProjectile(directionToThrowKnife);
     }
