@@ -8,13 +8,12 @@ public class TriggerDamage : CollisionEffects
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IDamageable>(out var _))
+        if (collision.TryGetComponent<IDamageable>(out var _) && canApplyEffect)
         {
             isColliding = true;
             objectInCollision = collision.gameObject;
 
             ApplyEffect();
-            effectCooldown.StartTimer();
         }
         InvokeCollisionEvent();
     }
@@ -30,5 +29,6 @@ public class TriggerDamage : CollisionEffects
     protected override void ApplyEffect()
     {
         objectInCollision.GetComponent<IDamageable>().TakeDamage(damage);
+        InitializeEffectCooldown();
     }
 }

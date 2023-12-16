@@ -12,6 +12,7 @@ public class AIVision : MonoBehaviour
     public bool PlayerVisible { get; set; }
     public EnemyTargetManager TargetManager { get; set; }
     public EnemyLocation Location { get; set; }
+    public float Range { get => range; set => range = value; }
 
     void Awake()
     {
@@ -38,12 +39,12 @@ public class AIVision : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, range);
+        Gizmos.DrawWireSphere(transform.position, Range);
 
         Vector3 rotatedVector1 = Quaternion.Euler(0, 0, angle / 2) * transform.right;
         Vector3 rotatedVector2 = Quaternion.Euler(0, 0, -angle / 2) * transform.right;
-        Gizmos.DrawLine(transform.position, transform.position + rotatedVector1 * range);
-        Gizmos.DrawLine(transform.position, transform.position + rotatedVector2 * range);
+        Gizmos.DrawLine(transform.position, transform.position + rotatedVector1 * Range);
+        Gizmos.DrawLine(transform.position, transform.position + rotatedVector2 * Range);
     }
 
     void HandleTargetVisibility()
@@ -86,7 +87,7 @@ public class AIVision : MonoBehaviour
         }
 
         Vector2 toTarget = TargetManager.Player.position - transform.position;
-        if (toTarget.magnitude > range)
+        if (toTarget.magnitude > Range)
         {
             return false;
         }

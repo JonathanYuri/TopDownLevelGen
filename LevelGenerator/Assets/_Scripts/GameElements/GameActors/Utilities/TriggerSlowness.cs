@@ -9,13 +9,12 @@ public class TriggerSlowness : CollisionEffects
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<ISlowable>(out var _))
+        if (collision.TryGetComponent<ISlowable>(out var _) && canApplyEffect)
         {
             isColliding = true;
             objectInCollision = collision.gameObject;
 
             ApplyEffect();
-            effectCooldown.StartTimer();
         }
         InvokeCollisionEvent();
     }
@@ -31,5 +30,6 @@ public class TriggerSlowness : CollisionEffects
     protected override void ApplyEffect()
     {
         objectInCollision.GetComponent<ISlowable>().TakeSlowness(percentSlow, timeSlow);
+        InitializeEffectCooldown();
     }
 }

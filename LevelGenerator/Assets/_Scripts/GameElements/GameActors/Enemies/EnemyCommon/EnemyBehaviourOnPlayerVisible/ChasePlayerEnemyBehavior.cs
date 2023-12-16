@@ -4,11 +4,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(AIPathController))]
 [RequireComponent(typeof(AIVision))]
-public class ChaseController : MonoBehaviour
+public class ChasePlayerEnemyBehavior : EnemyBehaviorOnPlayerVisible
 {
-    public EnemyTargetManager TargetManager { get; set; }
-
-    public void TryChaseTarget()
+    public override void Run()
     {
         TargetManager.ChasePlayer();
     }

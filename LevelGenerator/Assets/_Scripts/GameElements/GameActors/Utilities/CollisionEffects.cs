@@ -9,6 +9,7 @@ public abstract class CollisionEffects : MonoBehaviour
     [SerializeField] protected Timer effectCooldown;
 
     protected bool isColliding = false;
+    protected bool canApplyEffect = true;
     protected GameObject objectInCollision;
 
     public event Action CollisionOccured;
@@ -30,6 +31,8 @@ public abstract class CollisionEffects : MonoBehaviour
 
     void OnEffectTimerExpired()
     {
+        canApplyEffect = true;
+
         if (isColliding)
         {
             if (objectInCollision == null)
@@ -39,15 +42,20 @@ public abstract class CollisionEffects : MonoBehaviour
             }
 
             ApplyEffect();
-            effectCooldown.StartTimer();
         }
     }
 
-    protected void InvokeCollisionEvent() => CollisionOccured?.Invoke();
+    protected void InitializeEffectCooldown()
+    {
+        effectCooldown.StartTimer();
+        canApplyEffect = false;
+    }
 
     protected void ResetColision()
     {
         isColliding = false;
         objectInCollision = null;
     }
+
+    protected void InvokeCollisionEvent() => CollisionOccured?.Invoke();
 }

@@ -59,8 +59,8 @@ GameObject:
   - component: {fileID: 960051703032710505}
   - component: {fileID: 3976242800943822502}
   - component: {fileID: 2922351088196787626}
-  - component: {fileID: 4873740101189739888}
   - component: {fileID: 8306904822291667586}
+  - component: {fileID: 2189318609167487983}
   m_Layer: 8
   m_Name: AI
   m_TagString: Untagged
@@ -174,18 +174,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   patrolTimer: {fileID: 4148752337870011390}
   patrolRange: 1
---- !u!114 &4873740101189739888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3450944568378401892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36bbdb63dd4d7fa4a970219a24ade2fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8306904822291667586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,6 +190,20 @@ MonoBehaviour:
   targetManager: {fileID: 7324877665200866385}
   location: {fileID: 3970811768209648529}
   damageForgetTimer: {fileID: 486322242890889319}
+--- !u!114 &2189318609167487983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3450944568378401892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a720357b53bbf6a4c9a69210e9914c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyLocation: {fileID: 3970811768209648529}
+  aiVision: {fileID: 8071979939752362801}
 --- !u!1 &3635678906205600835
 GameObject:
   m_ObjectHideFlags: 0

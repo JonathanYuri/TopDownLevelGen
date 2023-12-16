@@ -19,6 +19,7 @@ public class AIPathController : MonoBehaviour
     Seeker seeker;
 
     public EnemyTargetManager TargetManager { get; set; }
+    public bool FollowPath { get; set; }
 
     void Awake()
     {
@@ -38,7 +39,10 @@ public class AIPathController : MonoBehaviour
 
     void Update()
     {
-        FollowThePath();
+        if (FollowPath)
+        {
+            FollowThePath();
+        }
     }
 
     void OnDestroy()

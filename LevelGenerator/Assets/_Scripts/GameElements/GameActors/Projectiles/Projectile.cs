@@ -7,34 +7,32 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb;
-    [SerializeField] CollisionEffects triggerEffect;
+    [SerializeField] List<CollisionEffects> triggerEffects;
     RotateObject rotateObject;
 
-    [SerializeField] float movimentVelocity = 2.0f;
-    [SerializeField] float timeToAutoDestroy = 4.0f;
+    int totalEffectsApplied = 0;
 
+    [SerializeField] float movimentVelocity = 2.0f;
+    [SerializeField] Timer autoDestroyTimer;
     Vector2 movementDirection;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rotateObject = GetComponent<RotateObject>();
-        triggerEffect.CollisionOccured += CollisionOccured;
+        triggerEffects.ForEach(triggerEffect => triggerEffect.CollisionOccured += CollisionOccured);
+        autoDestroyTimer.OnTimerExpired += OnAutoDestroyTimerExpired;
     }
 
     void OnDestroy()
     {
-        if (triggerEffect != null)
-        {
-            triggerEffect.CollisionOccured -= CollisionOccured;
-        }
-
-        StopAllCoroutines();
+        triggerEffects.ForEach(triggerEffect => triggerEffect.CollisionOccured -= CollisionOccured);
+        autoDestroyTimer.OnTimerExpired -= OnAutoDestroyTimerExpired;
     }
 
     void Start()
     {
-        StartCoroutine(AutoDestroy());
+        autoDestroyTimer.StartTimer();
     }
 
     void FixedUpdate()
@@ -43,23 +41,26 @@ public class Projectile : MonoBehaviour
         rb.MovePosition((Vector2)this.transform.position + moviment);
     }
 
-    IEnumerator AutoDestroy()
+    void CollisionOccured()
     {
-        yield return new WaitForSeconds(timeToAutoDestroy);
-        if (gameObject != null)
+        totalEffectsApplied++;
+        if (totalEffectsApplied == triggerEffects.Count)
         {
             Destroy(gameObject);
         }
-    }
-
-    void CollisionOccured()
-    {
-        Destroy(gameObject);
     }
 
     public void InitializeProjectile(Vector2 movementDirection)
     {
         this.movementDirection = movementDirection;
         rotateObject.StartRotation(movementDirection);
+    }
+
+    void OnAutoDestroyTimerExpired()
+    {
+        if (gameObject != null)
+        {
+            Destroy(gameObject);
+        }
     }
 }

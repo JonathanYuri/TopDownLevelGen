@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(PatrolController))]
-[RequireComponent(typeof(ChaseController))]
+[RequireComponent(typeof(EnemyBehaviorOnPlayerVisible))]
 [RequireComponent(typeof(AIVision))]
 public class AIController : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class AIController : MonoBehaviour
     [SerializeField] Timer damageForgetTimer;
 
     PatrolController patrolController;
-    ChaseController chaseController;
+    EnemyBehaviorOnPlayerVisible enemyBehaviorOnPlayerVisible;
     AIVision aiVision;
     AIPathController aiPathController;
 
@@ -23,8 +23,8 @@ public class AIController : MonoBehaviour
         patrolController.TargetManager = targetManager;
         patrolController.Location = location;
 
-        chaseController = GetComponent<ChaseController>();
-        chaseController.TargetManager = targetManager;
+        enemyBehaviorOnPlayerVisible = GetComponent<EnemyBehaviorOnPlayerVisible>();
+        enemyBehaviorOnPlayerVisible.TargetManager = targetManager;
 
         aiPathController = GetComponent<AIPathController>();
         aiPathController.TargetManager = targetManager;
@@ -52,7 +52,13 @@ public class AIController : MonoBehaviour
     {
         if (location.IsInPlayerRoom(targetManager.PlayerLocation.RoomPosition))
         {
+            aiPathController.FollowPath = true;
             DecideEnemyAction();
+        }
+        else
+        {
+            aiPathController.FollowPath = false;
+            targetManager.Target = null;
         }
     }
 
@@ -60,7 +66,7 @@ public class AIController : MonoBehaviour
     {
         if (aiVision.PlayerVisible || targetDamagedMe)
         {
-            chaseController.TryChaseTarget();
+            enemyBehaviorOnPlayerVisible.Run();
         }
         else
         {

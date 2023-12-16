@@ -58,13 +58,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
     {
         if (life - damage <= 0)
         {
+            playerHealthBarController.UpdateLife(0);
             Die();
         }
         else
         {
             life -= damage;
+            playerHealthBarController.UpdateLife(life);
         }
-        playerHealthBarController.UpdateLife(life);
     }
 
     void Die()
