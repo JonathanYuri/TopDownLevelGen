@@ -9,13 +9,6 @@ public class MaintainMaxRangeDistanceEnemyBehavior : EnemyBehaviorOnPlayerVisibl
     [SerializeField] EnemyLocation enemyLocation; // TODO: modify this
     [SerializeField] AIVision aiVision;
 
-    GameMapManager gameMapManager; // TODO: modify this
-
-    void Start()
-    {
-        gameMapManager = FindObjectOfType<GameMapManager>();
-    }
-
     public override void Run()
     {
         Transform chosenFloor = ChooseFloorToGo();
@@ -27,7 +20,12 @@ public class MaintainMaxRangeDistanceEnemyBehavior : EnemyBehaviorOnPlayerVisibl
 
     Transform ChooseFloorToGo()
     {
-        if (!gameMapManager.EachRoomFloors.TryGetValue(enemyLocation.RoomPosition, out List<GameObject> floors))
+        if (!GameMapSingleton.Instance.EachRoomFloors.TryGetValue(enemyLocation.RoomPosition, out List<GameObject> floors))
+        {
+            return null;
+        }
+
+        if (TargetManager.Player == null)
         {
             return null;
         }
@@ -45,7 +43,7 @@ public class MaintainMaxRangeDistanceEnemyBehavior : EnemyBehaviorOnPlayerVisibl
 
     Transform TryMoveAwayFromPlayer(List<GameObject> floors, Vector2 toTarget)
     {
-        // pega a posicao no meu range que me deixa ver o inimigo ainda
+        // pega a posicao no meu range que me deixa ver o player ainda
         var orderedFloors = floors
             .Where(floor => Vector2.Distance(floor.transform.position, transform.position) <= aiVision.Range - toTarget.magnitude)
             .OrderByDescending(floor => Vector2.Distance(floor.transform.position, transform.position))

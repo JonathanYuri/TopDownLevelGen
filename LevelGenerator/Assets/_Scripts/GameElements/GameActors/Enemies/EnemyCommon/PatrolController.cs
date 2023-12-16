@@ -6,7 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(AIMovementController))]
 public class PatrolController : MonoBehaviour
 {
-    GameMapManager gameMapManager;
     EnemyTargetManager targetManager;
 
     EnemyLocation location;
@@ -33,11 +32,6 @@ public class PatrolController : MonoBehaviour
         patrolTimer.OnTimerExpired -= OnPatrolTimerExpired;
     }
 
-    void Start()
-    {
-        gameMapManager = FindObjectOfType<GameMapManager>();
-    }
-
     public void TryPatrol()
     {
         if (canPatrol)
@@ -60,7 +54,7 @@ public class PatrolController : MonoBehaviour
 
     Transform ChooseFloorToGo()
     {
-        if (!gameMapManager.EachRoomFloors.TryGetValue(Location.RoomPosition, out List<GameObject> floors))
+        if (!GameMapSingleton.Instance.EachRoomFloors.TryGetValue(Location.RoomPosition, out List<GameObject> floors))
         {
             return null;
         }

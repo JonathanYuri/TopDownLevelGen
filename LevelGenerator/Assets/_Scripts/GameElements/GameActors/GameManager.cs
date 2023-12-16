@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
 
     PlayerController player;
     PlayerLocationManager playerLocationManager;
-    GameMapManager gameMapManager;
 
     Camera sceneCamera;
 
@@ -26,7 +25,6 @@ public class GameManager : MonoBehaviour
         uiMapGenerator = FindObjectOfType<UIMapGenerator>();
         levelGenerator = FindObjectOfType<LevelGenerator>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
-        gameMapManager = FindObjectOfType<GameMapManager>();
         levelDataManager = GetComponent<LevelDataManager>();
         GenerateGame();
     }
@@ -42,19 +40,20 @@ public class GameManager : MonoBehaviour
 
     void GenerateGame()
     {
-        gameMapManager.RoomPositions.Clear();
-        gameMapManager.RoomPositions = levelGenerator.Generate();
+        GameMapSingleton.Instance.EachRoomFloors.Clear();
+        GameMapSingleton.Instance.RoomPositions.Clear();
+        GameMapSingleton.Instance.RoomPositions = levelGenerator.Generate();
 
         if (player == null)
         {
             CreatePlayer();
         }
-        playerLocationManager.SetPlayerToInitialRoom(sceneCamera, gameMapManager.RoomPositions.ElementAt(0));
+        playerLocationManager.SetPlayerToInitialRoom(sceneCamera, GameMapSingleton.Instance.RoomPositions.ElementAt(0));
 
-        uiMapGenerator.CreateUIMap(gameMapManager.RoomPositions, playerLocationManager.Location);
+        uiMapGenerator.CreateUIMap(GameMapSingleton.Instance.RoomPositions, playerLocationManager.Location);
 
-        gameMapManager.ConfigureAStar();
-        gameMapManager.SetEnemiesTargetPlayer(player.transform, playerLocationManager.Location);
+        GameMapSingleton.Instance.ConfigureAStar();
+        GameMapSingleton.Instance.SetEnemiesTargetPlayer(player.transform, playerLocationManager.Location);
     }
 
     void CreatePlayer()

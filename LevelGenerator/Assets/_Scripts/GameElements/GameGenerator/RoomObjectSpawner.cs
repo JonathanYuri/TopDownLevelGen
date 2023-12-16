@@ -11,8 +11,6 @@ namespace SpawnRoomObjects.SpawnAll
     /// </summary>
     public class RoomObjectSpawner : MonoBehaviour
     {
-        GameMapManager gameMapManager;
-
         [SerializeField] GameObject[] enemies;
 
         [SerializeField] GameObject obstacle;
@@ -86,11 +84,6 @@ namespace SpawnRoomObjects.SpawnAll
             };
         }
 
-        void Start()
-        {
-            gameMapManager = FindObjectOfType<GameMapManager>();
-        }
-
         /// <summary>
         /// Spawns room objects within the given room.
         /// </summary>
@@ -118,7 +111,7 @@ namespace SpawnRoomObjects.SpawnAll
                 }
             }
 
-            gameMapManager.EachRoomFloors[roomPosition] = allFloorsPlaced.Values.ToList();
+            GameMapSingleton.Instance.EachRoomFloors.Add(roomPosition, allFloorsPlaced.Values.ToList());
         }
 
         internal GameObject InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent)
