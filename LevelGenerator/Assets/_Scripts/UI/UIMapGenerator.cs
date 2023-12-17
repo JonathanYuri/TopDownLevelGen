@@ -28,6 +28,11 @@ public class UIMapGenerator : MonoBehaviour
         playerInRoomImage = playerInRoomPanel.GetComponent<Image>();
     }
 
+    void Start()
+    {
+        playerLocation = FindObjectOfType<PlayerLocationManager>().Location;
+    }
+
     /// <summary>
     /// Destroys the previously generated UI map elements, clearing the map for regeneration.
     /// </summary>
@@ -43,10 +48,9 @@ public class UIMapGenerator : MonoBehaviour
     /// <summary>
     /// Creates the UI map to represent the game map with room panels and player's current position.
     /// </summary>
-    public void CreateUIMap(HashSet<Position> map, Location playerLocation)
+    public void CreateUIMap()
     {
-        this.playerLocation = playerLocation;
-        this.map = map;
+        this.map = GameMapSingleton.Instance.RoomPositions;
         DestroyPastUIMap();
 
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();

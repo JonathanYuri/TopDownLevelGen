@@ -35,13 +35,14 @@ public class LevelGenerator : MonoBehaviour
     /// Generates a level, including its map.
     /// </summary>
     /// <returns>A collection of positions representing the generated map.</returns>
-    public HashSet<Position> Generate()
+    public void Generate()
     {
         DestroyAllPastObjects();
         map = GenerateMap();
         GenerateInitialAndFinalRoom();
         GenerateRemainingRooms();
-        return map;
+
+        GameMapSingleton.Instance.RoomPositions = map;
     }
 
     /// <summary>

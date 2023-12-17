@@ -6,7 +6,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class MaintainMaxRangeDistanceEnemyBehavior : EnemyBehaviorOnPlayerVisible
 {
-    [SerializeField] EnemyLocation enemyLocation; // TODO: modify this
+    [SerializeField] EnemyLocation enemyLocation;
     [SerializeField] AIVision aiVision;
 
     public override void Run()

@@ -22,9 +22,9 @@ public class PlayerLocationManager : MonoBehaviour
         Location = GetComponent<Location>();
     }
 
-    public void SetPlayerToInitialRoom(Camera camera, Position initialPosition)
+    public void SetPlayerToInitialRoom(Position initialPosition)
     {
-        camera.transform.position = new Vector3(0, 0, camera.transform.position.z);
+        Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
         SetPlayerToRoom(initialPosition, new Vector3(0, 0));
     }
 
@@ -39,7 +39,7 @@ public class PlayerLocationManager : MonoBehaviour
     /// </summary>
     /// <param name="direction">The direction of movement.</param>
     /// <param name="camera">The game camera.</param>
-    public void TranslatePlayerToDirectionOfRoom(Vector3 direction, Camera camera)
+    public void TranslatePlayerToDirectionOfRoom(Vector3 direction)
     {
         Position roomPosition = new()
         {
@@ -48,7 +48,7 @@ public class PlayerLocationManager : MonoBehaviour
         };
 
         Vector2 roomInUnity = Utils.TransformAMapPositionIntoAUnityPosition(roomPosition);
-        camera.transform.position = new Vector3(roomInUnity.x, roomInUnity.y, camera.transform.position.z);
+        Camera.main.transform.position = new Vector3(roomInUnity.x, roomInUnity.y, Camera.main.transform.position.z);
         SetPlayerToRoom(roomPosition, roomInUnity + directionToPositionInRoomMatrix[direction]);
     }
 }

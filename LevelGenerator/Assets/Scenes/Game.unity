@@ -134,8 +134,9 @@ GameObject:
   - component: {fileID: 150029447}
   - component: {fileID: 150029446}
   - component: {fileID: 150029445}
+  - component: {fileID: 150029448}
   m_Layer: 0
-  m_Name: PlayerLocationManager
+  m_Name: PlayerManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -180,6 +181,19 @@ Transform:
   m_Father: {fileID: 733645070}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &150029448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150029444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52fa3b6266090fa4d8bce2f8d190e488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 3393287145384940802, guid: fb4cd3f64dba7304b9eb1dfd018f87a4, type: 3}
 --- !u!1 &339250559
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,6 +621,7 @@ Transform:
   - {fileID: 2146271735}
   - {fileID: 150029447}
   - {fileID: 2022860811}
+  - {fileID: 1874049232}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -946,6 +961,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1626703165}
   m_CullTransparentMesh: 1
+--- !u!1 &1874049231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1874049232}
+  - component: {fileID: 1874049233}
+  m_Layer: 0
+  m_Name: UIMapGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1874049232
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1874049231}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 733645070}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1874049233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1874049231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3b8a34d21c7d434d8a7be653603518f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapHolder: {fileID: 1626703165}
+  roomPanelPrefab: {fileID: 2696002759004637187, guid: b4bdd381a41a8e240a1d313f3c975990, type: 3}
+  playerInRoomPanel: {fileID: 2696002759004637187, guid: 210ecaa32d5e20c409361a1e7f72f3f9, type: 3}
+  blankSpacePrefab: {fileID: 2696002759004637187, guid: 7ea186aa2de37b542a4cae15e0a6f055, type: 3}
 --- !u!1 &2022860810
 GameObject:
   m_ObjectHideFlags: 0
@@ -1170,7 +1233,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2146271735}
   - component: {fileID: 2146271734}
-  - component: {fileID: 2146271736}
   - component: {fileID: 2146271737}
   m_Layer: 0
   m_Name: GameManager
@@ -1191,7 +1253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 641c4395564ba5c489dc3b7e2357caae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 3393287145384940802, guid: fb4cd3f64dba7304b9eb1dfd018f87a4, type: 3}
 --- !u!4 &2146271735
 Transform:
   m_ObjectHideFlags: 0
@@ -1207,22 +1268,6 @@ Transform:
   m_Father: {fileID: 733645070}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2146271736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2146271733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3b8a34d21c7d434d8a7be653603518f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapHolder: {fileID: 1626703165}
-  roomPanelPrefab: {fileID: 2696002759004637187, guid: b4bdd381a41a8e240a1d313f3c975990, type: 3}
-  playerInRoomPanel: {fileID: 2696002759004637187, guid: 210ecaa32d5e20c409361a1e7f72f3f9, type: 3}
-  blankSpacePrefab: {fileID: 2696002759004637187, guid: 7ea186aa2de37b542a4cae15e0a6f055, type: 3}
 --- !u!114 &2146271737
 MonoBehaviour:
   m_ObjectHideFlags: 0
