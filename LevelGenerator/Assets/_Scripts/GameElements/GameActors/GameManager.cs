@@ -40,8 +40,7 @@ public class GameManager : MonoBehaviour
 
     void GenerateGame()
     {
-        GameMapSingleton.Instance.EachRoomFloors.Clear();
-        GameMapSingleton.Instance.RoomPositions.Clear();
+        GameMapSingleton.Instance.ClearMap();
         GameMapSingleton.Instance.RoomPositions = levelGenerator.Generate();
 
         if (player == null)

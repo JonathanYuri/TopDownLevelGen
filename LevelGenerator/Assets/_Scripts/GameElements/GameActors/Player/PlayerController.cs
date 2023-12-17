@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
     {
         if (collision.CompareTag("OpenDoor"))
         {
-            Door door = collision.GetComponent<Door>();
+            Door door = collision.GetComponentInParent<Door>();
             DoorEventArgs doorEventArgs = new()
             {
                 doorDirection = door.Direction,

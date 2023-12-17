@@ -43,7 +43,7 @@ public class MaintainMaxRangeDistanceEnemyBehavior : EnemyBehaviorOnPlayerVisibl
 
     Transform TryMoveAwayFromPlayer(List<GameObject> floors, Vector2 toTarget)
     {
-        // pega a posicao no meu range que me deixa ver o player ainda
+        // pega a posicao no meu range que me deixa ver o player ainda (maior distancia)
         var orderedFloors = floors
             .Where(floor => Vector2.Distance(floor.transform.position, transform.position) <= aiVision.Range - toTarget.magnitude)
             .OrderByDescending(floor => Vector2.Distance(floor.transform.position, transform.position))
@@ -57,7 +57,7 @@ public class MaintainMaxRangeDistanceEnemyBehavior : EnemyBehaviorOnPlayerVisibl
         // pega a posicao no meu range que me deixa mais perto do player
         var orderedFloors = floors
             .Where(floor => Vector2.Distance(floor.transform.position, transform.position) <= aiVision.Range)
-            .OrderByDescending(floor => Vector2.Distance(floor.transform.position, TargetManager.Player.position))
+            .OrderBy(floor => Vector2.Distance(floor.transform.position, TargetManager.Player.position))
             .ToList();
 
         return orderedFloors.Count > 0 ? orderedFloors[0].transform : null;

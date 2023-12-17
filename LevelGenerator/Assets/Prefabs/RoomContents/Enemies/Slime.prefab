@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf27f00228ad68b4a93c480e18ff5190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aIPathController: {fileID: 7971363246775922797}
 --- !u!1 &2906686817777263135
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   life: 70
   targetManager: {fileID: 7014183382443654903}
+  location: {fileID: 1752701515999892145}
 --- !u!114 &4602692104869820121
 MonoBehaviour:
   m_ObjectHideFlags: 0

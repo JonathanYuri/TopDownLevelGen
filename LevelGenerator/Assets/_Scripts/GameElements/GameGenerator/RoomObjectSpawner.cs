@@ -91,7 +91,7 @@ namespace SpawnRoomObjects.SpawnAll
         /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
         public void SpawnRoomObjects(RoomSkeleton room, Position roomPosition, GameObject roomObject)
         {
-            Dictionary<Position, GameObject> allFloorsPlaced = floorSpawner.SpawnAllFloors(roomObject);
+            Dictionary<Position, GameObject> allFloorsPlaced = floorSpawner.SpawnAllFloors(roomObject, roomPosition);
 
             for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
             {
@@ -105,7 +105,7 @@ namespace SpawnRoomObjects.SpawnAll
                         continue;
                     }
 
-                    InstantiateRoomContentObject(tilePrefab, roomObject, positionRoomContent);
+                    InstantiateRoomContentObject(tilePrefab, roomObject, positionRoomContent, roomPosition);
                     // se chegou a instanciar o objeto nao eh um chao
                     allFloorsPlaced.Remove(positionRoomContent);
                 }
@@ -114,7 +114,7 @@ namespace SpawnRoomObjects.SpawnAll
             GameMapSingleton.Instance.EachRoomFloors.Add(roomPosition, allFloorsPlaced.Values.ToList());
         }
 
-        internal GameObject InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent)
+        internal GameObject InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent, Position roomPosition)
         {
             GameObject tileResult = Instantiate(tilePrefab, roomObject.transform);
             tileResult.transform.rotation = tilePrefab.transform.rotation;
@@ -124,6 +124,24 @@ namespace SpawnRoomObjects.SpawnAll
 
             // new Vector2(-GameConstants.ROOM_MIDDLE.X, -GameConstants.ROOM_MIDDLE.Y) pra colocar o (0, 0) que eh o canto inferior esquerdo para a coordenada -7, -4
             // new Vector2(positionRoomContent.X, positionRoomContent.Y); para colocar todos os objetos nas posicoes certas da matriz
+
+            if (tileResult.TryGetComponent(out Enemy enemy))
+            {
+                if (!GameMapSingleton.Instance.EachRoomEnemies.ContainsKey(roomPosition))
+                {
+                    GameMapSingleton.Instance.EachRoomEnemies[roomPosition] = new();
+                }
+                GameMapSingleton.Instance.EachRoomEnemies[roomPosition].Add(enemy);
+            }
+
+            else if (tileResult.TryGetComponent(out Door door))
+            {
+                if (!GameMapSingleton.Instance.EachRoomDoors.ContainsKey(roomPosition))
+                {
+                    GameMapSingleton.Instance.EachRoomDoors[roomPosition] = new();
+                }
+                GameMapSingleton.Instance.EachRoomDoors[roomPosition].Add(door);
+            }
 
             return tileResult;
         }

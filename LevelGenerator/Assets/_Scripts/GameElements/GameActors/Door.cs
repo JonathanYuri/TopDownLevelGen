@@ -15,7 +15,8 @@ public class DoorEventArgs : EventArgs
 /// </summary>
 public class Door : MonoBehaviour
 {
-    Vector3 direction;
+    [SerializeField] GameObject openDoor;
+    [SerializeField] GameObject closedDoor;
 
     static readonly Dictionary<Vector3, Vector3> RotationToDirectionMap = new()
     {
@@ -25,7 +26,7 @@ public class Door : MonoBehaviour
         { new Vector3(0, 0, 180), Vector3.left }
     };
 
-    public Vector3 Direction { get => direction; set => direction = value; }
+    public Vector3 Direction { get; set; }
 
     private void Awake()
     {
@@ -38,5 +39,17 @@ public class Door : MonoBehaviour
         {
             throw new ArgumentException("Unknown door direction: " + rotation);
         }
+    }
+
+    public void Open()
+    {
+        openDoor.SetActive(true);
+        closedDoor.SetActive(false);
+    }
+
+    void Close()
+    {
+        openDoor.SetActive(false);
+        closedDoor.SetActive(true);
     }
 }

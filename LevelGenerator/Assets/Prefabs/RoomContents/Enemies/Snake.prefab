@@ -179,6 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf27f00228ad68b4a93c480e18ff5190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aIPathController: {fileID: 3877943038967408362}
 --- !u!1 &1877137431109540566
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   life: 30
   targetManager: {fileID: 8743796044381433544}
+  location: {fileID: 4600576350118075242}
   dashController: {fileID: 3677121069923688478}
   aiVision: {fileID: 7141659908848299429}
 --- !u!114 &5883983589104860115

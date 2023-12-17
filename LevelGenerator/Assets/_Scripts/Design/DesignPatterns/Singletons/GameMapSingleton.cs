@@ -7,6 +7,16 @@ public class GameMapSingleton : Singleton<GameMapSingleton>
 {
     public HashSet<Position> RoomPositions { get; set; } = new();
     public Dictionary<Position, List<GameObject>> EachRoomFloors { get; set; } = new();
+    public Dictionary<Position, HashSet<Door>> EachRoomDoors { get; set; } = new();
+    public Dictionary<Position, HashSet<Enemy>> EachRoomEnemies { get; set; } = new();
+
+    public void ClearMap()
+    {
+        RoomPositions.Clear();
+        EachRoomFloors.Clear();
+        EachRoomDoors.Clear();
+        EachRoomEnemies.Clear();
+    }
 
     public void ConfigureAStar()
     {
