@@ -42,15 +42,16 @@ public class PlayerManager : MonoBehaviour
         Player = playerController;
 
         playerLocationManager.Player = Player;
+        playerLocationManager.PlayerLocation = Player.GetComponentInChildren<Location>();
         Player.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
         Player.OnLevelComplete += OnLevelComplete;
     }
 
     void PlayerPassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
     {
-        Position playerOldPosition = playerLocationManager.Location.RoomPosition;
+        Position playerOldPosition = playerLocationManager.PlayerLocation.RoomPosition;
         playerLocationManager.TranslatePlayerToDirectionOfRoom(doorEventArgs.doorDirection);
-        uiMapGenerator.UpdateUIMap(playerOldPosition, playerLocationManager.Location.RoomPosition);
+        uiMapGenerator.UpdateUIMap(playerOldPosition, playerLocationManager.PlayerLocation.RoomPosition);
     }
 
     void OnLevelComplete()

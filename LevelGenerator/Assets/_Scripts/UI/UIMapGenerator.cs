@@ -19,7 +19,7 @@ public class UIMapGenerator : MonoBehaviour
     Dictionary<Position, Image> uiMap;
     HashSet<Position> map;
 
-    Location playerLocation;
+    PlayerLocationManager playerLocationManager;
 
     void Awake()
     {
@@ -30,7 +30,7 @@ public class UIMapGenerator : MonoBehaviour
 
     void Start()
     {
-        playerLocation = FindObjectOfType<PlayerLocationManager>().Location;
+        playerLocationManager = FindObjectOfType<PlayerLocationManager>();
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ public class UIMapGenerator : MonoBehaviour
     /// <returns>The selected room panel GameObject.</returns>
     GameObject ChoosePanelToPosition(Position position)
     {
-        if (playerLocation.RoomPosition.Equals(position))
+        if (playerLocationManager.PlayerLocation.RoomPosition.Equals(position))
         {
             return playerInRoomPanel;
         }

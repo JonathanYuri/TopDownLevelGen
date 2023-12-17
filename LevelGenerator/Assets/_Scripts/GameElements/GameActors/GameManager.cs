@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         uiMapGenerator.CreateUIMap();
 
         GameMapSingleton.Instance.ConfigureAStar();
-        GameMapSingleton.Instance.SetEnemiesTargetPlayer(playerManager.Player.transform, playerLocationManager.Location);
+        GameMapSingleton.Instance.SetEnemiesTargetPlayer(playerManager.Player.transform, playerLocationManager.PlayerLocation);
     }
 
     public void LoadNextLevel()

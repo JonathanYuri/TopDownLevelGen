@@ -86,6 +86,11 @@ public class AIVision : MonoBehaviour
             return false;
         }
 
+        if (TargetManager.PlayerLocation.JustEnteredRoom)
+        {
+            return false;
+        }
+
         Vector2 toTarget = TargetManager.Player.position - transform.position;
         if (toTarget.magnitude > Range)
         {

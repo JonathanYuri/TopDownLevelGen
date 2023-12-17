@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(Location))]
 public class PlayerLocationManager : MonoBehaviour
 {
     static readonly Dictionary<Vector3, Vector2> directionToPositionInRoomMatrix = new()
@@ -15,12 +14,7 @@ public class PlayerLocationManager : MonoBehaviour
     };
 
     public PlayerController Player { get; set; }
-    public Location Location { get; private set; }
-
-    void Awake()
-    {
-        Location = GetComponent<Location>();
-    }
+    public Location PlayerLocation { get; set; }
 
     public void SetPlayerToInitialRoom(Position initialPosition)
     {
@@ -31,7 +25,7 @@ public class PlayerLocationManager : MonoBehaviour
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)
     {
         Player.transform.position = positionInRoomMatrix;
-        Location.RoomPosition = roomPosition;
+        PlayerLocation.RoomPosition = roomPosition;
     }
 
     /// <summary>
@@ -43,8 +37,8 @@ public class PlayerLocationManager : MonoBehaviour
     {
         Position roomPosition = new()
         {
-            X = Location.RoomPosition.X + (int)direction.x,
-            Y = Location.RoomPosition.Y + (int)direction.y
+            X = PlayerLocation.RoomPosition.X + (int)direction.x,
+            Y = PlayerLocation.RoomPosition.Y + (int)direction.y
         };
 
         Vector2 roomInUnity = Utils.TransformAMapPositionIntoAUnityPosition(roomPosition);

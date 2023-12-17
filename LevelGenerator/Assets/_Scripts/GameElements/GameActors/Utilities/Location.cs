@@ -4,5 +4,45 @@ using UnityEngine;
 
 public class Location : MonoBehaviour
 {
-    public Position RoomPosition { get; set; }
+    Position roomPosition;
+    bool justEnteredRoom;
+
+    [SerializeField] Timer entryTimer;
+
+    public Position RoomPosition
+    {
+        get => roomPosition;
+        set
+        {
+            roomPosition = value;
+            if (entryTimer != null)
+            {
+                JustEnteredRoom = true;
+                entryTimer.StartTimer();
+            }
+        }
+    }
+
+    public bool JustEnteredRoom { get => justEnteredRoom; set => justEnteredRoom = value; }
+
+    void Start()
+    {
+        if (entryTimer != null)
+        {
+            entryTimer.OnTimerExpired += OnEntryTimerExpired;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (entryTimer != null)
+        {
+            entryTimer.OnTimerExpired -= OnEntryTimerExpired;
+        }
+    }
+
+    void OnEntryTimerExpired()
+    {
+        JustEnteredRoom = false;
+    }
 }
