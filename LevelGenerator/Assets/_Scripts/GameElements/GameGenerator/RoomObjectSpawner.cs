@@ -91,7 +91,7 @@ namespace SpawnRoomObjects.SpawnAll
         /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
         public void SpawnRoomObjects(RoomSkeleton room, Position roomPosition, GameObject roomObject)
         {
-            Dictionary<Position, GameObject> allFloorsPlaced = floorSpawner.SpawnAllFloors(roomObject, roomPosition);
+            Dictionary<Position, GameObject> allFloorsPlaced = floorSpawner.SpawnAllFloors(room, roomObject, roomPosition);
 
             for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
             {
