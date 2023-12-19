@@ -122,3 +122,19 @@ public class RoomSkeleton
         ChangeablesPositions.Remove(position);
     }
 }
+
+public struct RoomData
+{
+    public Position[] doorPositions;
+    public RoomContents[] enemies;
+    public RoomContents[] obstacles;
+    public float difficulty;
+
+    public RoomData(Position[] doorPositions, RoomContents[] enemies, RoomContents[] obstacles, float difficulty)
+    {
+        this.doorPositions = doorPositions;
+        this.enemies = enemies;
+        this.obstacles = obstacles;
+        this.difficulty = difficulty;
+    }
+}

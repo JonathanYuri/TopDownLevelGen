@@ -51,13 +51,15 @@ namespace RoomGeneticAlgorithm
             int count = 0;
             foreach (RoomContents enemy in GeneticAlgorithmConstants.ROOM.Enemies)
             {
-                RoomMatrix.PutContentInPosition(enemy, chosenPositions[count]);
+                RoomMatrix.PutContentInPosition(enemy, chosenPositions[count],
+                    GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
                 count++;
             }
 
             foreach (RoomContents obstacle in GeneticAlgorithmConstants.ROOM.Obstacles)
             {
-                RoomMatrix.PutContentInPosition(obstacle, chosenPositions[count]);
+                RoomMatrix.PutContentInPosition(obstacle, chosenPositions[count],
+                    GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
                 count++;
             }
         }

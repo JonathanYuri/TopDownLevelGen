@@ -111,10 +111,6 @@ public static class Utils
         return combinedPositions;
     }
 
-    public static bool IsAObstacle(RoomContents[] obstacles, RoomContents content) => obstacles.Contains(content);
-
-    public static bool IsAEnemy(RoomContents[] enemies, RoomContents content) => enemies.Contains(content);
-
     public static int CalculateDistance(Position position1, Position position2) => ManhattanDistance(position1, position2);
 
     static int ManhattanDistance(Position position1, Position position2)

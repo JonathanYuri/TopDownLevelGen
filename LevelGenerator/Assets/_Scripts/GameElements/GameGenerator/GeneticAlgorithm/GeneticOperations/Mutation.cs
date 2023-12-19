@@ -17,7 +17,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
             int idx2 = Random.Range(0, GeneticAlgorithmConstants.ROOM.ChangeablesPositions.Count);
             Position position2 = GeneticAlgorithmConstants.ROOM.ChangeablesPositions.ElementAt(idx2);
 
-            individual.RoomMatrix.SwapPositions(position1, position2);
+            individual.RoomMatrix.SwapPositions(position1, position2, GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
         }
 
         /// <summary>

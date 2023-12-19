@@ -1,3 +1,4 @@
+using RoomGeneticAlgorithm.Constants;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,7 +46,8 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         {
             foreach (Position position in positions)
             {
-                child.RoomMatrix.PutContentInPosition(content, position);
+                child.RoomMatrix.PutContentInPosition(content, position,
+                    GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
                 avaliablePositions.Remove(position);
             }
         }

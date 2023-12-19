@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using RoomGeneticAlgorithm.Constants;
+using System.Linq;
 
 namespace RoomGeneticAlgorithm.Variables
 {
@@ -27,13 +27,13 @@ namespace RoomGeneticAlgorithm.Variables
         /// </summary>
         /// <param name="content">The content to place in the room.</param>
         /// <param name="position">The position where the content should be placed.</param>
-        public void PutContentInPosition(RoomContents content, Position position)
+        public void PutContentInPosition(RoomContents content, Position position, RoomContents[] originalEnemies, RoomContents[] originalObstacles)
         {
-            if (Utils.IsAEnemy(GeneticAlgorithmConstants.ROOM.Enemies, content))
+            if (originalEnemies.Contains(content))
             {
                 EnemiesPositions.Add(position);
             }
-            else if (Utils.IsAObstacle(GeneticAlgorithmConstants.ROOM.Obstacles, content))
+            else if (originalObstacles.Contains(content))
             {
                 ObstaclesPositions.Add(position);
             }
@@ -42,14 +42,14 @@ namespace RoomGeneticAlgorithm.Variables
         }
 
 
-        void RemoveFromPosition(Position position)
+        void RemoveFromPosition(Position position, RoomContents[] originalEnemies, RoomContents[] originalObstacles)
         {
             RoomContents content = Values[position.X, position.Y];
-            if (Utils.IsAEnemy(GeneticAlgorithmConstants.ROOM.Enemies, content))
+            if (originalEnemies.Contains(content))
             {
                 EnemiesPositions.Remove(position);
             }
-            else if (Utils.IsAObstacle(GeneticAlgorithmConstants.ROOM.Obstacles, content))
+            else if (originalObstacles.Contains(content))
             {
                 ObstaclesPositions.Remove(position);
             }
@@ -60,19 +60,19 @@ namespace RoomGeneticAlgorithm.Variables
         /// </summary>
         /// <param name="position">The position of the content to be updated.</param>
         /// <param name="changeTo">The content to replace it with.</param>
-        void UpdateContentInPosition(Position position, RoomContents changeTo)
+        void UpdateContentInPosition(Position position, RoomContents changeTo, RoomContents[] originalEnemies, RoomContents[] originalObstacles)
         {
-            RemoveFromPosition(position);
-            PutContentInPosition(changeTo, position);
+            RemoveFromPosition(position, originalEnemies, originalObstacles);
+            PutContentInPosition(changeTo, position, originalEnemies, originalObstacles);
         }
 
-        public void SwapPositions(Position position1, Position position2)
+        public void SwapPositions(Position position1, Position position2, RoomContents[] originalEnemies, RoomContents[] originalObstacles)
         {
             RoomContents content1 = Values[position1.X, position1.Y];
             RoomContents content2 = Values[position2.X, position2.Y];
 
-            UpdateContentInPosition(position1, content2);
-            UpdateContentInPosition(position2, content1);
+            UpdateContentInPosition(position1, content2, originalEnemies, originalObstacles);
+            UpdateContentInPosition(position2, content1, originalEnemies, originalObstacles);
         }
     }
 }
