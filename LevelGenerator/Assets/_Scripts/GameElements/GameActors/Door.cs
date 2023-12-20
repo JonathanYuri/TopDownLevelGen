@@ -18,6 +18,8 @@ public class Door : MonoBehaviour
     [SerializeField] GameObject openDoor;
     [SerializeField] GameObject closedDoor;
 
+    bool isDestroying;
+
     static readonly Dictionary<Vector3, Vector3> RotationToDirectionMap = new()
     {
         { new Vector3(0, 0, 270), Vector3.down },
@@ -41,10 +43,23 @@ public class Door : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        isDestroying = true;
+    }
+
     public void Open()
     {
-        openDoor.SetActive(true);
-        closedDoor.SetActive(false);
+        if (isDestroying) return;
+
+        if (openDoor != null)
+        {
+            openDoor.SetActive(true);
+        }
+        if (closedDoor != null)
+        {
+            closedDoor.SetActive(false);
+        }
     }
 
     void Close()

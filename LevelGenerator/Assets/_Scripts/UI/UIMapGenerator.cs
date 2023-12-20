@@ -19,6 +19,7 @@ public class UIMapGenerator : MonoBehaviour
     Dictionary<Position, Image> uiMap;
     HashSet<Position> map;
 
+    LevelGenerator levelGenerator;
     PlayerLocationManager playerLocationManager;
 
     void Awake()
@@ -31,6 +32,21 @@ public class UIMapGenerator : MonoBehaviour
     void Start()
     {
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
+        levelGenerator = FindObjectOfType<LevelGenerator>();
+        levelGenerator.OnLevelGenerated += OnLevelGenerated;
+    }
+
+    void OnDestroy()
+    {
+        if (levelGenerator != null)
+        {
+            levelGenerator.OnLevelGenerated -= OnLevelGenerated;
+        }
+    }
+
+    void OnLevelGenerated()
+    {
+        CreateUIMap();
     }
 
     /// <summary>

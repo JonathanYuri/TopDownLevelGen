@@ -1,4 +1,5 @@
 using Pathfinding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,7 +47,7 @@ public class GameMapSingleton : Singleton<GameMapSingleton>
 
     public void SetEnemiesTargetPlayer(Transform player, Location playerLocation)
     {
-        Enemy[] enemies = Object.FindObjectsOfType<Enemy>();
+        Enemy[] enemies = UnityEngine.Object.FindObjectsOfType<Enemy>();
 
         foreach (Enemy enemy in enemies)
         {

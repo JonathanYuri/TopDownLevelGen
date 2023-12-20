@@ -7,11 +7,12 @@ using UnityEngine;
 /// Controls the player's movement and interactions in the game.
 /// </summary>
 [RequireComponent(typeof(PlayerMovementController))]
-public class PlayerController : MonoBehaviour, IDamageable, ISlowable
+public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
 {
     PlayerMovementController playerMovementController;
     HealthBarController playerHealthBarController;
     [SerializeField] Timer slownessTimer;
+    [SerializeField] DamageInvincibilityController damageInvincibilityController;
 
     float velocityWithoutSlow;
 
@@ -24,9 +25,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
     void Awake()
     {
         playerMovementController = GetComponent<PlayerMovementController>();
-        playerHealthBarController = FindObjectOfType<HealthBarController>();
         velocityWithoutSlow = playerMovementController.Velocity;
         slownessTimer.OnTimerExpired += OnSlownessTimerExpired;
+    }
+
+    void Start()
+    {
+        playerHealthBarController = FindObjectOfType<HealthBarController>();
     }
 
     void OnDestroy()
@@ -56,6 +61,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
 
     public void TakeDamage(int damage)
     {
+        if (!damageInvincibilityController.Invincible)
+        {
+            damageInvincibilityController.MakeInvincible();
+            HandleDamageReceived(damage);
+        }
+    }
+
+    void HandleDamageReceived(int damage)
+    {
         if (life - damage <= 0)
         {
             playerHealthBarController.UpdateLife(0);
@@ -68,7 +82,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISlowable
         }
     }
 
-    void Die()
+    public void Die()
     {
         Destroy(gameObject);
     }

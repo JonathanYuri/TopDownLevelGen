@@ -16,6 +16,8 @@ public class LevelGenerator : MonoBehaviour
 
     HashSet<Position> map;
 
+    public event Action OnLevelGenerated;
+
     public Position InitialRoomPosition { get; private set; }
     public Position FinalRoomPosition { get; private set; }
     public int DistanceFromInitialToFinalRoom { get; private set; }
@@ -28,7 +30,7 @@ public class LevelGenerator : MonoBehaviour
 
     void Start()
     {
-        levelDataManager = FindFirstObjectByType<LevelDataManager>();
+        levelDataManager = FindObjectOfType<LevelDataManager>();
     }
 
     /// <summary>
@@ -43,6 +45,7 @@ public class LevelGenerator : MonoBehaviour
         GenerateRemainingRooms();
 
         GameMapSingleton.Instance.RoomPositions = map;
+        OnLevelGenerated?.Invoke();
     }
 
     /// <summary>

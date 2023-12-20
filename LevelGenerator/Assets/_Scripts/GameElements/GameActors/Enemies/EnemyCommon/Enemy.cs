@@ -19,6 +19,16 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
     public event Action OnDamageTaken;
     public EventHandler<EnemyDefeatedEventArgs> OnDefeated;
 
+    void OnDestroy()
+    {
+        EnemyDefeatedEventArgs e = new()
+        {
+            enemy = this,
+            roomPosition = location.RoomPosition,
+        };
+        OnDefeated?.Invoke(this, e);
+    }
+
     public void SetTargetPlayer(Transform target, Location targetLocation)
     {
         targetManager.Player = target;
@@ -29,12 +39,6 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
     {
         if (life - damage <= 0)
         {
-            EnemyDefeatedEventArgs e = new()
-            {
-                enemy = this,
-                roomPosition = location.RoomPosition,
-            };
-            OnDefeated?.Invoke(this, e);
             Die();
         }
         else

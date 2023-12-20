@@ -7,7 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(LevelDataManager))]
 public class GameManager : MonoBehaviour
 {
-    UIMapGenerator uiMapGenerator;
     LevelGenerator levelGenerator;
     PlayerManager playerManager;
     PlayerLocationManager playerLocationManager;
@@ -20,7 +19,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        uiMapGenerator = FindObjectOfType<UIMapGenerator>();
         levelGenerator = FindObjectOfType<LevelGenerator>();
         playerManager = FindObjectOfType<PlayerManager>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
@@ -31,9 +29,6 @@ public class GameManager : MonoBehaviour
     {
         GameMapSingleton.Instance.ClearMap();
         levelGenerator.Generate();
-
-        playerLocationManager.SetPlayerToInitialRoom(GameMapSingleton.Instance.RoomPositions.ElementAt(0));
-        uiMapGenerator.CreateUIMap();
 
         GameMapSingleton.Instance.ConfigureAStar();
         GameMapSingleton.Instance.SetEnemiesTargetPlayer(playerManager.Player.transform, playerLocationManager.PlayerLocation);

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerLocationManager : MonoBehaviour
 {
+    LevelGenerator levelGenerator;
+
     static readonly Dictionary<Vector3, Vector2> directionToPositionInRoomMatrix = new()
     {
         // se estou indo pra baixo spawno o jogador na parte de cima da room
@@ -16,10 +18,29 @@ public class PlayerLocationManager : MonoBehaviour
     public PlayerController Player { get; set; }
     public Location PlayerLocation { get; set; }
 
-    public void SetPlayerToInitialRoom(Position initialPosition)
+    void Start()
+    {
+        levelGenerator = FindObjectOfType<LevelGenerator>();
+        levelGenerator.OnLevelGenerated += OnLevelGenerated;
+    }
+
+    void OnDestroy()
+    {
+        if (levelGenerator != null)
+        {
+            levelGenerator.OnLevelGenerated -= OnLevelGenerated;
+        }
+    }
+
+    private void OnLevelGenerated()
+    {
+        SetPlayerToInitialRoom();
+    }
+
+    public void SetPlayerToInitialRoom()
     {
         Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
-        SetPlayerToRoom(initialPosition, new Vector3(0, 0));
+        SetPlayerToRoom(GameMapSingleton.Instance.RoomPositions.ElementAt(0), new Vector3(0, 0));
     }
 
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)
