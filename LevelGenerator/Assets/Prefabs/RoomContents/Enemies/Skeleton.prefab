@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf27f00228ad68b4a93c480e18ff5190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aIPathController: {fileID: 3976242800943822502}
+  aiPathController: {fileID: 3976242800943822502}
 --- !u!1 &6056213582785261799
 GameObject:
   m_ObjectHideFlags: 0

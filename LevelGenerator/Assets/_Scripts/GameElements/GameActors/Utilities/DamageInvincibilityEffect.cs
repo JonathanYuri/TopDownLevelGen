@@ -7,9 +7,15 @@ public class DamageInvincibilityEffect : MonoBehaviour
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] float delayBetweenEffects;
 
+    Coroutine effectCoroutine;
+
     public void StartEffect(float effectDuraction)
     {
-        StartCoroutine(StartEffectCoroutine(effectDuraction));
+        if (effectCoroutine != null)
+        {
+            StopCoroutine(effectCoroutine);
+        }
+        effectCoroutine = StartCoroutine(StartEffectCoroutine(effectDuraction));
     }
 
     IEnumerator StartEffectCoroutine(float effectDuraction)

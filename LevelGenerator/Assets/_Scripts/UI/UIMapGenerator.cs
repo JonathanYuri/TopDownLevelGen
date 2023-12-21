@@ -3,6 +3,11 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+public static class OpenMapKeyConstants
+{
+    public static KeyCode OPEN_MAP_KEY = KeyCode.Tab;
+}
+
 /// <summary>
 /// Manages the generation and display of the UI map, including player location and room status.
 /// </summary>
@@ -41,6 +46,18 @@ public class UIMapGenerator : MonoBehaviour
         if (levelGenerator != null)
         {
             levelGenerator.OnLevelGenerated -= OnLevelGenerated;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKey(OpenMapKeyConstants.OPEN_MAP_KEY))
+        {
+            mapHolder.SetActive(true);
+        }
+        else
+        {
+            mapHolder.SetActive(false);
         }
     }
 
