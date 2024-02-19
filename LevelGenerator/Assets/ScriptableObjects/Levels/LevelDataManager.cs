@@ -11,22 +11,23 @@ public class LevelDataManager : MonoBehaviour
 
     public List<LevelData> levels;
 
-    public int RoomCount { get { return levels[indexCurrentLevel].roomCount; } }
-    public List<RoomContents> Enemies { get { return levels[indexCurrentLevel].enemies; } }
-    public List<int> EnemiesDifficulty { get { return levels[indexCurrentLevel].enemiesDifficult; } }
-    public int EnemiesCapacity { get { return levels[indexCurrentLevel].enemiesCapacity; } }
-    public List<RoomContents> Obstacles { get { return levels[indexCurrentLevel].obstacles; } }
-    public List<int> ObstaclesDifficulty { get { return levels[indexCurrentLevel].obstaclesDifficult; } }
-    public int ObstaclesCapacity { get { return levels[indexCurrentLevel].obstaclesCapacity; } }
+    public int RoomCount { get { return levels[IndexCurrentLevel].roomCount; } }
+    public List<RoomContents> Enemies { get { return levels[IndexCurrentLevel].enemies; } }
+    public List<int> EnemiesDifficulty { get { return levels[IndexCurrentLevel].enemiesDifficult; } }
+    public int EnemiesCapacity { get { return levels[IndexCurrentLevel].enemiesCapacity; } }
+    public List<RoomContents> Obstacles { get { return levels[IndexCurrentLevel].obstacles; } }
+    public List<int> ObstaclesDifficulty { get { return levels[IndexCurrentLevel].obstaclesDifficult; } }
+    public int ObstaclesCapacity { get { return levels[IndexCurrentLevel].obstaclesCapacity; } }
+    public int IndexCurrentLevel { get => indexCurrentLevel; private set => indexCurrentLevel = value; }
 
     /// <summary>
     /// Advances to the next level in the list of available levels, if there is one.
     /// </summary>
     public void NextLevel()
     {
-        if (indexCurrentLevel < levels.Count - 1)
+        if (IndexCurrentLevel < levels.Count - 1)
         {
-            indexCurrentLevel++;
+            IndexCurrentLevel++;
         }
     }
 }

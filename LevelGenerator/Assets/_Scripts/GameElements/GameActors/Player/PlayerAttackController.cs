@@ -13,6 +13,7 @@ public static class AttackButtonsConstants
     public static bool IsDownAttackPressed() => Input.GetKey(DOWN_ATTACK);
     public static bool IsLeftAttackPressed() => Input.GetKey(LEFT_ATTACK);
     public static bool IsRightAttackPressed() => Input.GetKey(RIGHT_ATTACK);
+    public static bool IsAttackPressed() => IsUpAttackPressed() || IsDownAttackPressed() || IsLeftAttackPressed() || IsRightAttackPressed();
 }
 
 public class PlayerAttackController : MonoBehaviour

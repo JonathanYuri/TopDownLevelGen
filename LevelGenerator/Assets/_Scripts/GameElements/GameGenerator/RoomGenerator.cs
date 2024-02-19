@@ -11,6 +11,7 @@ public class RoomGenerator : MonoBehaviour
     LevelDataManager levelDataManager;
     LevelGenerator levelGenerator;
     RoomObjectSpawner roomObjectSpawner;
+    RoomInfoProvider roomInfoProvider;
 
     [SerializeField] GameObject roomPrefab;
 
@@ -18,6 +19,7 @@ public class RoomGenerator : MonoBehaviour
     {
         levelGenerator = GetComponent<LevelGenerator>();
         roomObjectSpawner = GetComponent<RoomObjectSpawner>();
+        roomInfoProvider = GetComponent<RoomInfoProvider>();
     }
 
     void Start()
@@ -47,7 +49,7 @@ public class RoomGenerator : MonoBehaviour
     public void GenerateRoom(Position roomPosition, HashSet<Position> map, bool generateObjectsInRoom = true)
     {
         GameObject roomObject = GenerateRoomGameObject(roomPosition);
-        RoomData roomData = GetRoomData(roomPosition, map);
+        RoomData roomData = roomInfoProvider.GetRoomData(roomPosition, map);
 
         RoomSkeleton room = new(roomData);
         
@@ -63,34 +65,11 @@ public class RoomGenerator : MonoBehaviour
             Debug.LogError("Tempo total de execução ate agora: " + endTime + " segundos");
         }
 
-        if (IsFinalRoom(roomPosition))
+        if (roomInfoProvider.IsFinalRoom(roomPosition))
         {
             room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
         }
 
         roomObjectSpawner.SpawnRoomObjects(room, roomPosition, roomObject);
-    }
-
-    bool IsFinalRoom(Position roomPosition) => levelGenerator.FinalRoomPosition != null && levelGenerator.FinalRoomPosition.Equals(roomPosition);
-
-    RoomData GetRoomData(Position roomPosition, HashSet<Position> map)
-    {
-        int distanceToInitialRoom = Utils.CalculateDistance(levelGenerator.InitialRoomPosition, roomPosition);
-        float difficulty = (float)distanceToInitialRoom / (float)levelGenerator.DistanceFromInitialToFinalRoom;
-
-        KnapsackSelectionResult knapsackSelectionResult = Knapsack.ChooseEnemiesAndObstaclesToKnapsack(
-            levelDataManager.Enemies, levelDataManager.EnemiesDifficulty,
-            levelDataManager.Obstacles, levelDataManager.ObstaclesDifficulty
-        );
-
-        KnapsackParams enemyKnapsackParams = new(knapsackSelectionResult.ChosenEnemies, knapsackSelectionResult.ChosenEnemiesDifficulty, levelDataManager.EnemiesCapacity);
-        KnapsackParams obstacleKnapsackParams = new(knapsackSelectionResult.ChosenObstacles, knapsackSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesCapacity);
-
-        return new(
-            MapUtility.GetDoorPositionsFromRoomPosition(roomPosition, map),
-            Knapsack.ResolveKnapsack(enemyKnapsackParams),
-            Knapsack.ResolveKnapsack(obstacleKnapsackParams),
-            difficulty
-        );
     }
 }

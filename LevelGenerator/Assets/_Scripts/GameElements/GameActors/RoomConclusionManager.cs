@@ -8,6 +8,8 @@ public class RoomConclusionManager : MonoBehaviour
 {
     LevelGenerator levelGenerator;
 
+    public event Action OnRoomDoorsOpened;
+
     void Start()
     {
         levelGenerator = FindObjectOfType<LevelGenerator>();
@@ -83,5 +85,7 @@ public class RoomConclusionManager : MonoBehaviour
                 door.Open();
             }
         }
+
+        OnRoomDoorsOpened?.Invoke();
     }
 }
