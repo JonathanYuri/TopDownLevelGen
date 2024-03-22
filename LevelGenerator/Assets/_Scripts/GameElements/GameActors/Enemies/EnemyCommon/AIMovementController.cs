@@ -7,6 +7,7 @@ public class AIMovementController : MonoBehaviour
     [SerializeField] MovementDirectionHandler movementDirectionHandler;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] SpriteRenderer spriteRenderer;
+    [SerializeField] AudioManager audioManager;
 
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
@@ -50,6 +51,7 @@ public class AIMovementController : MonoBehaviour
         if (distanceToTarget <= threshold)
         {
             ArrivedAtDestination = true;
+            audioManager.ShouldPlayStepSound = false;
         }
         else
         {
@@ -67,7 +69,9 @@ public class AIMovementController : MonoBehaviour
         }
 
         this.destination = destination;
+
         ArrivedAtDestination = false;
+        audioManager.ShouldPlayStepSound = true;
 
         Vector2 direction = destination - (Vector2)transform.position;
         movementDirectionHandler.SetRotationBasedOnMovementDirection(direction);

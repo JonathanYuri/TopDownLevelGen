@@ -20,7 +20,7 @@ public class APISender : MonoBehaviour
     RoomInfoProvider roomInfoProvider;
     PlayerLocationManager playerLocationManager;
 
-    const string baseUrl = "http://wonderful-hill-lavender.glitch.me";
+    const string baseUrl = "http://game-runs.glitch.me";
     const string adminKey = "123456";
 
     bool closingTheGame = false;
