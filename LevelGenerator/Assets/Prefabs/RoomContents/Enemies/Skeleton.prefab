@@ -45,7 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2abf1e2f4be695a4eb8a220a4f0d4ce5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepSound: {fileID: 5196735442255435418}
+  sounds:
+  - {fileID: 5196735442255435418}
+  soundsName:
+  - step
 --- !u!1 &3382720161642433171
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,6 +151,7 @@ MonoBehaviour:
   rb: {fileID: 3030883783467190354}
   spriteRenderer: {fileID: 2329067677884576730}
   audioManager: {fileID: 6046305330814830942}
+  stepSoundName: step
   velocity: 1.5
   threshold: 0.1
 --- !u!114 &8071979939752362801

@@ -4,18 +4,41 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] AudioSource stepSound;
-    public bool ShouldPlayStepSound { get; set; }
+    [SerializeField] List<AudioSource> sounds;
+    [SerializeField] List<string> soundsName;
+
+    public Dictionary<string, float> SoundsDuration { get; private set; }
+    public Dictionary<string, bool> ShouldPlaySound { get; set; }
+    public Dictionary<string, bool> SoundPlayingState { get; private set; }
+
+    void Awake()
+    {
+        SoundsDuration = new();
+        ShouldPlaySound = new();
+        SoundPlayingState = new();
+
+        for (int i = 0; i < soundsName.Count; i++)
+        {
+            SoundsDuration.Add(soundsName[i], sounds[i].clip.length);
+            ShouldPlaySound.Add(soundsName[i], false);
+            SoundPlayingState.Add(soundsName[i], false);
+        }
+    }
 
     void Update()
     {
-        if (stepSound.isPlaying && !ShouldPlayStepSound)
+        for (int i = 0; i < sounds.Count; i++)
         {
-            stepSound.Stop();
-        }
-        if (!stepSound.isPlaying && ShouldPlayStepSound)
-        {
-            stepSound.Play();
+            if (sounds[i].isPlaying && !ShouldPlaySound[soundsName[i]])
+            {
+                sounds[i].Stop();
+            }
+            if (!sounds[i].isPlaying && ShouldPlaySound[soundsName[i]])
+            {
+                sounds[i].Play();
+            }
+
+            SoundPlayingState[soundsName[i]] = sounds[i].isPlaying;
         }
     }
 }

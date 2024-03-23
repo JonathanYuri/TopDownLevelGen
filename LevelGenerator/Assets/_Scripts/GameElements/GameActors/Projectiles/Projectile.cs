@@ -8,6 +8,9 @@ public class Projectile : MonoBehaviour
 {
     Rigidbody2D rb;
     [SerializeField] List<CollisionEffects> triggerEffects;
+    [SerializeField] AudioManager audioManager;
+    [SerializeField] string collisionSoundName;
+
     RotateObject rotateObject;
 
     int totalEffectsApplied = 0;
@@ -46,7 +49,7 @@ public class Projectile : MonoBehaviour
         totalEffectsApplied++;
         if (totalEffectsApplied == triggerEffects.Count)
         {
-            Destroy(gameObject);
+            PlayCollisionSound();
         }
     }
 
@@ -60,7 +63,27 @@ public class Projectile : MonoBehaviour
     {
         if (gameObject != null)
         {
+            PlayCollisionSound();
+        }
+    }
+
+    void PlayCollisionSound()
+    {
+        if (audioManager != null)
+        {
+            audioManager.ShouldPlaySound[collisionSoundName] = true;
+            StartCoroutine(WaitCollisionSoundToDestroy());
+        }
+        else
+        {
             Destroy(gameObject);
         }
+    }
+
+    IEnumerator WaitCollisionSoundToDestroy()
+    {
+        yield return new WaitForSeconds(audioManager.SoundsDuration[collisionSoundName]);
+
+        Destroy(gameObject);
     }
 }
