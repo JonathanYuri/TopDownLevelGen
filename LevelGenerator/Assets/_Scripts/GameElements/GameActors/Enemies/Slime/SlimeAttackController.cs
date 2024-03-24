@@ -77,6 +77,7 @@ public class SlimeAttackController : MonoBehaviour
         GameObject thrownSlimeBall = Instantiate(slimeBall, positionToSpawnProjectile, Quaternion.identity);
         Projectile thrownSlimeBallScript = thrownSlimeBall.GetComponent<Projectile>();
         thrownSlimeBallScript.InitializeProjectile(directionToThrow, enemy.gameObject.GetInstanceID());
+        AudioManager.Instance.PlayCharacterSound("attack", enemy.gameObject.GetInstanceID());
     }
 
     void OnAttackTimerExpired()
