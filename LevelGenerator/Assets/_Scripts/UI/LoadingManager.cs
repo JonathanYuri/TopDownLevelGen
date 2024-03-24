@@ -11,7 +11,7 @@ public class LoadingManager : MonoBehaviour
     public void StartLoading()
     {
         gameObject.SetActive(true);
-        //StartCoroutine(ModifyLoadingTextCoroutine());
+        StartCoroutine(ModifyLoadingTextCoroutine());
     }
 
     IEnumerator ModifyLoadingTextCoroutine()
@@ -42,7 +42,7 @@ public class LoadingManager : MonoBehaviour
     public void StopLoading()
     {
         StopAllCoroutines();
-        text.text = "Carregando";
+        text.text = "Carregando...";
         gameObject.SetActive(false);
     }
 }

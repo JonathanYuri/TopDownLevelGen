@@ -57,7 +57,9 @@ public class RoomGenerator : MonoBehaviour
         {
             float startTime = Time.realtimeSinceStartup;
 
-            room.Values = GeneticRoomGenerator.GeneticLooping(room);
+            yield return GeneticRoomGenerator.GeneticLooping(room);
+
+            room.Values = GeneticRoomGenerator.Best.RoomMatrix.Values;
 
             float endTime = Time.realtimeSinceStartup;
 

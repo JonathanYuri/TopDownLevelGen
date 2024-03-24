@@ -33,6 +33,7 @@ namespace RoomGeneticAlgorithm.Run
     using RoomGeneticAlgorithm.Constants;
     using RoomGeneticAlgorithm.Fitness;
     using RoomGeneticAlgorithm.GeneticOperations;
+    using System.Collections;
     using System.Linq;
 
     /// <summary>
@@ -41,7 +42,7 @@ namespace RoomGeneticAlgorithm.Run
     public static class GeneticRoomGenerator
     {
         static RoomIndividual[] population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
-        static RoomIndividual best;
+        public static RoomIndividual Best { get; private set; }
 
         /// <summary>
         /// Generates the initial population of individuals for the genetic algorithm.
@@ -58,47 +59,47 @@ namespace RoomGeneticAlgorithm.Run
         /// Executes the main loop of the genetic algorithm to evolve a population of individuals.
         /// </summary>
         /// <returns>A matrix representing the best room configuration found by the genetic algorithm.</returns>
-        public static RoomContents[,] GeneticLooping(RoomSkeleton room)
+        public static IEnumerator GeneticLooping(RoomSkeleton room)
         {
             GeneticAlgorithmConstants.ROOM = room;
 
             GeneratePopulation();
             FitnessHandler.EvaluatePopulation(population);
 
-            best = new(population.MaxBy(individual => individual.Value));
+            Best = new(population.MaxBy(individual => individual.Value));
 
             int iterationsWithoutImprovement = 0;
             int iterations = 0;
+
             while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
                 RoomIndividual bestInGeneration = population.MaxBy(individual => individual.Value);
-                Debug.Log("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + best.Value);
+                Debug.Log("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
                 UpdateBestIndividual(bestInGeneration, ref iterationsWithoutImprovement);
                 PerformGeneticOperations();
                 iterations++;
+                yield return null;
             }
 
             RoomIndividual bestInGenerationFinal = population.MaxBy(individual => individual.Value);
-            if (bestInGenerationFinal.Value > best.Value)
+            if (bestInGenerationFinal.Value > Best.Value)
             {
-                best = new(bestInGenerationFinal);
+                Best = new(bestInGenerationFinal);
             }
 
-            Debug.Log("Melhor individual: " + best.Value);
-            Debug.Log("Inimigo: " + best.RoomMatrix.EnemiesPositions.Count);
-            Debug.Log("Obstaculo: " + best.RoomMatrix.ObstaclesPositions.Count);
+            Debug.Log("Melhor individual: " + Best.Value);
+            Debug.Log("Inimigo: " + Best.RoomMatrix.EnemiesPositions.Count);
+            Debug.Log("Obstaculo: " + Best.RoomMatrix.ObstaclesPositions.Count);
             Debug.Log("qntInimigosProximosDeObstaculos: " +
-                RoomOperations.CountEnemiesNextToObstacles(best.RoomMatrix));
-            // retornar o melhor
-            return best.RoomMatrix.Values;
+                RoomOperations.CountEnemiesNextToObstacles(Best.RoomMatrix));
         }
 
         static void UpdateBestIndividual(RoomIndividual bestInGeneration, ref int iterationsWithoutImprovement)
         {
-            if (bestInGeneration.Value > best.Value)
+            if (bestInGeneration.Value > Best.Value)
             {
                 iterationsWithoutImprovement = 0;
-                best = new(bestInGeneration);
+                Best = new(bestInGeneration);
             }
             else
             {
@@ -111,7 +112,7 @@ namespace RoomGeneticAlgorithm.Run
             population = Reproduction.PerformReproduction(population);
             Mutation.MutatePopulation(population);
             FitnessHandler.EvaluatePopulation(population);
-            FitnessCalculator.Evaluate(best);
+            FitnessCalculator.Evaluate(Best);
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace RoomGeneticAlgorithm.Run
             {
                 return true;
             }
-            if (best.Value == int.MinValue)
+            if (Best.Value == int.MinValue)
             {
                 return true;
             }
