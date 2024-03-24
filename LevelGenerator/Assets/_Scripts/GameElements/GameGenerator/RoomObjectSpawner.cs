@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SpawnRoomObjects.SpawnFloor;
 using System.Linq;
+using System.Collections;
 
 namespace SpawnRoomObjects.SpawnAll
 {
@@ -89,9 +90,9 @@ namespace SpawnRoomObjects.SpawnAll
         /// </summary>
         /// <param name="room">The room containing information about the objects to spawn.</param>
         /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
-        public void SpawnRoomObjects(RoomSkeleton room, Position roomPosition, GameObject roomObject)
+        public IEnumerator SpawnRoomObjects(RoomSkeleton room, Position roomPosition, GameObject roomObject)
         {
-            Dictionary<Position, GameObject> allFloorsPlaced = floorSpawner.SpawnAllFloors(room, roomObject, roomPosition);
+            yield return floorSpawner.SpawnAllFloors(room, roomObject, roomPosition);
 
             for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
             {
@@ -107,11 +108,12 @@ namespace SpawnRoomObjects.SpawnAll
 
                     InstantiateRoomContentObject(tilePrefab, roomObject, positionRoomContent, roomPosition);
                     // se chegou a instanciar o objeto nao eh um chao
-                    allFloorsPlaced.Remove(positionRoomContent);
+                    floorSpawner.allFloorsPlaced.Remove(positionRoomContent);
+                    yield return null;
                 }
             }
 
-            GameMapSingleton.Instance.EachRoomFloors.Add(roomPosition, allFloorsPlaced.Values.ToList());
+            GameMapSingleton.Instance.EachRoomFloors.Add(roomPosition, floorSpawner.allFloorsPlaced.Values.ToList());
         }
 
         internal GameObject InstantiateRoomContentObject(GameObject tilePrefab, GameObject roomObject, Position positionRoomContent, Position roomPosition)

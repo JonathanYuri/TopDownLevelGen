@@ -56,6 +56,6 @@ public class PlayerManager : MonoBehaviour
 
     void OnLevelComplete()
     {
-        gameManager.LoadNextLevel();
+        StartCoroutine(gameManager.LoadNextLevel());
     }
 }

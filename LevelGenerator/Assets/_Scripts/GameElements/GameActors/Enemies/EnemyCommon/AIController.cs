@@ -50,6 +50,11 @@ public class AIController : MonoBehaviour
     }
     void Update()
     {
+        if (targetManager.PlayerLocation == null)
+        {
+            return;
+        }
+
         if (location.IsInPlayerRoom(targetManager.PlayerLocation.RoomPosition))
         {
             aiPathController.FollowPath = true;

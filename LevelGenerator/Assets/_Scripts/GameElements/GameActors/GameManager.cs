@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class GameManager : MonoBehaviour
     PlayerManager playerManager;
     PlayerLocationManager playerLocationManager;
     LevelDataManager levelDataManager;
+    LoadingManager loadingManager;
 
     void Awake()
     {
@@ -22,21 +24,25 @@ public class GameManager : MonoBehaviour
         levelGenerator = FindObjectOfType<LevelGenerator>();
         playerManager = FindObjectOfType<PlayerManager>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
-        GenerateGame();
+        loadingManager = FindObjectOfType<LoadingManager>(true);
+        StartCoroutine(GenerateGame());
     }
 
-    void GenerateGame()
+    IEnumerator GenerateGame()
     {
         GameMapSingleton.Instance.ClearMap();
-        levelGenerator.Generate();
+
+        loadingManager.StartLoading();
+        yield return levelGenerator.Generate();
+        loadingManager.StopLoading();
 
         GameMapSingleton.Instance.ConfigureAStar();
         GameMapSingleton.Instance.SetEnemiesTargetPlayer(playerManager.Player.transform, playerLocationManager.PlayerLocation);
     }
 
-    public void LoadNextLevel()
+    public IEnumerator LoadNextLevel()
     {
         levelDataManager.NextLevel();
-        GenerateGame();
+        yield return GenerateGame();
     }
 }

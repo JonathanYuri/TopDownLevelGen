@@ -22,6 +22,8 @@ namespace SpawnRoomObjects.SpawnFloor
 
         RoomObjectSpawner roomObjectSpawner;
 
+        internal Dictionary<Position, GameObject> allFloorsPlaced;
+
         void Awake()
         {
             roomObjectSpawner = GetComponent<RoomObjectSpawner>();
@@ -57,9 +59,9 @@ namespace SpawnRoomObjects.SpawnFloor
             return spritesFloor[^1];
         }
 
-        internal Dictionary<Position, GameObject> SpawnAllFloors(RoomSkeleton room, GameObject roomObject, Position roomPosition)
+        internal IEnumerator SpawnAllFloors(RoomSkeleton room, GameObject roomObject, Position roomPosition)
         {
-            Dictionary<Position, GameObject> allFloorsPlaced = new();
+            allFloorsPlaced = new();
             for (int i = 1; i < GameConstants.ROOM_WIDTH - 1; i++)
             {
                 for (int j = 1; j < GameConstants.ROOM_HEIGHT - 1; j++)
@@ -72,9 +74,9 @@ namespace SpawnRoomObjects.SpawnFloor
                         floorPlaced.name = "Nothing";
                     }
                     allFloorsPlaced.Add(new Position() { X = i, Y = j }, floorPlaced);
+                    yield return null;
                 }
             }
-            return allFloorsPlaced;
         }
     }
 }

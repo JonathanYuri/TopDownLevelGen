@@ -46,13 +46,13 @@ public class RoomGenerator : MonoBehaviour
     /// <param name="roomPosition">The position of the room to be generated.</param>
     /// <param name="generateObjectsInRoom">Determines whether to generate objects in the room (default: true).</param>
     /// <returns>An IEnumerator for asynchronous room generation.</returns>
-    public void GenerateRoom(Position roomPosition, HashSet<Position> map, bool generateObjectsInRoom = true)
+    public IEnumerator GenerateRoom(Position roomPosition, HashSet<Position> map, bool generateObjectsInRoom = true)
     {
         GameObject roomObject = GenerateRoomGameObject(roomPosition);
         RoomData roomData = roomInfoProvider.GetRoomData(roomPosition, map);
 
         RoomSkeleton room = new(roomData);
-        
+
         if (generateObjectsInRoom)
         {
             float startTime = Time.realtimeSinceStartup;
@@ -70,6 +70,6 @@ public class RoomGenerator : MonoBehaviour
             room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
         }
 
-        roomObjectSpawner.SpawnRoomObjects(room, roomPosition, roomObject);
+        yield return roomObjectSpawner.SpawnRoomObjects(room, roomPosition, roomObject);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -37,15 +38,12 @@ public class LevelGenerator : MonoBehaviour
     /// Generates a level, including its map.
     /// </summary>
     /// <returns>A collection of positions representing the generated map.</returns>
-    public void Generate()
+    public IEnumerator Generate()
     {
         DestroyAllPastObjects();
         map = GenerateMap();
-        GenerateInitialAndFinalRoom();
-        GenerateRemainingRooms();
-
-        GameMapSingleton.Instance.RoomPositions = map;
-        OnLevelGenerated?.Invoke();
+        yield return GenerateInitialAndFinalRoom();
+        yield return GenerateRemainingRooms();
     }
 
     /// <summary>
@@ -98,15 +96,15 @@ public class LevelGenerator : MonoBehaviour
     /// Generates the final room at a calculated position within the level layout.
     /// Generates the initial room at the starting position of the level layout.
     /// </summary>
-    void GenerateInitialAndFinalRoom()
+    IEnumerator GenerateInitialAndFinalRoom()
     {
         InitialRoomPosition = new() { X = 0, Y = 0 };
         FinalRoomPosition = ChooseFinalRoomPosition();
 
         DistanceFromInitialToFinalRoom = Utils.CalculateDistance(InitialRoomPosition, FinalRoomPosition);
 
-        roomGenerator.GenerateRoom(InitialRoomPosition, map, false); // gerar so o esqueleto
-        roomGenerator.GenerateRoom(FinalRoomPosition, map, false);  // gerar so o esqueleto
+        yield return roomGenerator.GenerateRoom(InitialRoomPosition, map, false); // gerar so o esqueleto
+        yield return roomGenerator.GenerateRoom(FinalRoomPosition, map, false);  // gerar so o esqueleto
     }
 
     /// <summary>
@@ -124,7 +122,7 @@ public class LevelGenerator : MonoBehaviour
     /// <summary>
     /// Generates the remaining rooms within the level layout, excluding the initial and final rooms.
     /// </summary>
-    void GenerateRemainingRooms()
+    IEnumerator GenerateRemainingRooms()
     {
         Position[] selectedRooms = {InitialRoomPosition, FinalRoomPosition};
         var remainingRooms = map.Except(selectedRooms);
@@ -132,7 +130,10 @@ public class LevelGenerator : MonoBehaviour
         foreach (Position roomPosition in remainingRooms)
         {
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
-            roomGenerator.GenerateRoom(roomPosition, map);
+            yield return roomGenerator.GenerateRoom(roomPosition, map);
         }
+
+        GameMapSingleton.Instance.RoomPositions = map;
+        OnLevelGenerated?.Invoke();
     }
 }
