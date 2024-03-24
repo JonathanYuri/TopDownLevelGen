@@ -5,11 +5,19 @@ using UnityEngine;
 
 public class LoadingManager : MonoBehaviour
 {
+    InputManager inputManager;
+
     [SerializeField] TMP_Text text;
     [SerializeField] float timeToModifyLoadingText;
 
     public void StartLoading()
     {
+        if (inputManager == null)
+        {
+            inputManager = FindObjectOfType<InputManager>();
+        }
+
+        inputManager.DisableInput();
         gameObject.SetActive(true);
         StartCoroutine(ModifyLoadingTextCoroutine());
     }
@@ -41,6 +49,7 @@ public class LoadingManager : MonoBehaviour
 
     public void StopLoading()
     {
+        inputManager.EnableInput();
         StopAllCoroutines();
         text.text = "Carregando...";
         gameObject.SetActive(false);

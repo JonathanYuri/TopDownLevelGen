@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovementController : MonoBehaviour
 {
+    InputManager inputManager;
     Rigidbody2D rb;
 
     [SerializeField] float velocity;
@@ -14,6 +15,11 @@ public class PlayerMovementController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    void Start()
+    {
+        inputManager = FindObjectOfType<InputManager>();
+    }
+
     void FixedUpdate()
     {
         Move();
@@ -21,6 +27,11 @@ public class PlayerMovementController : MonoBehaviour
 
     void Move()
     {
+        if (!inputManager.IsInputEnabled())
+        {
+            return;
+        }
+
         float horizontalMovement = Input.GetAxis("Horizontal");
         float verticalMovement = Input.GetAxis("Vertical");
 

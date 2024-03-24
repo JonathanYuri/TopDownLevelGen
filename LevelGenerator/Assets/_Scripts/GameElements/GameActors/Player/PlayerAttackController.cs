@@ -20,6 +20,7 @@ public class PlayerAttackController : MonoBehaviour
 {
     [SerializeField] GameObject knife;
     [SerializeField] Timer attackTimer;
+    InputManager inputManager;
 
     [SerializeField] GameObject attackSpawnUp;
     [SerializeField] GameObject attackSpawnDown;
@@ -43,6 +44,11 @@ public class PlayerAttackController : MonoBehaviour
         };
     }
 
+    void Start()
+    {
+        inputManager = FindObjectOfType<InputManager>();
+    }
+
     void OnDestroy()
     {
         if (attackTimer != null)
@@ -53,6 +59,16 @@ public class PlayerAttackController : MonoBehaviour
 
     void Update()
     {
+        TryAttack();
+    }
+
+    void TryAttack()
+    {
+        if (!inputManager.IsInputEnabled())
+        {
+            return;
+        }
+
         if (canAttack)
         {
             if (AttackButtonsConstants.IsUpAttackPressed())
