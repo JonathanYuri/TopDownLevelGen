@@ -6,10 +6,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
+    int shooterId;
+
     Rigidbody2D rb;
     [SerializeField] List<CollisionEffects> triggerEffects;
-    [SerializeField] AudioManager audioManager;
-    [SerializeField] string collisionSoundName;
 
     RotateObject rotateObject;
 
@@ -35,6 +35,7 @@ public class Projectile : MonoBehaviour
 
     void Start()
     {
+        AudioManager.Instance.PlayCharacterSound("flight", shooterId);
         autoDestroyTimer.StartTimer();
     }
 
@@ -53,9 +54,10 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public void InitializeProjectile(Vector2 movementDirection)
+    public void InitializeProjectile(Vector2 movementDirection, int shooterId)
     {
         this.movementDirection = movementDirection;
+        this.shooterId = shooterId;
         rotateObject.StartRotation(movementDirection);
     }
 
@@ -69,21 +71,9 @@ public class Projectile : MonoBehaviour
 
     void PlayCollisionSound()
     {
-        if (audioManager != null)
-        {
-            audioManager.ShouldPlaySound[collisionSoundName] = true;
-            StartCoroutine(WaitCollisionSoundToDestroy());
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    IEnumerator WaitCollisionSoundToDestroy()
-    {
-        yield return new WaitForSeconds(audioManager.SoundsDuration[collisionSoundName]);
-
+        AudioManager.Instance.PlayCharacterSound("collision", shooterId);
+        AudioManager.Instance.StopCharacterSound("flight", shooterId);
+        //StartCoroutine(WaitCollisionSoundToDestroy());
         Destroy(gameObject);
     }
 }

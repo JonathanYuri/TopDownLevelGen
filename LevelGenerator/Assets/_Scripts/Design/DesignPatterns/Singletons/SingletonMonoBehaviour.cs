@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 {
-    private static T _instance;
+    static T _instance;
+    static bool destroying;
 
     public static T Instance
     {
         get
         {
-            if (_instance == null)
+            if (_instance == null && !destroying)
             {
                 _instance = FindObjectOfType<T>();
                 if (_instance == null)
@@ -34,5 +35,10 @@ public class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void OnDestroy()
+    {
+        destroying = true;
     }
 }

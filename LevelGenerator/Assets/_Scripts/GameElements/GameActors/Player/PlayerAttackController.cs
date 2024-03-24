@@ -88,7 +88,7 @@ public class PlayerAttackController : MonoBehaviour
         GameObject attackSpawn = directionToAttackObject[directionToThrowKnife];
         GameObject thrownKnife = Instantiate(knife, attackSpawn.transform.position, Quaternion.identity);
         Projectile thrownKnifeScript = thrownKnife.GetComponent<Projectile>();
-        thrownKnifeScript.InitializeProjectile(directionToThrowKnife);
+        thrownKnifeScript.InitializeProjectile(directionToThrowKnife, gameObject.GetInstanceID());
     }
 
     void OnAttackTimerExpired()

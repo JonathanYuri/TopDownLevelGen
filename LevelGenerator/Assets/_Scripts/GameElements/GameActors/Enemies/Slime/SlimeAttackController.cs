@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Timer))]
 public class SlimeAttackController : MonoBehaviour
 {
+    Enemy enemy;
+
     [SerializeField] AIVision aiVision;
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] GameObject slimeBall;
@@ -26,6 +28,11 @@ public class SlimeAttackController : MonoBehaviour
         {
             Debug.LogError("TargetManager not assign");
         }
+    }
+
+    void Start()
+    {
+        enemy = GetComponentInParent<Enemy>();
     }
 
     void OnDestroy()
@@ -69,7 +76,7 @@ public class SlimeAttackController : MonoBehaviour
         Vector2 positionToSpawnProjectile = this.transform.position + (directionToThrow / 2);
         GameObject thrownSlimeBall = Instantiate(slimeBall, positionToSpawnProjectile, Quaternion.identity);
         Projectile thrownSlimeBallScript = thrownSlimeBall.GetComponent<Projectile>();
-        thrownSlimeBallScript.InitializeProjectile(directionToThrow);
+        thrownSlimeBallScript.InitializeProjectile(directionToThrow, enemy.gameObject.GetInstanceID());
     }
 
     void OnAttackTimerExpired()

@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Timer))]
 public class SkeletonAttackController : MonoBehaviour
 {
+    Enemy enemy;
+
     [SerializeField] AIVision aiVision;
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] GameObject bone;
@@ -26,6 +28,11 @@ public class SkeletonAttackController : MonoBehaviour
         {
             Debug.LogError("TargetManager not assign");
         }
+    }
+
+    void Start()
+    {
+        enemy = GetComponentInParent<Enemy>();
     }
 
     void OnDestroy()
@@ -69,7 +76,7 @@ public class SkeletonAttackController : MonoBehaviour
         Vector2 positionToSpawnProjectile = this.transform.position + (directionToThrow / 2);
         GameObject thrownBone = Instantiate(bone, positionToSpawnProjectile, Quaternion.identity);
         Projectile thrownBoneScript = thrownBone.GetComponent<Projectile>();
-        thrownBoneScript.InitializeProjectile(directionToThrow);
+        thrownBoneScript.InitializeProjectile(directionToThrow, enemy.gameObject.GetInstanceID());
     }
 
     void OnAttackTimerExpired()
