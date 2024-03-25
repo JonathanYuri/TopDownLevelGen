@@ -1,9 +1,6 @@
-using log4net.Core;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UIElements;
 
 public class APISender : MonoBehaviour
 {
@@ -19,6 +16,7 @@ public class APISender : MonoBehaviour
     LevelDataManager levelDataManager;
     RoomInfoProvider roomInfoProvider;
     PlayerLocationManager playerLocationManager;
+    PlayerInfo playerInfo;
 
     const string baseUrl = "http://game-runs.glitch.me";
     const string adminKey = "123456";
@@ -30,6 +28,7 @@ public class APISender : MonoBehaviour
         levelDataManager = FindObjectOfType<LevelDataManager>();
         roomInfoProvider = FindObjectOfType<RoomInfoProvider>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
+        playerInfo = FindObjectOfType<PlayerInfo>();
     }
 
     void OnApplicationQuit()
@@ -49,7 +48,7 @@ public class APISender : MonoBehaviour
     {
         UserData userData = new()
         {
-            usuario = "jonathan",
+            usuario = playerInfo.Username,
             nivel = levelDataManager.IndexCurrentLevel,
             dificuldade = roomInfoProvider.GetRoomData(playerLocationManager.PlayerLocation.RoomPosition, GameMapSingleton.Instance.RoomPositions).difficulty,
             tempo = time,

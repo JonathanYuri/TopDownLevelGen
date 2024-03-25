@@ -17,7 +17,10 @@ public class LoadingManager : MonoBehaviour
             inputManager = FindObjectOfType<InputManager>();
         }
 
-        inputManager.DisableInput();
+        if (inputManager != null)
+        {
+            inputManager.DisableInput();
+        }
         gameObject.SetActive(true);
         StartCoroutine(ModifyLoadingTextCoroutine());
     }
