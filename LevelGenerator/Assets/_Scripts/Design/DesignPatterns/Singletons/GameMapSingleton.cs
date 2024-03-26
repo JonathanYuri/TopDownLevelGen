@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameMapSingleton : Singleton<GameMapSingleton>
 {
-    public HashSet<Position> RoomPositions { get; set; } = new();
+    public Dictionary<Position, Room> RoomPositions { get; set; } = new();
     public Dictionary<Position, List<GameObject>> EachRoomFloors { get; set; } = new();
     public Dictionary<Position, HashSet<Door>> EachRoomDoors { get; set; } = new();
     public Dictionary<Position, HashSet<Enemy>> EachRoomEnemies { get; set; } = new();
@@ -23,8 +23,8 @@ public class GameMapSingleton : Singleton<GameMapSingleton>
     {
         GridGraph gridGraph = AstarPath.active.data.gridGraph;
 
-        (int maxX, int minX) = RoomPositions.MaxAndMin(position => position.X);
-        (int maxY, int minY) = RoomPositions.MaxAndMin(position => position.Y);
+        (int maxX, int minX) = RoomPositions.Keys.MaxAndMin(position => position.X);
+        (int maxY, int minY) = RoomPositions.Keys.MaxAndMin(position => position.Y);
 
         maxX = Mathf.Abs(maxX);
         minX = Mathf.Abs(minX);

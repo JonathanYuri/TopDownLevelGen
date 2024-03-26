@@ -22,7 +22,7 @@ public class UIMapGenerator : MonoBehaviour
     [SerializeField] GameObject blankSpacePrefab;
 
     Dictionary<Position, Image> uiMap;
-    HashSet<Position> map;
+    List<Position> map;
 
     LevelGenerator levelGenerator;
     PlayerLocationManager playerLocationManager;
@@ -83,7 +83,7 @@ public class UIMapGenerator : MonoBehaviour
     /// </summary>
     public void CreateUIMap()
     {
-        this.map = GameMapSingleton.Instance.RoomPositions;
+        this.map = GameMapSingleton.Instance.RoomPositions.Keys.ToList();
         DestroyPastUIMap();
 
         RectTransform mapHolderRect = mapHolder.GetComponent<RectTransform>();

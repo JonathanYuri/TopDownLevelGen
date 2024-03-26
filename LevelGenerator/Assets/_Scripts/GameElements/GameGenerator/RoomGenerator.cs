@@ -3,6 +3,7 @@ using UnityEngine;
 using RoomGeneticAlgorithm.Run;
 using SpawnRoomObjects.SpawnAll;
 using System.Collections.Generic;
+using System.Linq;
 
 [RequireComponent(typeof(LevelGenerator))]
 [RequireComponent(typeof(RoomObjectSpawner))]
@@ -49,17 +50,23 @@ public class RoomGenerator : MonoBehaviour
     public IEnumerator GenerateRoom(Position roomPosition, HashSet<Position> map, bool generateObjectsInRoom = true)
     {
         GameObject roomObject = GenerateRoomGameObject(roomPosition);
-        RoomData roomData = roomInfoProvider.GetRoomData(roomPosition, map);
+        Room room = roomObject.GetComponent<Room>();
 
-        RoomSkeleton room = new(roomData);
+        RoomData roomData = roomInfoProvider.GetRoomData(roomPosition, map);
+        RoomSkeleton roomSkeleton = new(roomData);
+
+        room.Difficulty = roomData.difficulty;
 
         if (generateObjectsInRoom)
         {
+            room.Enemies = roomData.enemies.ToList();
+            room.Obstacles = roomData.obstacles.ToList();
+
             float startTime = Time.realtimeSinceStartup;
 
-            yield return GeneticRoomGenerator.GeneticLooping(room);
+            yield return GeneticRoomGenerator.GeneticLooping(roomSkeleton);
 
-            room.Values = GeneticRoomGenerator.Best.RoomMatrix.Values;
+            roomSkeleton.Values = GeneticRoomGenerator.Best.RoomMatrix.Values;
 
             float endTime = Time.realtimeSinceStartup;
 
@@ -69,9 +76,11 @@ public class RoomGenerator : MonoBehaviour
 
         if (roomInfoProvider.IsFinalRoom(roomPosition))
         {
-            room.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
+            roomSkeleton.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
         }
 
-        yield return roomObjectSpawner.SpawnRoomObjects(room, roomPosition, roomObject);
+        GameMapSingleton.Instance.RoomPositions.Add(roomPosition, room);
+
+        yield return roomObjectSpawner.SpawnRoomObjects(roomSkeleton, roomPosition, roomObject);
     }
 }

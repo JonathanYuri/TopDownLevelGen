@@ -40,7 +40,7 @@ public class PlayerLocationManager : MonoBehaviour
     public void SetPlayerToInitialRoom()
     {
         Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
-        SetPlayerToRoom(GameMapSingleton.Instance.RoomPositions.ElementAt(0), new Vector3(0, 0));
+        SetPlayerToRoom(GameMapSingleton.Instance.RoomPositions.Keys.ElementAt(0), new Vector3(0, 0));
     }
 
     public void SetPlayerToRoom(Position roomPosition, Vector2 positionInRoomMatrix)

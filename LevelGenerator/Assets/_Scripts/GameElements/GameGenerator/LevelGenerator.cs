@@ -133,7 +133,6 @@ public class LevelGenerator : MonoBehaviour
             yield return roomGenerator.GenerateRoom(roomPosition, map);
         }
 
-        GameMapSingleton.Instance.RoomPositions = map;
         OnLevelGenerated?.Invoke();
     }
 }

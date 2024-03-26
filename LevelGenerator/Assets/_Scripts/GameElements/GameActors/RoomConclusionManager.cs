@@ -62,7 +62,7 @@ public class RoomConclusionManager : MonoBehaviour
 
     void OpenInitialRoomDoors()
     {
-        OpenAllDoorsOfRoom(GameMapSingleton.Instance.RoomPositions.ElementAt(0));
+        OpenAllDoorsOfRoom(GameMapSingleton.Instance.RoomPositions.Keys.ElementAt(0));
     }
 
     void OnEnemyDefeated(object sender, EnemyDefeatedEventArgs e)
