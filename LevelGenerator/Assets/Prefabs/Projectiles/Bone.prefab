@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2159439943988175042}
   - component: {fileID: 4364914818704876143}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: DamageCooldown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ GameObject:
   - component: {fileID: 5765553159916312114}
   - component: {fileID: 5765553159916312115}
   - component: {fileID: 5765553159916312116}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,8 +121,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1408500753
-  m_SortingLayer: 4
+  m_SortingLayerID: 2010089167
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 75f499dcea271a341b920dc5848db5a7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -195,8 +195,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   triggerEffects:
   - {fileID: 4748904361967094958}
-  audioManager: {fileID: 0}
-  collisionSoundName: collision
   movimentVelocity: 3
   autoDestroyTimer: {fileID: 5996609807078344266}
 --- !u!1 &6199567940823685006
@@ -210,7 +208,7 @@ GameObject:
   - component: {fileID: 3224494479535656468}
   - component: {fileID: 4748904361967094958}
   - component: {fileID: 4162451229491581072}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Damage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +281,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8546119664723027565}
   - component: {fileID: 5996609807078344266}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: AutoDestroyTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

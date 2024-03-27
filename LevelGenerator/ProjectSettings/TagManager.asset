@@ -15,8 +15,8 @@ TagManager:
   - UI
   - PlayerProjectiles
   - Player
-  - Enemies
   - EnemiesProjectiles
+  - Enemies
   - Obstacles
   - EnemiesTriggerEffects
   - 
@@ -52,9 +52,9 @@ TagManager:
   - name: Enemies
     uniqueID: 2874847269
     locked: 0
-  - name: Projectiles
+  - name: Player
     uniqueID: 2886466543
     locked: 0
-  - name: Player
+  - name: Projectiles
     uniqueID: 2010089167
     locked: 0

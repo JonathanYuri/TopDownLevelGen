@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 303817506669301771}
   - component: {fileID: 7747068480015622975}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: UpdatePathTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1289397561656630002}
   - component: {fileID: 8961169664962927508}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: EnemyMemoryTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4702567538710994866}
   - component: {fileID: 7014183382443654903}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: TargetManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 1575837734285475158}
   - component: {fileID: 137069106865219309}
   - component: {fileID: 6062120948080545444}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: CollisionDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   - component: {fileID: 8425105622888728243}
   - component: {fileID: 1345995216060365832}
   - component: {fileID: 9158104915460835325}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: AttackManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1807924066576814865}
   - component: {fileID: 5305337348956163466}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: PatrolCooldownTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 4252468037641662324}
   - component: {fileID: -3241152050810332825}
   - component: {fileID: 4602692104869820121}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 4343242919614877521}
   - component: {fileID: 7104970475059246946}
   - component: {fileID: 2871184781699451322}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: AI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -630,7 +630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7590191971467199062}
   - component: {fileID: 4282616983750206204}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: DamageForgetTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -675,7 +675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8777268501855841262}
   - component: {fileID: 8630518358588748393}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: DamageCooldown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -720,7 +720,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6850546828219387306}
   - component: {fileID: 1752701515999892145}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Location
   m_TagString: Untagged
   m_Icon: {fileID: 0}

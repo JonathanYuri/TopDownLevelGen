@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1346259596179352330}
   - component: {fileID: 4148752337870011390}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: PatrolColldownTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 2922351088196787626}
   - component: {fileID: 8306904822291667586}
   - component: {fileID: 2189318609167487983}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: AI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -214,7 +214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2728584651613659258}
   - component: {fileID: 3970811768209648529}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Location
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -258,7 +258,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6526303996361065384}
   - component: {fileID: 5996988955309681333}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: EnemyMemoryTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3815660118359878758}
   - component: {fileID: 7192114014552698122}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: DamageCooldown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +349,7 @@ GameObject:
   - component: {fileID: 4556461857121094257}
   - component: {fileID: 8612523298999663278}
   - component: {fileID: 6387137868551184556}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: AttackManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -409,7 +409,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2079295631660457001}
   - component: {fileID: 7324877665200866385}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: TargetManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -457,7 +457,7 @@ GameObject:
   - component: {fileID: 3030883783467190354}
   - component: {fileID: 6042307813416905462}
   - component: {fileID: 7277807764853123077}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -612,7 +612,7 @@ GameObject:
   m_Component:
   - component: {fileID: 451367802308537293}
   - component: {fileID: 2111340639347111924}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: UpdatePathTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -657,7 +657,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6781743967818133367}
   - component: {fileID: 486322242890889319}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: DamageForgetTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -703,7 +703,7 @@ GameObject:
   - component: {fileID: 7047821879351234161}
   - component: {fileID: 1267306782016850176}
   - component: {fileID: 9184992361156771934}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: CollisionDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
