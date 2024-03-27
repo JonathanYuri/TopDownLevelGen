@@ -9,8 +9,6 @@ public class TriggerSlowness : CollisionEffects
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.LogWarning(gameObject.name + " " + gameObject.transform.position);
-        Debug.LogWarning(collision.gameObject.name + " " + collision.gameObject.transform.position);
         if (collision.TryGetComponent<ISlowable>(out var _) && canApplyEffect)
         {
             isColliding = true;
