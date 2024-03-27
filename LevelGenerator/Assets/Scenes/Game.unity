@@ -992,7 +992,9 @@ MonoBehaviour:
   - {fileID: 6056213582785261799, guid: bf87ebbe3daed1342b261d2fa2773471, type: 3}
   - {fileID: 6056213582785261799, guid: 3bb1be591582b8d4c98557125827a369, type: 3}
   - {fileID: 6056213582785261799, guid: 3699bd81ead9e9f43ac43f00119f3675, type: 3}
-  obstacle: {fileID: 6056213582785261799, guid: 5466bd5675fffc24dab69ae0db3c36e4, type: 3}
+  obstacles:
+  - {fileID: 6056213582785261799, guid: 5466bd5675fffc24dab69ae0db3c36e4, type: 3}
+  - {fileID: 6056213582785261799, guid: ee6ad0144f8459e4eba2485b90e6bcc0, type: 3}
   levelEnd: {fileID: 4874131849379363410, guid: 0292f0fcba1e73240877de8f72f26d52, type: 3}
   doors:
   - {fileID: 2427380696651136222, guid: 42e5f5db84b1eab4aaf1a1e62f0e5b45, type: 3}

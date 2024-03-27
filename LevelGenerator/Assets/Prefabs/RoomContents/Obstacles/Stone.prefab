@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6957752916923792148}
   - component: {fileID: 1846080804519361312}
   m_Layer: 10
-  m_Name: Obstacle
+  m_Name: Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,8 +74,8 @@ SpriteRenderer:
   m_SortingLayerID: 738129089
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 4af8e56d86e23154781be1e170d738ab, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

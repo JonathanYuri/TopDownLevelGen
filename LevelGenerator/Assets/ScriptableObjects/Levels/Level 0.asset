@@ -16,6 +16,6 @@ MonoBehaviour:
   enemies: 040000000500000006000000
   enemiesDifficult: 010000000200000003000000
   enemiesCapacity: 13
-  obstacles: 010000000200000003000000
-  obstaclesDifficult: 010000000200000003000000
+  obstacles: 0100000002000000
+  obstaclesDifficult: 0100000003000000
   obstaclesCapacity: 13
