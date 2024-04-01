@@ -3,14 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum SoundsNameEnum
+{
+    Player,
+    Skeleton,
+    Slime,
+    Snake
+}
+
 public class AudioManager : SingletonMonoBehaviour<AudioManager>
 {
     [SerializeField] CharacterSoundsController characterSoundsController;
 
     [SerializeField] List<GameObject> sounds;
-    [SerializeField] List<string> soundsName;
+    [SerializeField] List<SoundsNameEnum> soundsName;
 
-    Dictionary<string, GameObject> objectSounds;
+    Dictionary<SoundsNameEnum, GameObject> objectSounds;
 
     protected override void Awake()
     {
@@ -22,7 +30,7 @@ public class AudioManager : SingletonMonoBehaviour<AudioManager>
         }
     }
 
-    public void AddCharacterSoundInstance(string characterSoundName, int gameObjectId)
+    public void AddCharacterSoundInstance(SoundsNameEnum characterSoundName, int gameObjectId)
     {
         if (!objectSounds.ContainsKey(characterSoundName))
         {

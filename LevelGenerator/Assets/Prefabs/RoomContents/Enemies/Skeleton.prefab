@@ -589,7 +589,7 @@ MonoBehaviour:
   life: 50
   targetManager: {fileID: 7324877665200866385}
   location: {fileID: 3970811768209648529}
-  characterSoundName: skeleton
+  characterSoundName: 1
 --- !u!114 &7277807764853123077
 MonoBehaviour:
   m_ObjectHideFlags: 0

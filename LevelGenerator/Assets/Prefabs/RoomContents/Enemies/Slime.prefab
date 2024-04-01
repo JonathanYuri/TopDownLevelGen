@@ -450,7 +450,7 @@ MonoBehaviour:
   life: 70
   targetManager: {fileID: 7014183382443654903}
   location: {fileID: 1752701515999892145}
-  characterSoundName: slime
+  characterSoundName: 2
 --- !u!114 &4602692104869820121
 MonoBehaviour:
   m_ObjectHideFlags: 0

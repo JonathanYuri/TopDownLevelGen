@@ -686,7 +686,7 @@ MonoBehaviour:
   life: 30
   targetManager: {fileID: 8743796044381433544}
   location: {fileID: 4600576350118075242}
-  characterSoundName: snake
+  characterSoundName: 3
   dashController: {fileID: 3677121069923688478}
   aiVision: {fileID: 7141659908848299429}
 --- !u!114 &5883983589104860115

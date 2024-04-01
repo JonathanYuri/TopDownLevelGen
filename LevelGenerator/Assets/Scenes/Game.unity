@@ -244,10 +244,7 @@ MonoBehaviour:
   - {fileID: 6695541274722863256, guid: 18aa91f6aa8ad8845a9be9ea8f201257, type: 3}
   - {fileID: 6847526229279707539, guid: a4ffdfb3a5e41f745b22dbcdc800ea43, type: 3}
   - {fileID: 187199077834269183, guid: ff97e9169f79ba6428c63b1fa7a2364c, type: 3}
-  soundsName:
-  - player
-  - skeleton
-  - slime
+  soundsName: 000000000100000002000000
 --- !u!1 &339250559
 GameObject:
   m_ObjectHideFlags: 0
