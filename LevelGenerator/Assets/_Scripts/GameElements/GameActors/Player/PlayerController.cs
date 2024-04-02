@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     public event Action OnLevelComplete;
     public event Action OnDied;
 
+    public bool OnLevelLoad { get; set; }
+
     void Awake()
     {
         playerMovementController = GetComponent<PlayerMovementController>();
@@ -57,16 +59,24 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
         else if (collision.CompareTag("LevelPortal"))
         {
             OnLevelComplete?.Invoke();
+            OnLevelLoad = true;
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (!damageInvincibilityController.Invincible)
+        if (damageInvincibilityController.Invincible)
         {
-            damageInvincibilityController.MakeInvincible();
-            HandleDamageReceived(damage);
+            return;
         }
+
+        if (OnLevelLoad)
+        {
+            return;
+        }
+
+        damageInvincibilityController.MakeInvincible();
+        HandleDamageReceived(damage);
     }
 
     void HandleDamageReceived(int damage)

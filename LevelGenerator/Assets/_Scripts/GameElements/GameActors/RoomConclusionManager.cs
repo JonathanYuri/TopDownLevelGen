@@ -69,10 +69,14 @@ public class RoomConclusionManager : MonoBehaviour
     {
         e.enemy.OnDefeated -= OnEnemyDefeated;
 
-        GameMapSingleton.Instance.EachRoomEnemies[e.roomPosition].Remove(e.enemy);
-        if (GameMapSingleton.Instance.EachRoomEnemies[e.roomPosition].Count == 0)
+        if (GameMapSingleton.Instance.EachRoomEnemies.TryGetValue(e.roomPosition, out var enemies))
         {
-            OpenAllDoorsOfRoom(e.roomPosition);
+            enemies.Remove(e.enemy);
+
+            if (enemies.Count == 0)
+            {
+                OpenAllDoorsOfRoom(e.roomPosition);
+            }
         }
     }
 

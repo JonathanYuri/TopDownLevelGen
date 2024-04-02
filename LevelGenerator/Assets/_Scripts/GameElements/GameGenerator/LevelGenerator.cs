@@ -100,6 +100,7 @@ public class LevelGenerator : MonoBehaviour
     {
         InitialRoomPosition = new() { X = 0, Y = 0 };
         FinalRoomPosition = ChooseFinalRoomPosition();
+        GameMapSingleton.Instance.FinalRoomPosition = FinalRoomPosition;
 
         DistanceFromInitialToFinalRoom = Utils.CalculateDistance(InitialRoomPosition, FinalRoomPosition);
 

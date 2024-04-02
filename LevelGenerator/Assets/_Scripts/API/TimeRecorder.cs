@@ -10,6 +10,8 @@ public class TimeRecorder : MonoBehaviour
 
     PlayerController playerController;
     RoomConclusionManager roomConclusionManager;
+    PlayerLocationManager playerLocationManager;
+    InputManager inputManager;
     APISender apiSender;
 
     void Start()
@@ -19,6 +21,9 @@ public class TimeRecorder : MonoBehaviour
         roomConclusionManager = FindObjectOfType<RoomConclusionManager>();
         roomConclusionManager.OnRoomDoorsOpened += OnRoomDoorsOpened;
 
+        playerLocationManager = FindObjectOfType<PlayerLocationManager>();
+        inputManager = FindObjectOfType<InputManager>();
+
         playerController = FindObjectOfType<PlayerController>();
         playerController.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
     }
@@ -26,14 +31,20 @@ public class TimeRecorder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        if (!inputManager.IsInputEnabled())
+        {
+            return;
+        }
 
-        // foi concluida a sala
         if (!enemiesInRoom)
         {
             return;
         }
+
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Debug.Log("time: " + time);
 
         if (horizontal != 0f || vertical != 0f)
         {
@@ -47,7 +58,15 @@ public class TimeRecorder : MonoBehaviour
 
     void PlayerPassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
     {
-        enemiesInRoom = true;
+        // se for a sala final nao tem inimigos
+        if (playerLocationManager.PlayerLocation.RoomPosition.Equals(GameMapSingleton.Instance.FinalRoomPosition))
+        {
+            enemiesInRoom = false;
+        }
+        else
+        {
+            enemiesInRoom = true;
+        }
     }
 
     void OnRoomDoorsOpened()

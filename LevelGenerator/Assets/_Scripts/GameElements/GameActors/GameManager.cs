@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     {
         levelDataManager.NextLevel();
         yield return GenerateGame();
+        playerManager.Player.OnLevelLoad = false;
     }
 
     public void RestartGame()
