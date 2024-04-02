@@ -38,6 +38,11 @@ public class APISender : MonoBehaviour
         closingTheGame = true;
     }
 
+    void OnDestroy()
+    {
+        closingTheGame = true;
+    }
+
     public void SendRoomConclusionData(float time)
     {
         if (!closingTheGame)
