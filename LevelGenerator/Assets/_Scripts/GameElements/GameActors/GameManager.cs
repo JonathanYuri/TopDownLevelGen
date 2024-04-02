@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Manages the game
@@ -44,5 +45,10 @@ public class GameManager : MonoBehaviour
     {
         levelDataManager.NextLevel();
         yield return GenerateGame();
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     public EventHandler<DoorEventArgs> PassedThroughTheDoorEvent;
 
     public event Action OnLevelComplete;
+    public event Action OnDied;
 
     void Awake()
     {
@@ -84,6 +85,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
 
     public void Die()
     {
+        OnDied?.Invoke();
         Destroy(gameObject);
     }
 

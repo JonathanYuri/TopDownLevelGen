@@ -32,6 +32,7 @@ public class PlayerManager : MonoBehaviour
         {
             Player.PassedThroughTheDoorEvent -= PlayerPassedThroughTheDoor;
             Player.OnLevelComplete -= OnLevelComplete;
+            Player.OnDied -= OnPlayerDied;
         }
     }
 
@@ -45,6 +46,12 @@ public class PlayerManager : MonoBehaviour
         playerLocationManager.PlayerLocation = Player.GetComponentInChildren<Location>();
         Player.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
         Player.OnLevelComplete += OnLevelComplete;
+        Player.OnDied += OnPlayerDied;
+    }
+
+    void OnPlayerDied()
+    {
+        gameManager.RestartGame();
     }
 
     void PlayerPassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
