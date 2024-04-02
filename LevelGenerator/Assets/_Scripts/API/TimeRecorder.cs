@@ -53,7 +53,7 @@ public class TimeRecorder : MonoBehaviour
     void OnRoomDoorsOpened()
     {
         enemiesInRoom = false;
-
         apiSender.SendRoomConclusionData(time);
+        time = 0;
     }
 }
