@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(TimeRecorder))]
+[RequireComponent(typeof(LostLifeRecorder))]
 public class APISender : MonoBehaviour
 {
     public class UserData
@@ -14,11 +17,16 @@ public class APISender : MonoBehaviour
         public List<string> enemies;
         public List<string> obstacles;
         public float time;
+        public int lostLife;
         public string version;
     }
 
     LevelDataManager levelDataManager;
     PlayerLocationManager playerLocationManager;
+    RoomConclusionManager roomConclusionManager;
+    PlayerController playerController;
+    TimeRecorder timeRecorder;
+    LostLifeRecorder lostLifeRecorder;
     PlayerInfo playerInfo;
 
     const string baseUrl = "http://game-runs.glitch.me";
@@ -26,11 +34,23 @@ public class APISender : MonoBehaviour
 
     bool closingTheGame = false;
 
+    void Awake()
+    {
+        timeRecorder = GetComponent<TimeRecorder>();
+        lostLifeRecorder = GetComponent<LostLifeRecorder>();
+    }
+
     void Start()
     {
+        playerInfo = FindObjectOfType<PlayerInfo>();
         levelDataManager = FindObjectOfType<LevelDataManager>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
-        playerInfo = FindObjectOfType<PlayerInfo>();
+
+        roomConclusionManager = FindObjectOfType<RoomConclusionManager>();
+        roomConclusionManager.OnRoomDoorsOpened += OnRoomDoorsOpened;
+
+        playerController = FindObjectOfType<PlayerController>();
+        playerController.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
     }
 
     void OnApplicationQuit()
@@ -41,17 +61,26 @@ public class APISender : MonoBehaviour
     void OnDestroy()
     {
         closingTheGame = true;
-    }
-
-    public void SendRoomConclusionData(float time)
-    {
-        if (!closingTheGame)
+        if (roomConclusionManager != null)
         {
-            StartCoroutine(SendPostRequest(time));
+            roomConclusionManager.OnRoomDoorsOpened -= OnRoomDoorsOpened;
+        }
+
+        if (playerController != null)
+        {
+            playerController.PassedThroughTheDoorEvent -= PlayerPassedThroughTheDoor;
         }
     }
 
-    IEnumerator SendPostRequest(float time)
+    public void SendRoomConclusionData(float time, int lostLife)
+    {
+        if (!closingTheGame)
+        {
+            StartCoroutine(SendPostRequest(time, lostLife));
+        }
+    }
+
+    IEnumerator SendPostRequest(float time, int lostLife)
     {
         Room room = GameMapSingleton.Instance.RoomPositions[playerLocationManager.PlayerLocation.RoomPosition];
 
@@ -76,6 +105,7 @@ public class APISender : MonoBehaviour
             enemies = enemiesName,
             obstacles = obstaclesName,
             time = time,
+            lostLife = lostLife,
             version = "1.0.0"
         };
 
@@ -100,5 +130,28 @@ public class APISender : MonoBehaviour
         {
             Debug.Log("Resposta: " + request.downloadHandler.text);
         }
+    }
+
+    void PlayerPassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
+    {
+        // se for a sala final nao tem inimigos
+        if (playerLocationManager.PlayerLocation.RoomPosition.Equals(GameMapSingleton.Instance.FinalRoomPosition))
+        {
+            timeRecorder.EnemiesInRoom = false;
+        }
+        else
+        {
+            timeRecorder.EnemiesInRoom = true;
+        }
+    }
+
+    void OnRoomDoorsOpened()
+    {
+        SendRoomConclusionData(timeRecorder.Time, playerController.Life - lostLifeRecorder.PreviousLife);
+
+        timeRecorder.EnemiesInRoom = false;
+        timeRecorder.Time = 0;
+
+        lostLifeRecorder.PreviousLife = playerController.Life;
     }
 }

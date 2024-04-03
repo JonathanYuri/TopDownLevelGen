@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     public event Action OnDied;
 
     public bool OnLevelLoad { get; set; }
+    public int Life { get => life; private set => life = value; }
 
     void Awake()
     {
@@ -81,15 +82,15 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
 
     void HandleDamageReceived(int damage)
     {
-        if (life - damage <= 0)
+        if (Life - damage <= 0)
         {
             playerHealthBarController.UpdateLife(0);
             Die();
         }
         else
         {
-            life -= damage;
-            playerHealthBarController.UpdateLife(life);
+            Life -= damage;
+            playerHealthBarController.UpdateLife(Life);
         }
     }
 
