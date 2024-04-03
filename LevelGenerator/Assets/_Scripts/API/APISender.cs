@@ -6,9 +6,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(TimeRecorder))]
-[RequireComponent(typeof(LostLifeRecorder))]
 public class APISender : MonoBehaviour
 {
+    const string baseUrl = "http://game-runs.glitch.me";
+    const string adminKey = "123456";
+
     public class UserData
     {
         public string username;
@@ -26,18 +28,14 @@ public class APISender : MonoBehaviour
     RoomConclusionManager roomConclusionManager;
     PlayerController playerController;
     TimeRecorder timeRecorder;
-    LostLifeRecorder lostLifeRecorder;
     PlayerInfo playerInfo;
 
-    const string baseUrl = "http://game-runs.glitch.me";
-    const string adminKey = "123456";
-
+    int previousLife;
     bool closingTheGame = false;
 
     void Awake()
     {
         timeRecorder = GetComponent<TimeRecorder>();
-        lostLifeRecorder = GetComponent<LostLifeRecorder>();
     }
 
     void Start()
@@ -50,6 +48,7 @@ public class APISender : MonoBehaviour
         roomConclusionManager.OnRoomDoorsOpened += OnRoomDoorsOpened;
 
         playerController = FindObjectOfType<PlayerController>();
+        previousLife = playerController.Life;
         playerController.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
     }
 
@@ -147,11 +146,11 @@ public class APISender : MonoBehaviour
 
     void OnRoomDoorsOpened()
     {
-        SendRoomConclusionData(timeRecorder.Time, playerController.Life - lostLifeRecorder.PreviousLife);
+        SendRoomConclusionData(timeRecorder.Time, previousLife - playerController.Life);
 
         timeRecorder.EnemiesInRoom = false;
         timeRecorder.Time = 0;
 
-        lostLifeRecorder.PreviousLife = playerController.Life;
+        previousLife = playerController.Life;
     }
 }
