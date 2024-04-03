@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(PlayerLocationManager))]
 public class PlayerManager : MonoBehaviour
@@ -63,6 +64,11 @@ public class PlayerManager : MonoBehaviour
 
     void OnLevelComplete()
     {
+        if (gameManager.LevelDataManager.IndexCurrentLevel == gameManager.LevelDataManager.MaxIndexLevel)
+        {
+            gameManager.RestartGame();
+            return;
+        }
         StartCoroutine(gameManager.LoadNextLevel());
     }
 }

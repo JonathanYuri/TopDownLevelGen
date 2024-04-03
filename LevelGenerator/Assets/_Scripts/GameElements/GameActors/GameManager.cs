@@ -12,12 +12,13 @@ public class GameManager : MonoBehaviour
     LevelGenerator levelGenerator;
     PlayerManager playerManager;
     PlayerLocationManager playerLocationManager;
-    LevelDataManager levelDataManager;
     LoadingManager loadingManager;
+
+    public LevelDataManager LevelDataManager { get; set; }
 
     void Awake()
     {
-        levelDataManager = GetComponent<LevelDataManager>();
+        LevelDataManager = GetComponent<LevelDataManager>();
     }
 
     void Start()
@@ -43,7 +44,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator LoadNextLevel()
     {
-        levelDataManager.NextLevel();
+        LevelDataManager.NextLevel();
         yield return GenerateGame();
         playerManager.Player.OnLevelLoad = false;
     }

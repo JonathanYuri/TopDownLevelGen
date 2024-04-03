@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6610102458545296612}
   - component: {fileID: 4144368573789058566}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: DamageCooldown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81300e726d32ff240b9ec86550ad4a8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timerDuration: 2
+  timerDuration: 1.5
 --- !u!1 &892652911800291631
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,7 +228,7 @@ MonoBehaviour:
   movementController: {fileID: 9217778847408348446}
   dashDuration: {fileID: 6453263574159101040}
   dashCooldown: {fileID: 8680199590020206155}
-  dashVelocity: 2
+  dashVelocity: 2.8
 --- !u!1 &2087245465399997300
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +330,7 @@ MonoBehaviour:
   movementDirectionHandler: {fileID: 5883983589104860115}
   rb: {fileID: -596854242487627998}
   spriteRenderer: {fileID: 6675631255662904958}
-  velocity: 1
+  velocity: 1.875
   threshold: 0.1
 --- !u!114 &7141659908848299429
 MonoBehaviour:
@@ -345,7 +345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   memoryTimer: {fileID: 3861252495959929608}
-  range: 2
+  range: 3
   angle: 360
 --- !u!114 &8108525909922972460
 MonoBehaviour:
@@ -487,7 +487,7 @@ GameObject:
   - component: {fileID: 2501329138116085925}
   - component: {fileID: 2865196939178200125}
   - component: {fileID: 131022817140852362}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: CollisionDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -539,7 +539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectCooldown: {fileID: 4144368573789058566}
-  damage: 5
+  damage: 10
 --- !u!1 &6056213582785261799
 GameObject:
   m_ObjectHideFlags: 0
