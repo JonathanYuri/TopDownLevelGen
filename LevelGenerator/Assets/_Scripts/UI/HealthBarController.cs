@@ -9,6 +9,8 @@ public class HealthBarController : MonoBehaviour
     RectTransform rectTransform;
     [SerializeField] TMP_Text lifeText;
 
+    public int MaxLife { get; set; }
+
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -21,6 +23,6 @@ public class HealthBarController : MonoBehaviour
     public void UpdateLife(int life)
     {
         rectTransform.localScale = new Vector3((float)life / 100f, rectTransform.localScale.y, rectTransform.localScale.y);
-        lifeText.text = life.ToString() + " / 100";
+        lifeText.text = life.ToString() + " / " + MaxLife.ToString();
     }
 }

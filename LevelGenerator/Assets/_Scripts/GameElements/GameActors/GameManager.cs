@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator LoadNextLevel()
     {
+        playerManager.Player.Heal(playerManager.Player.MaxLife - playerManager.Player.Life);
         LevelDataManager.NextLevel();
         yield return GenerateGame();
         playerManager.Player.OnLevelLoad = false;

@@ -24,10 +24,12 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     public event Action OnDied;
 
     public bool OnLevelLoad { get; set; }
-    public int Life { get => life; private set => life = value; }
+    public int Life { get => life; set => life = value; }
+    public int MaxLife { get; private set; }
 
     void Awake()
     {
+        MaxLife = Life;
         playerMovementController = GetComponent<PlayerMovementController>();
         velocityWithoutSlow = playerMovementController.Velocity;
         slownessTimer.OnTimerExpired += OnSlownessTimerExpired;
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     void Start()
     {
         playerHealthBarController = FindObjectOfType<HealthBarController>();
+        playerHealthBarController.MaxLife = MaxLife;
     }
 
     void OnDestroy()
@@ -92,6 +95,12 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
             Life -= damage;
             playerHealthBarController.UpdateLife(Life);
         }
+    }
+
+    public void Heal(int healAmount)
+    {
+        Life += healAmount;
+        playerHealthBarController.UpdateLife(Life);
     }
 
     public void Die()
