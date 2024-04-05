@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     PlayerManager playerManager;
     PlayerLocationManager playerLocationManager;
     LoadingManager loadingManager;
+    APISender apiSender;
 
     public LevelDataManager LevelDataManager { get; set; }
 
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        apiSender = FindObjectOfType<APISender>();
         levelGenerator = FindObjectOfType<LevelGenerator>();
         playerManager = FindObjectOfType<PlayerManager>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
     {
         playerManager.Player.Heal(playerManager.Player.MaxLife - playerManager.Player.Life);
         LevelDataManager.NextLevel();
+        apiSender.CompletedRooms.Clear();
         yield return GenerateGame();
         playerManager.Player.OnLevelLoad = false;
     }

@@ -33,8 +33,11 @@ public class APISender : MonoBehaviour
     int previousLife;
     bool closingTheGame = false;
 
+    public List<Position> CompletedRooms { get; set; }
+
     void Awake()
     {
+        CompletedRooms = new();
         timeRecorder = GetComponent<TimeRecorder>();
     }
 
@@ -108,6 +111,8 @@ public class APISender : MonoBehaviour
             version = "1.0.0"
         };
 
+        Debug.LogWarning("SendRoomConclusionData (1): " + userData.time);
+
         string jsonData = JsonUtility.ToJson(userData);
         byte[] postData = System.Text.Encoding.UTF8.GetBytes(jsonData);
 
@@ -138,6 +143,11 @@ public class APISender : MonoBehaviour
         {
             timeRecorder.EnemiesInRoom = false;
         }
+        // se ja passei por essa sala
+        else if (CompletedRooms.Contains(playerLocationManager.PlayerLocation.RoomPosition))
+        {
+            timeRecorder.EnemiesInRoom = false;
+        }
         else
         {
             timeRecorder.EnemiesInRoom = true;
@@ -146,6 +156,8 @@ public class APISender : MonoBehaviour
 
     void OnRoomDoorsOpened()
     {
+        Debug.LogWarning("SendRoomConclusionData (0): " + timeRecorder.Time);
+        CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
         SendRoomConclusionData(timeRecorder.Time, previousLife - playerController.Life);
 
         timeRecorder.EnemiesInRoom = false;
