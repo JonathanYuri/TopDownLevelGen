@@ -136,33 +136,45 @@ public class APISender : MonoBehaviour
         }
     }
 
-    void PlayerPassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
+    bool CountTimeCondition()
     {
-        // se for a sala final nao tem inimigos
-        if (playerLocationManager.PlayerLocation.RoomPosition.Equals(GameMapSingleton.Instance.FinalRoomPosition))
+        // sala inicial
+        if (playerLocationManager.PlayerLocation.RoomPosition.Equals(GameMapSingleton.Instance.InitialRoomPosition))
         {
-            timeRecorder.EnemiesInRoom = false;
+            return false;
+        }
+
+        // se for a sala final
+        else if (playerLocationManager.PlayerLocation.RoomPosition.Equals(GameMapSingleton.Instance.FinalRoomPosition))
+        {
+            return false;
         }
         // se ja passei por essa sala
         else if (CompletedRooms.Contains(playerLocationManager.PlayerLocation.RoomPosition))
         {
-            timeRecorder.EnemiesInRoom = false;
+            return false;
         }
-        else
-        {
-            timeRecorder.EnemiesInRoom = true;
-        }
+
+        return true;
+    }
+
+    void PlayerPassedThroughTheDoor(object player, DoorEventArgs doorEventArgs)
+    {
+        timeRecorder.EnemiesInRoom = CountTimeCondition();
     }
 
     void OnRoomDoorsOpened()
     {
-        Debug.LogWarning("SendRoomConclusionData (0): " + timeRecorder.Time);
-        CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
-        SendRoomConclusionData(timeRecorder.Time, previousLife - playerController.Life);
+        if (CountTimeCondition())
+        {
+            Debug.LogWarning("SendRoomConclusionData (0): " + timeRecorder.Time);
+            CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
+            SendRoomConclusionData(timeRecorder.Time, previousLife - playerController.Life);
 
-        timeRecorder.EnemiesInRoom = false;
-        timeRecorder.Time = 0;
+            timeRecorder.EnemiesInRoom = false;
+            timeRecorder.Time = 0;
 
-        previousLife = playerController.Life;
+            previousLife = playerController.Life;
+        }
     }
 }

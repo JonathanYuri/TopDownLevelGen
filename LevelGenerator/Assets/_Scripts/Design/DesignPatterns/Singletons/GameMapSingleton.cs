@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameMapSingleton : Singleton<GameMapSingleton>
 {
     public Dictionary<Position, Room> RoomPositions { get; set; } = new();
+    public Position InitialRoomPosition { get; set; } = new();
     public Position FinalRoomPosition { get; set; } = new();
     public Dictionary<Position, List<GameObject>> EachRoomFloors { get; set; } = new();
     public Dictionary<Position, HashSet<Door>> EachRoomDoors { get; set; } = new();
@@ -16,6 +17,7 @@ public class GameMapSingleton : Singleton<GameMapSingleton>
     {
         RoomPositions.Clear();
         FinalRoomPosition = new();
+        InitialRoomPosition = new();
         EachRoomFloors.Clear();
         EachRoomDoors.Clear();
         EachRoomEnemies.Clear();
