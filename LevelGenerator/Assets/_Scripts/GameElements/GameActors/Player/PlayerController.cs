@@ -62,8 +62,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
         }
         else if (collision.CompareTag("LevelPortal"))
         {
-            OnLevelComplete?.Invoke();
             OnLevelLoad = true;
+            OnLevelComplete?.Invoke();
         }
     }
 
