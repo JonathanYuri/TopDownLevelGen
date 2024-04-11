@@ -30,10 +30,10 @@ public class APISender : MonoBehaviour
     TimeRecorder timeRecorder;
     PlayerInfo playerInfo;
 
-    int previousLife;
     bool closingTheGame = false;
 
     public List<Position> CompletedRooms { get; set; }
+    public int PreviousLife { get; set; }
 
     void Awake()
     {
@@ -51,7 +51,7 @@ public class APISender : MonoBehaviour
         roomConclusionManager.OnRoomDoorsOpened += OnRoomDoorsOpened;
 
         playerController = FindObjectOfType<PlayerController>();
-        previousLife = playerController.Life;
+        PreviousLife = playerController.Life;
         playerController.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
     }
 
@@ -62,7 +62,6 @@ public class APISender : MonoBehaviour
 
     void OnDestroy()
     {
-        closingTheGame = true;
         if (roomConclusionManager != null)
         {
             roomConclusionManager.OnRoomDoorsOpened -= OnRoomDoorsOpened;
@@ -76,7 +75,7 @@ public class APISender : MonoBehaviour
 
     public void SendRoomConclusionData(float time, int lostLife)
     {
-        if (!closingTheGame)
+        if (!closingTheGame && !SceneChangeManager.Instance.LoadingScene)
         {
             StartCoroutine(SendPostRequest(time, lostLife));
         }
@@ -169,12 +168,12 @@ public class APISender : MonoBehaviour
         {
             Debug.LogWarning("SendRoomConclusionData (0): " + timeRecorder.Time);
             CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
-            SendRoomConclusionData(timeRecorder.Time, previousLife - playerController.Life);
+            SendRoomConclusionData(timeRecorder.Time, PreviousLife - playerController.Life);
 
             timeRecorder.EnemiesInRoom = false;
             timeRecorder.Time = 0;
 
-            previousLife = playerController.Life;
+            PreviousLife = playerController.Life;
         }
     }
 }

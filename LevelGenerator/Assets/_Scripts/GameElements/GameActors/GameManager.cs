@@ -47,14 +47,17 @@ public class GameManager : MonoBehaviour
     public IEnumerator LoadNextLevel()
     {
         playerManager.Player.Heal(playerManager.Player.MaxLife - playerManager.Player.Life);
-        LevelDataManager.NextLevel();
+
         apiSender.CompletedRooms.Clear();
+        apiSender.PreviousLife = playerManager.Player.Life;
+
+        LevelDataManager.NextLevel();
         yield return GenerateGame();
         playerManager.Player.OnLevelLoad = false;
     }
 
     public void RestartGame()
     {
-        SceneManager.LoadScene("Menu");
+        SceneChangeManager.Instance.LoadScene(SceneNamesConstants.MENU);
     }
 }

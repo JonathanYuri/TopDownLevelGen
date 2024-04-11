@@ -32,6 +32,6 @@ public class MenuManager : MonoBehaviour
         FindObjectOfType<PlayerInfo>().Username = username.text;
 
         loadingManager.StartLoading();
-        SceneManager.LoadSceneAsync("Game");
+        SceneChangeManager.Instance.LoadSceneAsync(SceneNamesConstants.GAME);
     }
 }
