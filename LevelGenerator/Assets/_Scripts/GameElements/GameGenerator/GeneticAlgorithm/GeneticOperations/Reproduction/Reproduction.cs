@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
 using RoomGeneticAlgorithm.Constants;
+using System.Text;
+using UnityEngine;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {
@@ -14,6 +16,22 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="parent1">The father individual.</param>
         /// <param name="parent2">The mother individual.</param>
         /// <returns>The child individual resulting from the crossover operation.</returns>
+        /// 
+        static string GetMatrix(RoomIndividual individual)
+        {
+            StringBuilder sb = new();
+            for (int i = 0; i < individual.RoomMatrix.Values.GetLength(0); i++)
+            {
+                for (int j = 0; j < individual.RoomMatrix.Values.GetLength(1); j++)
+                {
+                    sb.Append((int)individual.RoomMatrix.Values[i, j]);
+                    sb.Append(" ");
+                }
+                sb.Append("\n");
+            }
+            return sb.ToString();
+        }
+
         static RoomIndividual Crossover(RoomIndividual parent1, RoomIndividual parent2)
         {
             RoomIndividual child = new(false);
@@ -41,6 +59,9 @@ namespace RoomGeneticAlgorithm.GeneticOperations
                     parent1.RoomMatrix.ObstaclesPositions, parent2.RoomMatrix.ObstaclesPositions, child.RoomMatrix.ObstaclesPositions);
             }
 
+            //Debug.Log("parent1: " + GetMatrix(parent1));
+            //Debug.Log("parent2: " + GetMatrix(parent2));
+            //Debug.Log("child: " + GetMatrix(child));
             return child;
         }
 
@@ -52,13 +73,28 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         static RoomIndividual[] TournamentSelection(RoomIndividual[] population)
         {
             RoomIndividual[] parents = new RoomIndividual[GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT];
+            HashSet<RoomIndividual> selectedParents = new();
 
             for (int i = 0; i < GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT; i++)
             {
                 List<RoomIndividual> tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
 
                 // O vencedor do torneio (quem tem a maior fitness dos selecionados aleatoriamente) é selecionado para reprodução
-                parents[i] = tournament.MaxBy(individual => individual.Value);
+                RoomIndividual winner = tournament.MaxBy(individual => individual.Value);
+
+                // Garantir que o mesmo indivíduo não seja selecionado mais de uma vez
+                while (selectedParents.Contains(winner))
+                {
+                    tournament.Remove(winner);
+                    if (tournament.Count == 0)
+                    {
+                        tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
+                    }
+                    winner = tournament.MaxBy(individual => individual.Value);
+                }
+
+                parents[i] = winner;
+                selectedParents.Add(winner);
             }
 
             return parents;

@@ -14,10 +14,21 @@ public enum Direction
     Right
 }
 
-public class Range
+public class Range<T> where T : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>, IFormattable
 {
-    public int min;
-    public int max;
+    public T Min { get; set; }
+    public T Max { get; set; }
+
+    public Range(T min, T max)
+    {
+        Min = min;
+        Max = max;
+    }
+
+    public bool IsWithinRange(T value)
+    {
+        return value.CompareTo(Min) >= 0 && value.CompareTo(Max) <= 0;
+    }
 }
 
 /// <summary>

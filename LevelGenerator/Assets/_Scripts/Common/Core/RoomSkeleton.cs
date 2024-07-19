@@ -64,16 +64,16 @@ public class RoomSkeleton
             if (doorPosition.X == GameConstants.ROOM_WIDTH - 1) // porta na direita da room
             {
                 Position initialNothingPosition = new() { X = doorPosition.X - 1, Y = doorPosition.Y };
-                Range rangeX = new() { max = 0, min = -nothingRange + 1 };
-                Range rangeY = new() { max = nothingRange - 1, min = -nothingRange + 1 };
+                Range<int> rangeX = new(-nothingRange + 1, 0);
+                Range<int> rangeY = new(-nothingRange + 1, nothingRange - 1);
 
                 PlaceTheImmutableRoomContentInRange(RoomContents.Nothing, initialNothingPosition, rangeX, rangeY, nothingRange);
             }
             else if (doorPosition.X == 0) // porta na esquerda da room
             {
                 Position initialNothingPosition = new() { X = doorPosition.X + 1, Y = doorPosition.Y };
-                Range rangeX = new() { max = nothingRange - 1, min = 0 };
-                Range rangeY = new() { max = nothingRange - 1, min = -nothingRange + 1 };
+                Range<int> rangeX = new(0, nothingRange - 1);
+                Range<int> rangeY = new(-nothingRange + 1, nothingRange - 1);
 
                 PlaceTheImmutableRoomContentInRange(RoomContents.Nothing, initialNothingPosition, rangeX, rangeY, nothingRange);
             }
@@ -85,27 +85,27 @@ public class RoomSkeleton
             if (doorPosition.Y == GameConstants.ROOM_HEIGHT - 1) // porta pra cima na room
             {
                 Position initialNothingPosition = new() { X = doorPosition.X, Y = doorPosition.Y - 1 };
-                Range rangeX = new() { max = nothingRange - 1, min = -nothingRange + 1 };
-                Range rangeY = new() { max = 0, min = -nothingRange + 1 };
+                Range<int> rangeX = new(-nothingRange + 1, nothingRange - 1);
+                Range<int> rangeY = new(-nothingRange + 1, 0);
 
                 PlaceTheImmutableRoomContentInRange(RoomContents.Nothing, initialNothingPosition, rangeX, rangeY, nothingRange);
             }
             else if (doorPosition.Y == 0) // porta pra baixo na room
             {
                 Position initialNothingPosition = new() { X = doorPosition.X, Y = doorPosition.Y + 1 };
-                Range rangeX = new() { max = nothingRange - 1, min = -nothingRange + 1 };
-                Range rangeY = new() { max = nothingRange - 1, min = 0 };
+                Range<int> rangeX = new(-nothingRange + 1, nothingRange - 1);
+                Range<int> rangeY = new(0, nothingRange - 1);
 
                 PlaceTheImmutableRoomContentInRange(RoomContents.Nothing, initialNothingPosition, rangeX, rangeY, nothingRange);
             }
         }
     }
 
-    void PlaceTheImmutableRoomContentInRange(RoomContents roomContent, Position initialPosition, Range rangeX, Range rangeY, int maxDistanceToAccept)
+    void PlaceTheImmutableRoomContentInRange(RoomContents roomContent, Position initialPosition, Range<int> rangeX, Range<int> rangeY, int maxDistanceToAccept)
     {
-        for (int i = rangeX.min; i <= rangeX.max; i++)
+        for (int i = rangeX.Min; i <= rangeX.Max; i++)
         {
-            for (int j = rangeY.min; j <= rangeY.max; j++)
+            for (int j = rangeY.Min; j <= rangeY.Max; j++)
             {
                 Position roomContentPosition = new() { X = initialPosition.X + i, Y = initialPosition.Y + j };
                 if (Utils.CalculateDistance(initialPosition, roomContentPosition) < maxDistanceToAccept)

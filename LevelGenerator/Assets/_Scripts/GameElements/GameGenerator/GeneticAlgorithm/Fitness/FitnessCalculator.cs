@@ -1,4 +1,5 @@
 using RoomGeneticAlgorithm.Constants;
+using UnityEngine;
 
 namespace RoomGeneticAlgorithm.Fitness
 {
@@ -54,10 +55,10 @@ namespace RoomGeneticAlgorithm.Fitness
             int value = 0;
             for (int i = 0; i < FitnessHandler.numberOfFitnessVariables; i++)
             {
-                Range varBound = FitnessHandler.boundsOfFitnessVars[i];
+                Range<int> varBound = FitnessHandler.boundsOfFitnessVars[i];
                 float varImportance = FitnessHandler.importances[(FitnessHandler.FitnessVariable)i];
 
-                double normalizedValue = Utils.Normalization(fitnessVars[i], varBound.min, varBound.max);
+                double normalizedValue = Utils.Normalization(fitnessVars[i], varBound.Min, varBound.Max);
                 value += (int)(normalizedValue * varImportance);
             }
             return value;

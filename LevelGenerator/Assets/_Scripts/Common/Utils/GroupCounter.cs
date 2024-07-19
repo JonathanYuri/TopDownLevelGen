@@ -11,7 +11,7 @@ public static class GroupCounter
     /// <param name="matrix">The matrix of room contents.</param>
     /// <param name="positions">The set of positions to count groups in.</param>
     /// <returns>A list of group sizes.</returns>
-    public static List<int> CountGroups(RoomContents[,] matrix, HashSet<Position> positions)
+    public static List<int> GetGroupSizes(RoomContents[,] matrix, HashSet<Position> positions)
     {
         HashSet<Position> visited = new();
         List<int> groupSizes = new();
@@ -31,7 +31,7 @@ public static class GroupCounter
     /// <summary>
     /// Recursively counts the size of a connected group of positions starting from a given position.
     /// </summary>
-    /// <param name="matrix">The matrix of room contents.</param>
+    /// <param name="matriz">The matrix of room contents.</param>
     /// <param name="visited">The set of visited positions.</param>
     /// <param name="positions">The set of positions to count groups in.</param>
     /// <param name="position">The starting position for group counting.</param>

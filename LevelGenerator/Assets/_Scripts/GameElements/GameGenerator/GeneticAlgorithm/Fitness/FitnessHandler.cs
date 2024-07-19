@@ -13,12 +13,16 @@ namespace RoomGeneticAlgorithm.Fitness
         internal static readonly int numberOfFitnessVariables = 3;
 
         static Dictionary<int, int[]> allFitness = new();
-        internal static List<Range> boundsOfFitnessVars = new(); // pra normalizar as variaveis da fitness do individual
+        internal static List<Range<int>> boundsOfFitnessVars = new(); // pra normalizar as variaveis da fitness do individual
         static bool areBoundsModified = true;
 
         static readonly float numGroupsImportance = 1f;
         static readonly float enemiesPerGroupAverageImportance = 1f;
         static readonly float enemyDoorDistanceImportance = 1f;
+
+        static readonly Range<int> numGroupsRange = new(1, 10);
+        static readonly Range<float> enemiesPerGroupRange = new(1f, 5f);
+        static readonly Range<int> enemyDoorDistanceRange = new(1, 90);
 
         internal enum FitnessVariable
         {
@@ -36,6 +40,16 @@ namespace RoomGeneticAlgorithm.Fitness
 
         static FitnessHandler()
         {
+            numGroupsImportance = Mathf.Clamp01(numGroupsImportance);
+            enemiesPerGroupAverageImportance = Mathf.Clamp01(enemiesPerGroupAverageImportance);
+            enemyDoorDistanceImportance = Mathf.Clamp01(enemyDoorDistanceImportance);
+        }
+
+        public static void StartAlgorithm()
+        {
+            allFitness.Clear();
+            boundsOfFitnessVars.Clear();
+
             // initialize allFitness
             for (int i = 0; i < numberOfFitnessVariables; i++)
             {
@@ -45,12 +59,8 @@ namespace RoomGeneticAlgorithm.Fitness
             // initialize bounds
             for (int i = 0; i < numberOfFitnessVariables; i++)
             {
-                boundsOfFitnessVars.Add(new Range() { max = int.MinValue, min = int.MaxValue });
+                boundsOfFitnessVars.Add(new(int.MaxValue, int.MinValue));
             }
-
-            numGroupsImportance = Mathf.Clamp01(numGroupsImportance);
-            enemiesPerGroupAverageImportance = Mathf.Clamp01(enemiesPerGroupAverageImportance);
-            enemyDoorDistanceImportance = Mathf.Clamp01(enemyDoorDistanceImportance);
         }
 
         /// <summary>
@@ -62,23 +72,25 @@ namespace RoomGeneticAlgorithm.Fitness
             for (int i = 0; i < numberOfFitnessVariables; i++) // pra cada variavel do fitness
             {
                 (int max, int min) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
-                Range varBound = new() { max = max, min = min };
+                Range<int> varBound = new(min, max);
 
                 UpdateExistingBound(i, varBound, ref boundsModified);
             }
             areBoundsModified = boundsModified;
         }
 
-        static void UpdateExistingBound(int boundIndex, Range varBound, ref bool boundsModified)
+        static void UpdateExistingBound(int boundIndex, Range<int> varBound, ref bool boundsModified)
         {
-            if (varBound.max > boundsOfFitnessVars[boundIndex].max)
+            if (varBound.Max > boundsOfFitnessVars[boundIndex].Max)
             {
-                boundsOfFitnessVars[boundIndex].max = varBound.max;
+                //Debug.LogWarning("UPDATE MAX BOUND");
+                boundsOfFitnessVars[boundIndex].Max = varBound.Max;
                 boundsModified = true;
             }
-            if (varBound.min < boundsOfFitnessVars[boundIndex].min)
+            if (varBound.Min < boundsOfFitnessVars[boundIndex].Min)
             {
-                boundsOfFitnessVars[boundIndex].min = varBound.min;
+                //Debug.LogWarning("UPDATE MIN BOUND");
+                boundsOfFitnessVars[boundIndex].Min = varBound.Min;
                 boundsModified = true;
             }
         }
@@ -90,8 +102,9 @@ namespace RoomGeneticAlgorithm.Fitness
         /// <returns>A array of calculated fitness variables.</returns>
         internal static int[] CalculeAllFitnessVars(RoomIndividual individual)
         {
-            List<int> groups = GroupCounter.CountGroups(individual.RoomMatrix.Values, individual.RoomMatrix.EnemiesPositions);
-            double media = groups.Average();
+            float difficulty = GeneticAlgorithmConstants.ROOM.Difficulty;
+            List<int> groupSizes = GroupCounter.GetGroupSizes(individual.RoomMatrix.Values, individual.RoomMatrix.EnemiesPositions);
+            float averageEnemiesPerGroup = (float)groupSizes.Average();
 
             //double averageDistanceFromDoorsToEnemies =
             //    RoomOperations.AverageDistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions, GeneticAlgorithmConstants.ROOM.DoorPositions);
@@ -99,20 +112,37 @@ namespace RoomGeneticAlgorithm.Fitness
             int distanceFromDoorsToEnemies =
                 RoomOperations.DistanceFromDoorsToEnemies(individual.RoomMatrix.EnemiesPositions, GeneticAlgorithmConstants.ROOM.DoorPositions);
 
-            float valueWhenDifficultyIsMinimal = (float)distanceFromDoorsToEnemies; // maximizar a distancia entre os inimigos e as portas
-            float valueWhenDifficultyIsMaximal = (float)-distanceFromDoorsToEnemies; // minimizar a distancia entre os inimigos e as portas
+            // Calculate ideal values based on difficulty
 
-            //double minimunDistanceFromDoorsToEnemies = RoomOperations.MinimumDistanceBetweenDoorsAndEnemies(individual.RoomMatrix.EnemiesPositions);
-            //float valueWhenDifficultyIsMinimal = (float)minimunDistanceFromDoorsToEnemies; // maximizar a minima distancia entre os inimigos e as portas
-            //float valueWhenDifficultyIsMaximal = (float)-minimunDistanceFromDoorsToEnemies; // minimizar a minima distancia entre os inimigos e as portas
+            // quanto maior dificuldade quero diminuir o numero de grupos
+            float numGroupsIdeal = Mathf.Lerp(numGroupsRange.Max, numGroupsRange.Min, difficulty);
+            // quanto maior dificuldade quero aumentar a quantidade de inimigos por grupo
+            float enemiesPerGroupAverageIdeal = Mathf.Lerp(enemiesPerGroupRange.Min, enemiesPerGroupRange.Max, difficulty);
+            // quanto maior dificuldade quero diminuir a distancia das portas para os inimigos
+            float enemyDoorDistanceIdeal = Mathf.Lerp(enemyDoorDistanceRange.Max, enemyDoorDistanceRange.Min, difficulty);
 
-            // Calculate the final value by interpolating between minimal and maximal values based on the difficulty.
-            float value = Mathf.Lerp(valueWhenDifficultyIsMinimal, valueWhenDifficultyIsMaximal, GeneticAlgorithmConstants.ROOM.Difficulty);
+            // Calculate the fitness values (a distancia para o valor ideal)
+            float numGroupsValue = -Mathf.Abs(groupSizes.Count - numGroupsIdeal);
+            float enemiesPerGroupAverageValue = -Mathf.Abs(averageEnemiesPerGroup - enemiesPerGroupAverageIdeal);
+            float enemyDoorDistanceValue = -Mathf.Abs(distanceFromDoorsToEnemies - enemyDoorDistanceIdeal);
 
+            /*
+            Debug.LogError($"IDEAL Num grups: {numGroupsIdeal} Count groups: {groupSizes.Count}" + "\n" +
+                $"IDEAL enemiesPerGroup: {enemiesPerGroupAverageIdeal} average: {averageEnemiesPerGroup}" + "\n" +
+                $"IDEAL enemyDoorDistance: {enemyDoorDistanceIdeal} distance: {distanceFromDoorsToEnemies}" + "\n" +
+                $"DIFICULDADE: {difficulty}");
+            */
+
+            /*enemiesPerGroupAverageValue *= 10f;
+            Debug.Log(
+                $"numGroupsValue (float): {numGroupsValue} (int): {(int)numGroupsValue}" + "\n" +
+                $"enemiesPerGroupAverageValue(float): {enemiesPerGroupAverageValue} (int): {(int)enemiesPerGroupAverageValue}" + "\n" +
+                $"enemyDoorDistanceValue (float): {enemyDoorDistanceValue} (int): {(int)enemyDoorDistanceValue}" + "\n");
+            */
             int[] vars = new int[numberOfFitnessVariables];
-            vars[(int)FitnessVariable.NumGroups] = -groups.Count; // minimizar a quantidade de grupos
-            vars[(int)FitnessVariable.EnemiesPerGroupAverage] = -(int)media; // minimizar a media de inimigos por grupos
-            vars[(int)FitnessVariable.EnemyDoorDistance] = (int)value; // maximizar a interpolacao da distancia entre os inimigos e as portas
+            vars[(int)FitnessVariable.NumGroups] = (int)numGroupsValue;
+            vars[(int)FitnessVariable.EnemiesPerGroupAverage] = (int)enemiesPerGroupAverageValue;
+            vars[(int)FitnessVariable.EnemyDoorDistance] = (int)enemyDoorDistanceValue;
             return vars;
         }
 
@@ -124,7 +154,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// <returns>True if fitness should be recalculated, false otherwise.</returns>
         static bool ShouldRecalculateFitness(RoomIndividual individual)
         {
-            if (individual.ItWasModified)
+            if (individual.Modified)
             {
                 return true;
             }
@@ -173,7 +203,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 }
 
                 FitnessCalculator.Evaluate(population[i], allFitness[i]);
-                population[i].ItWasModified = false;
+                population[i].Modified = false;
             }
         }
     }

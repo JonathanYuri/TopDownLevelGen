@@ -10,8 +10,8 @@ namespace RoomGeneticAlgorithm.Constants
         // TODO: mudar a probabilidade de crossover e mutacao durante a execucao?
 
         public static int ITERATIONS_WITHOUT_IMPROVEMENT = 20;
-        public static float CROSSOVER_PROBABILITY = 0.8f; // 0 a 1
-        public static float MUTATION_PROBABILITY = 0.8f; // 0 a 1
+        public static float CROSSOVER_PROBABILITY = 1.0f; // 0 a 1
+        public static float MUTATION_PROBABILITY = 1.0f; // 0 a 1
         public static int POPULATION_SIZE = 6;
         public static int TOURNAMENT_SIZE = 5;
         public static int NUM_PARENTS_TOURNAMENT = 2;
@@ -34,7 +34,6 @@ namespace RoomGeneticAlgorithm.Run
     using RoomGeneticAlgorithm.Fitness;
     using RoomGeneticAlgorithm.GeneticOperations;
     using System.Collections;
-    using System.Linq;
 
     /// <summary>
     /// Represents a class for generating and evolving room configurations using a genetic algorithm.
@@ -64,6 +63,7 @@ namespace RoomGeneticAlgorithm.Run
             GeneticAlgorithmConstants.ROOM = room;
 
             GeneratePopulation();
+            FitnessHandler.StartAlgorithm();
             FitnessHandler.EvaluatePopulation(population);
 
             Best = new(population.MaxBy(individual => individual.Value));
@@ -73,8 +73,12 @@ namespace RoomGeneticAlgorithm.Run
 
             while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
+                foreach (RoomIndividual roomIndividual in population)
+                {
+                    //Debug.Log("value: " + roomIndividual.Value);
+                }
                 RoomIndividual bestInGeneration = population.MaxBy(individual => individual.Value);
-                Debug.Log("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
+                Debug.LogError("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
                 UpdateBestIndividual(bestInGeneration, ref iterationsWithoutImprovement);
                 PerformGeneticOperations();
                 iterations++;

@@ -10,7 +10,7 @@ namespace RoomGeneticAlgorithm
     public class RoomIndividual
     {
         public int Value { get; set; }
-        public bool ItWasModified { get; set; }
+        public bool Modified { get; set; }
         public RoomMatrix RoomMatrix { get; set; }
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace RoomGeneticAlgorithm
         public RoomIndividual(bool generateRandomly = true)
         {
             Value = default;
-            ItWasModified = true;
+            Modified = true;
             RoomMatrix = new RoomMatrix((RoomContents[,])GeneticAlgorithmConstants.ROOM.Values.Clone());
 
             if (generateRandomly)

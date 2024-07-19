@@ -2,11 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using RoomGeneticAlgorithm.Constants;
+using System.Text;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {
     public static class Mutation
     {
+        // pelo menos 70 % do hashset vai ser mutado
+        readonly static float minMutations = 0.7f;
+        static HashSet<Position> positions;
+
         /// <summary>
         /// Swaps the positions of two room contents randomly in an individual's room matrix.
         /// </summary>
@@ -14,9 +19,11 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="position1">The first position to swap content with another position.</param>
         static void SwapRoomPositionsRandomly(RoomIndividual individual, Position position1)
         {
-            int idx2 = Random.Range(0, GeneticAlgorithmConstants.ROOM.ChangeablesPositions.Count);
-            Position position2 = GeneticAlgorithmConstants.ROOM.ChangeablesPositions.ElementAt(idx2);
+            if (positions.Count == 0) return;
 
+            int idx2 = Random.Range(0, positions.Count);
+            Position position2 = positions.ElementAt(idx2);
+            positions.Remove(position2);
             individual.RoomMatrix.SwapPositions(position1, position2, GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
         }
 
@@ -27,7 +34,10 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="positionsToMutate">The set of positions in which room contents should be mutated.</param>
         static void Mutate(RoomIndividual individual, HashSet<Position> positionsToMutate)
         {
-            Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(Random.Range(0, positionsToMutate.Count + 1));
+            float minPercentMutations = minMutations * positionsToMutate.Count;
+            int numMutations = Random.Range((int)minPercentMutations, positionsToMutate.Count + 1);
+
+            Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(numMutations);
             foreach (Position position in positionsToChange)
             {
                 SwapRoomPositionsRandomly(individual, position);
@@ -40,15 +50,25 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="individual">The room individual to mutate.</param>
         static void Mutate(RoomIndividual individual)
         {
-            // escolher inimigos ou obstaculos para mudar
-            if (Random.value < 0.5f)
+            //Debug.Log("antes: \n" + GetMatrix(individual));
+            Mutate(individual, individual.RoomMatrix.EnemiesPositions);
+            Mutate(individual, individual.RoomMatrix.ObstaclesPositions);
+            //Debug.LogError("depois: \n" + GetMatrix(individual));
+        }
+
+        static string GetMatrix(RoomIndividual individual)
+        {
+            StringBuilder sb = new();
+            for (int i = 0; i < individual.RoomMatrix.Values.GetLength(0); i++)
             {
-                Mutate(individual, individual.RoomMatrix.EnemiesPositions);
+                for (int j = 0; j < individual.RoomMatrix.Values.GetLength(1); j++)
+                {
+                    sb.Append((int)individual.RoomMatrix.Values[i, j]);
+                    sb.Append(" ");
+                }
+                sb.Append("\n");
             }
-            else
-            {
-                Mutate(individual, individual.RoomMatrix.ObstaclesPositions);
-            }
+            return sb.ToString();
         }
 
         /// <summary>
@@ -57,14 +77,16 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="population">The population of room individuals to mutate.</param>
         public static void MutatePopulation(RoomIndividual[] population)
         {
+            positions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
             foreach (RoomIndividual individual in population)
             {
                 if (Random.value < GeneticAlgorithmConstants.MUTATION_PROBABILITY)
                 {
                     Mutate(individual);
-                    individual.ItWasModified = true;
+                    individual.Modified = true;
                 }
             }
+            positions.Clear();
         }
     }
 }
