@@ -16,22 +16,6 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="parent1">The father individual.</param>
         /// <param name="parent2">The mother individual.</param>
         /// <returns>The child individual resulting from the crossover operation.</returns>
-        /// 
-        static string GetMatrix(RoomIndividual individual)
-        {
-            StringBuilder sb = new();
-            for (int i = 0; i < individual.RoomMatrix.Values.GetLength(0); i++)
-            {
-                for (int j = 0; j < individual.RoomMatrix.Values.GetLength(1); j++)
-                {
-                    sb.Append((int)individual.RoomMatrix.Values[i, j]);
-                    sb.Append(" ");
-                }
-                sb.Append("\n");
-            }
-            return sb.ToString();
-        }
-
         static RoomIndividual Crossover(RoomIndividual parent1, RoomIndividual parent2)
         {
             RoomIndividual child = new(false);
@@ -58,10 +42,6 @@ namespace RoomGeneticAlgorithm.GeneticOperations
                     parent1.RoomMatrix.EnemiesPositions, parent2.RoomMatrix.EnemiesPositions, child.RoomMatrix.EnemiesPositions,
                     parent1.RoomMatrix.ObstaclesPositions, parent2.RoomMatrix.ObstaclesPositions, child.RoomMatrix.ObstaclesPositions);
             }
-
-            //Debug.Log("parent1: " + GetMatrix(parent1));
-            //Debug.Log("parent2: " + GetMatrix(parent2));
-            //Debug.Log("child: " + GetMatrix(child));
             return child;
         }
 

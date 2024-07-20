@@ -9,7 +9,6 @@ using System.Linq;
 [RequireComponent(typeof(RoomObjectSpawner))]
 public class RoomGenerator : MonoBehaviour
 {
-    LevelDataManager levelDataManager;
     LevelGenerator levelGenerator;
     RoomObjectSpawner roomObjectSpawner;
     RoomInfoProvider roomInfoProvider;
@@ -21,11 +20,6 @@ public class RoomGenerator : MonoBehaviour
         levelGenerator = GetComponent<LevelGenerator>();
         roomObjectSpawner = GetComponent<RoomObjectSpawner>();
         roomInfoProvider = GetComponent<RoomInfoProvider>();
-    }
-
-    void Start()
-    {
-        levelDataManager = FindObjectOfType<LevelDataManager>();
     }
 
     /// <summary>
@@ -63,10 +57,10 @@ public class RoomGenerator : MonoBehaviour
             room.Obstacles = roomData.obstacles.ToList();
 
             float startTime = Time.realtimeSinceStartup;
+            GeneticRoomGenerator geneticRoomGenerator = new();
+            yield return geneticRoomGenerator.GeneticLooping(roomSkeleton);
 
-            yield return GeneticRoomGenerator.GeneticLooping(roomSkeleton);
-
-            roomSkeleton.Values = GeneticRoomGenerator.Best.RoomMatrix.Values;
+            roomSkeleton.Values = geneticRoomGenerator.Best.RoomMatrix.Values;
 
             float endTime = Time.realtimeSinceStartup;
 

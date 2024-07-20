@@ -1,4 +1,5 @@
 using RoomGeneticAlgorithm.Constants;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RoomGeneticAlgorithm.Fitness
@@ -8,14 +9,13 @@ namespace RoomGeneticAlgorithm.Fitness
     /// </summary>
     public static class FitnessCalculator
     {
-
         /// <summary>
         /// Calculates and assigns the fitness value for an individual based on provided fitness variables.
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
         /// </summary>
         /// <param name="individual">The individual to evaluate.</param>
         /// <param name="allFitnessVars">An array of fitness variables used in the evaluation.</param>
-        public static void Evaluate(RoomIndividual individual, int[] allFitnessVars)
+        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler, List<int> allFitnessVars)
         {
             if (IsMonstrous(individual))
             {
@@ -23,8 +23,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 return;
             }
 
-            individual.Value = CalculateNormalizedFitnessValue(allFitnessVars);
-            //Value = - groups.Count - (int)media + (int)value; // + qntInimigosProximosDeObstaculos;
+            individual.Value = CalculateNormalizedFitnessValue(fitnessHandler.fitnessVars, allFitnessVars);
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
         /// </summary>
         /// <param name="individual">The individual to evaluate.</param>
-        public static void Evaluate(RoomIndividual individual)
+        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler)
         {
             if (IsMonstrous(individual))
             {
@@ -41,27 +40,49 @@ namespace RoomGeneticAlgorithm.Fitness
                 return;
             }
 
-            individual.Value = CalculateNormalizedFitnessValue(FitnessHandler.CalculeAllFitnessVars(individual));
+            individual.Value = CalculateNormalizedFitnessValue(
+                fitnessHandler.fitnessVars,
+                CalculateAllFitnessVars(individual, fitnessHandler)
+            );
         }
 
         /// <summary>
         /// Calculates the normalized fitness value based on a set of fitness variables.
         /// Normalization ensures that the fitness value falls within specified bounds.
         /// </summary>
-        /// <param name="fitnessVars">An array of fitness variables used to calculate the fitness value.</param>
+        /// <param name="fitnessVarsValue">An array of fitness variables used to calculate the fitness value.</param>
         /// <returns>The normalized fitness value.</returns>
-        static int CalculateNormalizedFitnessValue(int[] fitnessVars)
+        static int CalculateNormalizedFitnessValue(List<FitnessVar> fitnessVars, List<int> fitnessVarsValue)
         {
             int value = 0;
-            for (int i = 0; i < FitnessHandler.numberOfFitnessVariables; i++)
+            for (int i = 0; i < fitnessVars.Count; i++)
             {
-                Range<int> varBound = FitnessHandler.boundsOfFitnessVars[i];
-                float varImportance = FitnessHandler.importances[(FitnessHandler.FitnessVariable)i];
+                FitnessVar fitnessVar = fitnessVars[i];
+                Range<int> varBound = fitnessVar.CurrentBound;
 
-                double normalizedValue = Utils.Normalization(fitnessVars[i], varBound.Min, varBound.Max);
-                value += (int)(normalizedValue * varImportance);
+                double normalizedValue = Utils.Normalization(fitnessVarsValue[i], varBound.Min, varBound.Max);
+                value += (int)(normalizedValue * fitnessVar.Importance);
             }
             return value;
+        }
+
+        /// <summary>
+        /// Calculates fitness variables based on the characteristics of the room individual.
+        /// </summary>
+        /// <param name="individual">The room individual for which to calculate fitness variables.</param>
+        /// <returns>A array of calculated fitness variables.</returns>
+        internal static List<int> CalculateAllFitnessVars(RoomIndividual individual, FitnessHandler fitnessHandler)
+        {
+            List<int> vars = new();
+            float difficulty = GeneticAlgorithmConstants.ROOM.Difficulty;
+
+            // Calculate ideal values based on difficulty
+            foreach (var fitnessVar in fitnessHandler.fitnessVars)
+            {
+                float varValue = -Mathf.Abs(fitnessVar.FitnessVarValue(individual) - fitnessVar.Ideal);
+                vars.Add((int)varValue);
+            }
+            return vars;
         }
 
         /// <summary>

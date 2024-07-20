@@ -38,15 +38,16 @@ namespace RoomGeneticAlgorithm.Run
     /// <summary>
     /// Represents a class for generating and evolving room configurations using a genetic algorithm.
     /// </summary>
-    public static class GeneticRoomGenerator
+    public class GeneticRoomGenerator
     {
-        static RoomIndividual[] population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
-        public static RoomIndividual Best { get; private set; }
+        RoomIndividual[] population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
+        public RoomIndividual Best { get; private set; }
+        public FitnessHandler fitnessHandler;
 
         /// <summary>
         /// Generates the initial population of individuals for the genetic algorithm.
         /// </summary>
-        static void GeneratePopulation()
+        void GeneratePopulation()
         {
             for (int i = 0; i < GeneticAlgorithmConstants.POPULATION_SIZE; i++)
             {
@@ -58,13 +59,13 @@ namespace RoomGeneticAlgorithm.Run
         /// Executes the main loop of the genetic algorithm to evolve a population of individuals.
         /// </summary>
         /// <returns>A matrix representing the best room configuration found by the genetic algorithm.</returns>
-        public static IEnumerator GeneticLooping(RoomSkeleton room)
+        public IEnumerator GeneticLooping(RoomSkeleton room)
         {
             GeneticAlgorithmConstants.ROOM = room;
+            fitnessHandler = new();
 
             GeneratePopulation();
-            FitnessHandler.StartAlgorithm();
-            FitnessHandler.EvaluatePopulation(population);
+            fitnessHandler.EvaluatePopulation(population, fitnessHandler);
 
             Best = new(population.MaxBy(individual => individual.Value));
 
@@ -73,10 +74,6 @@ namespace RoomGeneticAlgorithm.Run
 
             while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
-                foreach (RoomIndividual roomIndividual in population)
-                {
-                    //Debug.Log("value: " + roomIndividual.Value);
-                }
                 RoomIndividual bestInGeneration = population.MaxBy(individual => individual.Value);
                 Debug.LogError("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
                 UpdateBestIndividual(bestInGeneration, ref iterationsWithoutImprovement);
@@ -98,7 +95,7 @@ namespace RoomGeneticAlgorithm.Run
                 RoomOperations.CountEnemiesNextToObstacles(Best.RoomMatrix));
         }
 
-        static void UpdateBestIndividual(RoomIndividual bestInGeneration, ref int iterationsWithoutImprovement)
+        void UpdateBestIndividual(RoomIndividual bestInGeneration, ref int iterationsWithoutImprovement)
         {
             if (bestInGeneration.Value > Best.Value)
             {
@@ -111,21 +108,20 @@ namespace RoomGeneticAlgorithm.Run
             }
         }
 
-        static void PerformGeneticOperations()
+        void PerformGeneticOperations()
         {
             population = Reproduction.PerformReproduction(population);
             Mutation.MutatePopulation(population);
-            FitnessHandler.EvaluatePopulation(population);
-            FitnessCalculator.Evaluate(Best);
+            fitnessHandler.EvaluatePopulation(population, fitnessHandler);
+            FitnessCalculator.Evaluate(Best, fitnessHandler);
         }
 
         /// <summary>
         /// Determines whether the genetic algorithm should continue the loop.
         /// </summary>
         /// <param name="iterationsWithoutImprovement">The number of iterations without improvement.</param>
-        /// <param name="best">The best individual found so far.</param>
         /// <returns><c>true</c> if the loop should continue; otherwise, <c>false</c>.</returns>
-        static bool ShouldContinueLooping(int iterationsWithoutImprovement)
+        bool ShouldContinueLooping(int iterationsWithoutImprovement)
         {
             if (iterationsWithoutImprovement < GeneticAlgorithmConstants.ITERATIONS_WITHOUT_IMPROVEMENT)
             {

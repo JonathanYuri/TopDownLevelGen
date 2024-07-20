@@ -71,6 +71,20 @@ public static class RoomOperations
         return distance;
     }
 
+    public static int DistanceBetweenEnemies(List<Position> enemiesPositions)
+    {
+        int distance = 0;
+        for (int i = 0; i < enemiesPositions.Count; i++)
+        {
+            Position enemyPosition1 = enemiesPositions[i];
+            for (int j = i + 1; j < enemiesPositions.Count; j++)
+            {
+                distance += Utils.CalculateDistance(enemyPosition1, enemiesPositions[j]);
+            }
+        }
+        return distance;
+    }
+
     public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
     {
         int minDistance = int.MaxValue;

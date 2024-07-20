@@ -50,25 +50,8 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="individual">The room individual to mutate.</param>
         static void Mutate(RoomIndividual individual)
         {
-            //Debug.Log("antes: \n" + GetMatrix(individual));
             Mutate(individual, individual.RoomMatrix.EnemiesPositions);
             Mutate(individual, individual.RoomMatrix.ObstaclesPositions);
-            //Debug.LogError("depois: \n" + GetMatrix(individual));
-        }
-
-        static string GetMatrix(RoomIndividual individual)
-        {
-            StringBuilder sb = new();
-            for (int i = 0; i < individual.RoomMatrix.Values.GetLength(0); i++)
-            {
-                for (int j = 0; j < individual.RoomMatrix.Values.GetLength(1); j++)
-                {
-                    sb.Append((int)individual.RoomMatrix.Values[i, j]);
-                    sb.Append(" ");
-                }
-                sb.Append("\n");
-            }
-            return sb.ToString();
         }
 
         /// <summary>
