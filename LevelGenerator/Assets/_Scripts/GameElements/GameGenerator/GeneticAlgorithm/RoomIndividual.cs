@@ -17,15 +17,15 @@ namespace RoomGeneticAlgorithm
         /// Initializes a new instance of the <see cref="RoomIndividual"/> class, optionally generating it randomly.
         /// </summary>
         /// <param name="generateRandomly">Determines whether to generate the room layout randomly.</param>
-        public RoomIndividual(bool generateRandomly = true)
+        public RoomIndividual(RoomSkeleton roomSkeleton, bool generateRandomly = true)
         {
             Value = default;
             Modified = true;
-            RoomMatrix = new RoomMatrix((RoomContents[,])GeneticAlgorithmConstants.ROOM.Values.Clone());
+            RoomMatrix = new RoomMatrix(roomSkeleton);
 
             if (generateRandomly)
             {
-                GenerateRoomRandomly();
+                GenerateRoomRandomly(roomSkeleton);
             }
         }
 
@@ -42,24 +42,24 @@ namespace RoomGeneticAlgorithm
         /// <summary>
         /// Generates a random room layout by placing enemies and obstacles in available positions.
         /// </summary>
-        void GenerateRoomRandomly()
+        void GenerateRoomRandomly(RoomSkeleton roomSkeleton)
         {
-            List<Position> avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
-            int qntObjects = GeneticAlgorithmConstants.ROOM.Enemies.Length + GeneticAlgorithmConstants.ROOM.Obstacles.Length;
-            Position[] chosenPositions = avaliablePositions.SelectRandomDistinctElements(qntObjects);
+            RoomContents[] enemies = roomSkeleton.Enemies;
+            RoomContents[] obstacles = roomSkeleton.Obstacles;
+
+            List<Position> avaliablePositions = new(roomSkeleton.ChangeablesPositions);
+            Position[] chosenPositions = avaliablePositions.GetRandomElements(enemies.Length + obstacles.Length);
 
             int count = 0;
-            foreach (RoomContents enemy in GeneticAlgorithmConstants.ROOM.Enemies)
+            foreach (RoomContents enemy in enemies)
             {
-                RoomMatrix.PutContentInPosition(enemy, chosenPositions[count],
-                    GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
+                RoomMatrix.PutContentInPosition(enemy, chosenPositions[count]);
                 count++;
             }
 
-            foreach (RoomContents obstacle in GeneticAlgorithmConstants.ROOM.Obstacles)
+            foreach (RoomContents obstacle in obstacles)
             {
-                RoomMatrix.PutContentInPosition(obstacle, chosenPositions[count],
-                    GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
+                RoomMatrix.PutContentInPosition(obstacle, chosenPositions[count]);
                 count++;
             }
         }

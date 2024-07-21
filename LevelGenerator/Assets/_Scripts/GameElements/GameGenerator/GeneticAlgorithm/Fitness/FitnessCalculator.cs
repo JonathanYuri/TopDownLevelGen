@@ -14,9 +14,9 @@ namespace RoomGeneticAlgorithm.Fitness
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
         /// </summary>
         /// <param name="individual">The individual to evaluate.</param>
-        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler)
+        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler, Position[] doorPositions)
         {
-            if (IsMonstrous(individual))
+            if (IsMonstrous(individual, doorPositions))
             {
                 individual.Value = int.MinValue;
                 return;
@@ -33,8 +33,6 @@ namespace RoomGeneticAlgorithm.Fitness
         internal static int CalculateFitnessValue(RoomIndividual individual, FitnessHandler fitnessHandler)
         {
             int value = 0;
-            float difficulty = GeneticAlgorithmConstants.ROOM.Difficulty;
-
             foreach (var fitnessVar in fitnessHandler.fitnessVars)
             {
                 float fitnessVarValue = fitnessVar.FitnessVarValue(individual);
@@ -52,18 +50,19 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual to evaluate.</param>
         /// <returns>True if the individual is monstrous; otherwise, false.</returns>
-        static bool IsMonstrous(RoomIndividual individual)
+        static bool IsMonstrous(RoomIndividual individual, Position[] doorPositions)
         {
-            if (!PathFinder.IsAPathBetweenDoors(individual.RoomMatrix.Values, GeneticAlgorithmConstants.ROOM.DoorPositions))
+            if (!PathFinder.IsAPathBetweenDoors(individual.RoomMatrix.Values, doorPositions))
             {
                 return true;
             }
 
-            if (!PathFinder.IsAPathBetweenDoorAndEnemies(individual.RoomMatrix, GeneticAlgorithmConstants.ROOM.DoorPositions))
+            if (!PathFinder.IsAPathBetweenDoorAndEnemies(individual.RoomMatrix, doorPositions))
             {
                 return true;
             }
 
+            /*
             bool hasTheRightAmountOfEnemies = individual.RoomMatrix.EnemiesPositions.Count == GeneticAlgorithmConstants.ROOM.Enemies.Length;
             if (!hasTheRightAmountOfEnemies)
             {
@@ -73,19 +72,6 @@ namespace RoomGeneticAlgorithm.Fitness
             bool hasTheRightAmountOfObstacles = individual.RoomMatrix.ObstaclesPositions.Count == GeneticAlgorithmConstants.ROOM.Obstacles.Length;
             if (!hasTheRightAmountOfObstacles)
             {
-                return true;
-            }
-
-            /*
-            if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Enemies), enemiesPositions, room.enemies.Cast<object>().ToList()))
-            {
-                //Debug.Log("Mostro por causa dos inimigos");
-                return true;
-            }
-
-            if (!RoomOperations.HasTheRightObjects(roomMatrix, typeof(Obstacles), obstaclesPositions, room.obstacles.Cast<object>().ToList()))
-            {
-                //Debug.Log("Mostro por causa dos obstaculo");
                 return true;
             }
             */

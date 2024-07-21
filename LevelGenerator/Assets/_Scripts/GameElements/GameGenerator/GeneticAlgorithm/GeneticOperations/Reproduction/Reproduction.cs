@@ -3,36 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
 using RoomGeneticAlgorithm.Constants;
-using System.Text;
-using UnityEngine;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {
-    public static class Reproduction
+    public class Reproduction
     {
+        readonly ChildContentPlacement childContentPlacement;
+        readonly RoomSkeleton roomSkeleton;
+
+        public Reproduction(RoomSkeleton roomSkeleton)
+        {
+            childContentPlacement = new();
+            this.roomSkeleton = roomSkeleton;
+        }
+
         /// <summary>
         /// Performs crossover between a father individual and a mother individual to create a child individual.
         /// </summary>
         /// <param name="parent1">The father individual.</param>
         /// <param name="parent2">The mother individual.</param>
         /// <returns>The child individual resulting from the crossover operation.</returns>
-        static RoomIndividual Crossover(RoomIndividual parent1, RoomIndividual parent2)
+        RoomIndividual Crossover(RoomIndividual parent1, RoomIndividual parent2)
         {
-            RoomIndividual child = new(false);
+            RoomIndividual child = new(roomSkeleton, false);
 
-            Dictionary<RoomContents, List<Position>> enemiesPositionsInParent1 = RoomOperations.GroupPositionsByRoomValue(parent1.RoomMatrix.Values, parent1.RoomMatrix.EnemiesPositions);
-            Dictionary<RoomContents, List<Position>> enemiesPositionsInParent2 = RoomOperations.GroupPositionsByRoomValue(parent2.RoomMatrix.Values, parent2.RoomMatrix.EnemiesPositions);
+            var enemiesPositionsInParent1 = parent1.RoomMatrix.EnemyTypeToPositions;
+            var enemiesPositionsInParent2 = parent2.RoomMatrix.EnemyTypeToPositions;
 
-            Dictionary<RoomContents, List<Position>> obstaclesPositionsInParent1 = RoomOperations.GroupPositionsByRoomValue(parent1.RoomMatrix.Values, parent1.RoomMatrix.ObstaclesPositions);
-            Dictionary<RoomContents, List<Position>> obstaclesPositionsInParent2 = RoomOperations.GroupPositionsByRoomValue(parent2.RoomMatrix.Values, parent2.RoomMatrix.ObstaclesPositions);
+            var obstaclesPositionsInParent1 = parent1.RoomMatrix.ObstacleTypeToPositions;
+            var obstaclesPositionsInParent2 = parent2.RoomMatrix.ObstacleTypeToPositions;
 
-            if (enemiesPositionsInParent2.Keys.Count != enemiesPositionsInParent1.Keys.Count) throw new Exception("Inimigos diferentes no parent1 e no parent2");
-            if (obstaclesPositionsInParent2.Keys.Count != obstaclesPositionsInParent1.Keys.Count) throw new Exception("Obstaculos diferentes no parent1 e no parent2");
+            if (enemiesPositionsInParent2.Keys.Count != enemiesPositionsInParent1.Keys.Count)
+                throw new Exception("Inimigos diferentes no parent1 e no parent2");
+            if (obstaclesPositionsInParent2.Keys.Count != obstaclesPositionsInParent1.Keys.Count)
+                throw new Exception("Obstaculos diferentes no parent1 e no parent2");
 
-            ChildContentPlacement.avaliablePositions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
+            childContentPlacement.SetAvaliablePositions(roomSkeleton.ChangeablesPositions);
 
-            ChildContentPlacement.PlaceContentsInChild(child, enemiesPositionsInParent1, enemiesPositionsInParent2);
-            ChildContentPlacement.PlaceContentsInChild(child, obstaclesPositionsInParent1, obstaclesPositionsInParent2);
+            childContentPlacement.PlaceContentsInChild(child, enemiesPositionsInParent1, enemiesPositionsInParent2);
+            childContentPlacement.PlaceContentsInChild(child, obstaclesPositionsInParent1, obstaclesPositionsInParent2);
 
             if (child.RoomMatrix.EnemiesPositions.Count != parent1.RoomMatrix.EnemiesPositions.Count
                                             ||
@@ -52,29 +61,15 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <returns>An array of parent individuals selected for reproduction.</returns>
         static RoomIndividual[] TournamentSelection(RoomIndividual[] population)
         {
+            // para nao selecionar o mesmo individuo que ganhou o torneio
+            List<RoomIndividual> populationCopy = population.ToList();
             RoomIndividual[] parents = new RoomIndividual[GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT];
-            HashSet<RoomIndividual> selectedParents = new();
-
             for (int i = 0; i < GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT; i++)
             {
-                List<RoomIndividual> tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
-
-                // O vencedor do torneio (quem tem a maior fitness dos selecionados aleatoriamente) é selecionado para reprodução
-                RoomIndividual winner = tournament.MaxBy(individual => individual.Value);
-
-                // Garantir que o mesmo indivíduo não seja selecionado mais de uma vez
-                while (selectedParents.Contains(winner))
-                {
-                    tournament.Remove(winner);
-                    if (tournament.Count == 0)
-                    {
-                        tournament = population.SelectRandomDistinctElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
-                    }
-                    winner = tournament.MaxBy(individual => individual.Value);
-                }
-
+                List<RoomIndividual> tournament = populationCopy.GetRandomElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
+                RoomIndividual winner = tournament.GetBestIndividual();
                 parents[i] = winner;
-                selectedParents.Add(winner);
+                populationCopy.Remove(winner);
             }
 
             return parents;
@@ -85,7 +80,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// </summary>
         /// <param name="population">The population of room individuals to perform reproduction on.</param>
         /// <returns>An array of child individuals created through reproduction.</returns>
-        public static RoomIndividual[] PerformReproduction(RoomIndividual[] population)
+        public RoomIndividual[] PerformReproduction(RoomIndividual[] population)
         {
             RoomIndividual[] newPopulation = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
 
@@ -103,7 +98,6 @@ namespace RoomGeneticAlgorithm.GeneticOperations
                 }
                 else
                 {
-                    // Se nao houver cruzamento, copie os fathers diretamente para a nova populacao
                     newPopulation[count] = parents[0];
                     newPopulation[count + 1] = parents[1];
                 }

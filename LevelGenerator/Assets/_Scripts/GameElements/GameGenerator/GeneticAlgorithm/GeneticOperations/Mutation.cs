@@ -6,25 +6,28 @@ using System.Text;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {
-    public static class Mutation
+    public class Mutation
     {
-        // pelo menos 70 % do hashset vai ser mutado
-        readonly static float minMutations = 0.7f;
-        static HashSet<Position> positions;
+        HashSet<Position> availablePositions;
+        readonly HashSet<Position> changeablePositions;
+
+        public Mutation(RoomSkeleton roomSkeleton)
+        {
+            changeablePositions = roomSkeleton.ChangeablesPositions;
+        }
 
         /// <summary>
         /// Swaps the positions of two room contents randomly in an individual's room matrix.
         /// </summary>
         /// <param name="individual">The room individual whose room matrix will be modified.</param>
         /// <param name="position1">The first position to swap content with another position.</param>
-        static void SwapRoomPositionsRandomly(RoomIndividual individual, Position position1)
+        void SwapRoomPositionsRandomly(RoomIndividual individual, Position position1)
         {
-            if (positions.Count == 0) return;
+            if (availablePositions.Count == 0) return;
 
-            int idx2 = Random.Range(0, positions.Count);
-            Position position2 = positions.ElementAt(idx2);
-            positions.Remove(position2);
-            individual.RoomMatrix.SwapPositions(position1, position2, GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
+            Position position2 = availablePositions.GetRandomElement();
+            availablePositions.Remove(position2);
+            individual.RoomMatrix.SwapPositions(position1, position2);
         }
 
         /// <summary>
@@ -32,12 +35,12 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// </summary>
         /// <param name="individual">The room individual to mutate.</param>
         /// <param name="positionsToMutate">The set of positions in which room contents should be mutated.</param>
-        static void Mutate(RoomIndividual individual, HashSet<Position> positionsToMutate)
+        void Mutate(RoomIndividual individual, HashSet<Position> positionsToMutate)
         {
-            float minPercentMutations = minMutations * positionsToMutate.Count;
+            float minPercentMutations = GeneticAlgorithmConstants.MIN_MUTATIONS_PERCENT * positionsToMutate.Count;
             int numMutations = Random.Range((int)minPercentMutations, positionsToMutate.Count + 1);
 
-            Position[] positionsToChange = positionsToMutate.SelectRandomDistinctElements(numMutations);
+            Position[] positionsToChange = positionsToMutate.GetRandomElements(numMutations);
             foreach (Position position in positionsToChange)
             {
                 SwapRoomPositionsRandomly(individual, position);
@@ -48,7 +51,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// Mutates an individual's room matrix by randomly changing the positions of either enemies or obstacles.
         /// </summary>
         /// <param name="individual">The room individual to mutate.</param>
-        static void Mutate(RoomIndividual individual)
+        void Mutate(RoomIndividual individual)
         {
             Mutate(individual, individual.RoomMatrix.EnemiesPositions);
             Mutate(individual, individual.RoomMatrix.ObstaclesPositions);
@@ -58,9 +61,9 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// Mutates the entire population by applying mutations to each individual based on the mutation probability.
         /// </summary>
         /// <param name="population">The population of room individuals to mutate.</param>
-        public static void MutatePopulation(RoomIndividual[] population)
+        public void MutatePopulation(RoomIndividual[] population)
         {
-            positions = new(GeneticAlgorithmConstants.ROOM.ChangeablesPositions);
+            availablePositions = new(changeablePositions);
             foreach (RoomIndividual individual in population)
             {
                 if (Random.value < GeneticAlgorithmConstants.MUTATION_PROBABILITY)
@@ -69,7 +72,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
                     individual.Modified = true;
                 }
             }
-            positions.Clear();
+            availablePositions.Clear();
         }
     }
 }

@@ -12,19 +12,32 @@ namespace RoomGeneticAlgorithm.Fitness
     {
         internal List<FitnessVar> fitnessVars = new();
 
-        public FitnessHandler()
+        readonly RoomSkeleton roomSkeleton;
+
+        public FitnessHandler(RoomSkeleton roomSkeleton)
         {
-            fitnessVars.Add(FitnessVarsConstants.NUM_ENEMIES_GROUPS);
-            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_PER_GROUP);
-            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMY_DOOR_DISTANCE);
-            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_BETWEEN_ENEMIES_DISTANCE);
+            this.roomSkeleton = roomSkeleton;
+            FitnessVar averageEnemyDoorDistance = new(new(1f, 7f), 10f, 1f, false, GetAverageEnemiesDoorsDistance);
+
+            fitnessVars.Add(FitnessVarsConstants.NUM_ENEMIES_GROUP);
+            fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_PER_GROUP);
+            fitnessVars.Add(averageEnemyDoorDistance);
+            fitnessVars.Add(FitnessVarsConstants.AVERAGE_BETWEEN_ENEMIES_DISTANCE);
 
             foreach (var fitnessVar in fitnessVars)
             {
-                fitnessVar.SetIdealValue(GeneticAlgorithmConstants.ROOM.Difficulty);
+                fitnessVar.SetIdealValue(roomSkeleton.Difficulty);
             }
 
             Debug.LogWarning("ideal: " + fitnessVars[0].Ideal);
+        }
+
+        float GetAverageEnemiesDoorsDistance(RoomIndividual individual)
+        {
+            return RoomOperations.AverageDistanceFromDoorsToEnemies(
+                individual.RoomMatrix.EnemiesPositions,
+                roomSkeleton.DoorPositions
+            );
         }
 
         /// <summary>
@@ -58,7 +71,7 @@ namespace RoomGeneticAlgorithm.Fitness
                     continue;
                 }
 
-                FitnessCalculator.Evaluate(population[i], fitnessHandler);
+                FitnessCalculator.Evaluate(population[i], fitnessHandler, roomSkeleton.DoorPositions);
                 population[i].Modified = false;
             }
         }

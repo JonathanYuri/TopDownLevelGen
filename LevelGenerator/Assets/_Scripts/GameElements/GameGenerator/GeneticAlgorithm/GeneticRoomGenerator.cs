@@ -12,10 +12,10 @@ namespace RoomGeneticAlgorithm.Constants
         public static int ITERATIONS_WITHOUT_IMPROVEMENT = 20;
         public static float CROSSOVER_PROBABILITY = 1.0f; // 0 a 1
         public static float MUTATION_PROBABILITY = 1.0f; // 0 a 1
+        public static float MIN_MUTATIONS_PERCENT = 0.7f; // pelo menos x% do hashset vai ser mutado
         public static int POPULATION_SIZE = 6;
-        public static int TOURNAMENT_SIZE = 5;
+        public static int TOURNAMENT_SIZE = 4;
         public static int NUM_PARENTS_TOURNAMENT = 2;
-        public static RoomSkeleton ROOM;
 
         /// <summary>
         /// Limits the genetic algorithm constants to a valid range.
@@ -40,63 +40,57 @@ namespace RoomGeneticAlgorithm.Run
     /// </summary>
     public class GeneticRoomGenerator
     {
-        RoomIndividual[] population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
-        public RoomIndividual Best { get; private set; }
-        public FitnessHandler fitnessHandler;
+        RoomIndividual[] population;
 
-        /// <summary>
-        /// Generates the initial population of individuals for the genetic algorithm.
-        /// </summary>
-        void GeneratePopulation()
+        readonly FitnessHandler fitnessHandler;
+        readonly Reproduction reproduction;
+        readonly Mutation mutation;
+        readonly RoomSkeleton roomSkeleton;
+
+        public RoomIndividual Best { get; set; }
+
+        public GeneticRoomGenerator(RoomSkeleton roomSkeleton)
         {
+            population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
+            this.roomSkeleton = roomSkeleton;
+            fitnessHandler = new(roomSkeleton);
+            reproduction = new(roomSkeleton);
+            mutation = new(roomSkeleton);
+
             for (int i = 0; i < GeneticAlgorithmConstants.POPULATION_SIZE; i++)
             {
-                population[i] = new();
+                population[i] = new(roomSkeleton);
             }
+
+            fitnessHandler.EvaluatePopulation(population, fitnessHandler);
+            Best = new(population.GetBestIndividual());
         }
 
         /// <summary>
         /// Executes the main loop of the genetic algorithm to evolve a population of individuals.
         /// </summary>
         /// <returns>A matrix representing the best room configuration found by the genetic algorithm.</returns>
-        public IEnumerator GeneticLooping(RoomSkeleton room)
+        public IEnumerator GeneticLooping()
         {
-            GeneticAlgorithmConstants.ROOM = room;
-            fitnessHandler = new();
-
-            GeneratePopulation();
-            fitnessHandler.EvaluatePopulation(population, fitnessHandler);
-
-            Best = new(population.MaxBy(individual => individual.Value));
-
             int iterationsWithoutImprovement = 0;
             int iterations = 0;
 
             while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
-                RoomIndividual bestInGeneration = population.MaxBy(individual => individual.Value);
-                //Debug.LogWarning("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
-                UpdateBestIndividual(bestInGeneration, ref iterationsWithoutImprovement);
+                //Debug.LogWarning("NUMERO DE INTERACOES: " +iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
+                UpdateBestIndividual(ref iterationsWithoutImprovement);
                 PerformGeneticOperations();
                 iterations++;
                 yield return null;
             }
 
-            RoomIndividual bestInGenerationFinal = population.MaxBy(individual => individual.Value);
-            if (bestInGenerationFinal.Value > Best.Value)
-            {
-                Best = new(bestInGenerationFinal);
-            }
-
+            UpdateBestIndividual(ref iterationsWithoutImprovement);
             Debug.LogError("Melhor individual: " + Best.Value);
-            Debug.Log("Inimigo: " + Best.RoomMatrix.EnemiesPositions.Count);
-            Debug.Log("Obstaculo: " + Best.RoomMatrix.ObstaclesPositions.Count);
-            Debug.Log("qntInimigosProximosDeObstaculos: " +
-                RoomOperations.CountEnemiesNextToObstacles(Best.RoomMatrix));
         }
 
-        void UpdateBestIndividual(RoomIndividual bestInGeneration, ref int iterationsWithoutImprovement)
+        void UpdateBestIndividual(ref int iterationsWithoutImprovement)
         {
+            RoomIndividual bestInGeneration = population.GetBestIndividual();
             if (bestInGeneration.Value > Best.Value)
             {
                 iterationsWithoutImprovement = 0;
@@ -110,10 +104,10 @@ namespace RoomGeneticAlgorithm.Run
 
         void PerformGeneticOperations()
         {
-            population = Reproduction.PerformReproduction(population);
-            Mutation.MutatePopulation(population);
+            population = reproduction.PerformReproduction(population);
+            mutation.MutatePopulation(population);
             fitnessHandler.EvaluatePopulation(population, fitnessHandler);
-            FitnessCalculator.Evaluate(Best, fitnessHandler);
+            FitnessCalculator.Evaluate(Best, fitnessHandler, roomSkeleton.DoorPositions);
         }
 
         /// <summary>

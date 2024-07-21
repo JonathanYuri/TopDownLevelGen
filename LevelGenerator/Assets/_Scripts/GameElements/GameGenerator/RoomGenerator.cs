@@ -57,8 +57,8 @@ public class RoomGenerator : MonoBehaviour
             room.Obstacles = roomData.obstacles.ToList();
 
             float startTime = Time.realtimeSinceStartup;
-            GeneticRoomGenerator geneticRoomGenerator = new();
-            yield return geneticRoomGenerator.GeneticLooping(roomSkeleton);
+            GeneticRoomGenerator geneticRoomGenerator = new(roomSkeleton);
+            yield return geneticRoomGenerator.GeneticLooping();
 
             roomSkeleton.Values = geneticRoomGenerator.Best.RoomMatrix.Values;
 

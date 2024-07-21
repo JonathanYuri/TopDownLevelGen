@@ -110,13 +110,6 @@ public static class Utils
         return ((value - min) / (max - min)) * 100.0f;
     }
 
-    public static HashSet<Position> CombinePositions(List<Position> positions1, List<Position> positions2)
-    {
-        HashSet<Position> combinedPositions = new(positions1);
-        combinedPositions.UnionWith(positions2);
-        return combinedPositions;
-    }
-
     public static int CalculateDistance(Position position1, Position position2) => ManhattanDistance(position1, position2);
 
     static int ManhattanDistance(Position position1, Position position2)

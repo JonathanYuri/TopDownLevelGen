@@ -4,9 +4,14 @@ using System.Linq;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {
-    public static class ChildContentPlacement
+    public class ChildContentPlacement
     {
-        internal static List<Position> avaliablePositions = new();
+        List<Position> avaliablePositions = new();
+
+        internal void SetAvaliablePositions(HashSet<Position> changeablesPositions)
+        {
+            avaliablePositions = new(changeablesPositions);
+        }
 
         /// <summary>
         /// Places room contents in the child individual by combining the contents from the father and mother individuals.
@@ -14,23 +19,26 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="child">The child individual to place the contents in.</param>
         /// <param name="contentsPositionsInParent1">A dictionary of room contents positions in the father individual.</param>
         /// <param name="contentsPositionsInParent2">A dictionary of room contents positions in the mother individual.</param>
-        internal static void PlaceContentsInChild(
+        internal void PlaceContentsInChild(
             RoomIndividual child,
-            Dictionary<RoomContents, List<Position>> contentsPositionsInParent1,
-            Dictionary<RoomContents, List<Position>> contentsPositionsInParent2)
+            Dictionary<RoomContents, HashSet<Position>> contentsPositionsInParent1,
+            Dictionary<RoomContents, HashSet<Position>> contentsPositionsInParent2)
         {
             foreach (RoomContents key in contentsPositionsInParent1.Keys)
             {
-                HashSet<Position> combinedPositions = Utils.CombinePositions(contentsPositionsInParent1[key], contentsPositionsInParent2[key]);
-                combinedPositions = combinedPositions.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
-                Position[] chosenPositions = combinedPositions.SelectRandomDistinctElements(contentsPositionsInParent1[key].Count);
+                int contentsCount = contentsPositionsInParent1[key].Count;
+                HashSet<Position> allContents = new(contentsPositionsInParent1[key]);
+                allContents.UnionWith(contentsPositionsInParent2[key]);
 
-                int totalToPlaceRandomly = contentsPositionsInParent1[key].Count - chosenPositions.Length;
+                HashSet<Position> combinedPositions = allContents.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
+                Position[] chosenPositions = combinedPositions.GetRandomElements(contentsCount);
+
+                int totalToPlaceRandomly = contentsCount - chosenPositions.Length;
                 PlaceContentsInChosenPositions(child, chosenPositions, key, totalToPlaceRandomly);
             }
         }
 
-        static void PlaceContentsInChosenPositions(RoomIndividual child, Position[] chosenPositions, RoomContents content, int totalToPlaceRandomly)
+        void PlaceContentsInChosenPositions(RoomIndividual child, Position[] chosenPositions, RoomContents content, int totalToPlaceRandomly)
         {
             PlaceContentInPositions(child, chosenPositions, content);
 
@@ -39,15 +47,14 @@ namespace RoomGeneticAlgorithm.GeneticOperations
                 return;
             }
 
-            PlaceContentInPositions(child, avaliablePositions.SelectRandomDistinctElements(totalToPlaceRandomly), content);
+            PlaceContentInPositions(child, avaliablePositions.GetRandomElements(totalToPlaceRandomly), content);
         }
 
-        static void PlaceContentInPositions(RoomIndividual child, Position[] positions, RoomContents content)
+        void PlaceContentInPositions(RoomIndividual child, Position[] positions, RoomContents content)
         {
             foreach (Position position in positions)
             {
-                child.RoomMatrix.PutContentInPosition(content, position,
-                    GeneticAlgorithmConstants.ROOM.Enemies, GeneticAlgorithmConstants.ROOM.Obstacles);
+                child.RoomMatrix.PutContentInPosition(content, position);
                 avaliablePositions.Remove(position);
             }
         }

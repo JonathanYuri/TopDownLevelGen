@@ -29,6 +29,15 @@ public static class IEnumerableExtensions
         return shuffled;
     }
 
+    public static T GetRandomElement<T>(this IEnumerable<T> allElements)
+    {
+        if (allElements == null || !allElements.Any())
+            throw new ArgumentException("The collection is empty or null.", nameof(allElements));
+
+        int idx = Random.Range(0, allElements.Count());
+        return allElements.ElementAt(idx);
+    }
+
     /// <summary>
     /// Selects a specified number of random distinct elements from the collection.
     /// </summary>
@@ -36,7 +45,7 @@ public static class IEnumerableExtensions
     /// <param name="allElements">The collection to select elements from.</param>
     /// <param name="numberToSelect">The number of elements to select.</param>
     /// <returns>An array containing the selected random elements.</returns>
-    public static T[] SelectRandomDistinctElements<T>(this IEnumerable<T> allElements, int numberToSelect)
+    public static T[] GetRandomElements<T>(this IEnumerable<T> allElements, int numberToSelect)
     {
         if (numberToSelect >= allElements.Count())
         {
