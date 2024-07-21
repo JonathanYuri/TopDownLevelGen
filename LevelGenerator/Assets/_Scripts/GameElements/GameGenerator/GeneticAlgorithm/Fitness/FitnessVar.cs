@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class FitnessVar
 {
-    public Range<int> CurrentBound { get; set; } = new(int.MaxValue, int.MinValue);
-    public Range<float> IdealRange { get; private set; }
-    public float Importance { get; private set; }
+    public Range<float> IdealRange { get; }
+    public float MaxDeviation { get; }
+    public float Importance { get; }
     public float Ideal { get; private set; }
     public bool IncreaseWithDifficulty { get; private set; }
     public Func<RoomIndividual, float> FitnessVarValue { get; private set; }
 
-    public FitnessVar(Range<float> range, float importance, bool increaseWithDifficulty, Func<RoomIndividual, float> FitnessVarValue)
+    public FitnessVar(Range<float> range, float maxDeviation, float importance,
+        bool increaseWithDifficulty, Func<RoomIndividual, float> FitnessVarValue)
     {
         IdealRange = range;
+        MaxDeviation = maxDeviation;
         Importance = importance;
         IncreaseWithDifficulty = increaseWithDifficulty;
         this.FitnessVarValue = FitnessVarValue;
@@ -31,20 +33,18 @@ public class FitnessVar
         }
     }
 
-    public bool UpdateExistingBound(int value)
+    public float Normalize(float distance)
     {
-        if (value > CurrentBound.Max)
+        if (distance > MaxDeviation)
         {
-            //Debug.LogWarning("UPDATE MAX BOUND");
-            CurrentBound.Max = value;
-            return true;
+            return 0f;
         }
-        if (value < CurrentBound.Min)
+        else
         {
-            //Debug.LogWarning("UPDATE MIN BOUND");
-            CurrentBound.Min = value;
-            return true;
+            // se distance == 0 -> normalizedDistance = 100f
+            // se distance == MaxDeviation -> normalizedDistance = 0
+            float normalizedDistance = Mathf.Lerp(100f, 0f, distance / MaxDeviation);
+            return normalizedDistance;
         }
-        return false;
     }
 }

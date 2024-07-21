@@ -75,7 +75,7 @@ namespace RoomGeneticAlgorithm.Run
             while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
                 RoomIndividual bestInGeneration = population.MaxBy(individual => individual.Value);
-                Debug.LogError("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
+                //Debug.LogWarning("NUMERO DE INTERACOES: " + iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
                 UpdateBestIndividual(bestInGeneration, ref iterationsWithoutImprovement);
                 PerformGeneticOperations();
                 iterations++;
@@ -88,7 +88,7 @@ namespace RoomGeneticAlgorithm.Run
                 Best = new(bestInGenerationFinal);
             }
 
-            Debug.Log("Melhor individual: " + Best.Value);
+            Debug.LogError("Melhor individual: " + Best.Value);
             Debug.Log("Inimigo: " + Best.RoomMatrix.EnemiesPositions.Count);
             Debug.Log("Obstaculo: " + Best.RoomMatrix.ObstaclesPositions.Count);
             Debug.Log("qntInimigosProximosDeObstaculos: " +

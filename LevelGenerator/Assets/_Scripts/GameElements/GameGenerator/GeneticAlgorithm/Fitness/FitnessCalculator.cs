@@ -14,24 +14,6 @@ namespace RoomGeneticAlgorithm.Fitness
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
         /// </summary>
         /// <param name="individual">The individual to evaluate.</param>
-        /// <param name="allFitnessVars">An array of fitness variables used in the evaluation.</param>
-        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler, List<int> allFitnessVars)
-        {
-            if (IsMonstrous(individual))
-            {
-                individual.Value = int.MinValue;
-                return;
-            }
-
-            individual.Value = CalculateNormalizedFitnessValue(fitnessHandler.fitnessVars, allFitnessVars);
-        }
-
-        /// <summary>
-        /// Calculates and assigns the fitness value for an individual.
-        /// Fitness variables are determined internally for the individual before evaluation.
-        /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
-        /// </summary>
-        /// <param name="individual">The individual to evaluate.</param>
         public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler)
         {
             if (IsMonstrous(individual))
@@ -40,30 +22,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 return;
             }
 
-            individual.Value = CalculateNormalizedFitnessValue(
-                fitnessHandler.fitnessVars,
-                CalculateAllFitnessVars(individual, fitnessHandler)
-            );
-        }
-
-        /// <summary>
-        /// Calculates the normalized fitness value based on a set of fitness variables.
-        /// Normalization ensures that the fitness value falls within specified bounds.
-        /// </summary>
-        /// <param name="fitnessVarsValue">An array of fitness variables used to calculate the fitness value.</param>
-        /// <returns>The normalized fitness value.</returns>
-        static int CalculateNormalizedFitnessValue(List<FitnessVar> fitnessVars, List<int> fitnessVarsValue)
-        {
-            int value = 0;
-            for (int i = 0; i < fitnessVars.Count; i++)
-            {
-                FitnessVar fitnessVar = fitnessVars[i];
-                Range<int> varBound = fitnessVar.CurrentBound;
-
-                double normalizedValue = Utils.Normalization(fitnessVarsValue[i], varBound.Min, varBound.Max);
-                value += (int)(normalizedValue * fitnessVar.Importance);
-            }
-            return value;
+            individual.Value = CalculateFitnessValue(individual, fitnessHandler);
         }
 
         /// <summary>
@@ -71,25 +30,21 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual for which to calculate fitness variables.</param>
         /// <returns>A array of calculated fitness variables.</returns>
-        internal static List<int> CalculateAllFitnessVars(RoomIndividual individual, FitnessHandler fitnessHandler)
+        internal static int CalculateFitnessValue(RoomIndividual individual, FitnessHandler fitnessHandler)
         {
-            List<int> vars = new();
+            int value = 0;
             float difficulty = GeneticAlgorithmConstants.ROOM.Difficulty;
 
-            // Calculate ideal values based on difficulty
-            int i = 0;
             foreach (var fitnessVar in fitnessHandler.fitnessVars)
             {
-                float varValue = -Mathf.Abs(fitnessVar.FitnessVarValue(individual) - fitnessVar.Ideal);
-                vars.Add((int)varValue);
+                float fitnessVarValue = fitnessVar.FitnessVarValue(individual);
+                float distance = Mathf.Abs(fitnessVarValue - fitnessVar.Ideal);
+                float normalizedVar = fitnessVar.Normalize(distance);
 
-                Debug.Log(i + ": value: " + (int)varValue);
-
-                bool updatedBound = fitnessVar.UpdateExistingBound((int)varValue);
-                if (updatedBound) fitnessHandler.AreBoundsModified = true;
-                i++;
+                //Debug.Log("Value: " + fitnessVarValue + " Distance: " + distance + " normalizedVar: " + normalizedVar);
+                value += (int)(normalizedVar * fitnessVar.Importance);
             }
-            return vars;
+            return value;
         }
 
         /// <summary>

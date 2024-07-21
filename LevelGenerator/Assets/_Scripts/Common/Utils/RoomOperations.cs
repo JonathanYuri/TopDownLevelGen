@@ -43,46 +43,38 @@ public static class RoomOperations
         return enemies;
     }
 
-    public static double AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
+    public static float AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
     {
-        List<double> averagesDistances = new();
-        foreach (Position doorPosition in doorPositions)
-        {
-            List<int> averagesDistancesFromDoorPosition = new();
-            foreach (Position enemyPosition in enemiesPositions)
-            {
-                averagesDistancesFromDoorPosition.Add(Utils.CalculateDistance(doorPosition, enemyPosition));
-            }
-            averagesDistances.Add(averagesDistancesFromDoorPosition.Average());
-        }
-        return averagesDistances.Average();
-    }
+        int totalDistance = 0;
+        int pairCount = 0;
 
-    public static int DistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
-    {
-        int distance = 0;
         foreach (Position doorPosition in doorPositions)
         {
             foreach (Position enemyPosition in enemiesPositions)
             {
-                distance += Utils.CalculateDistance(doorPosition, enemyPosition);
+                totalDistance += Utils.CalculateDistance(doorPosition, enemyPosition);
+                pairCount++;
             }
         }
-        return distance;
+        return (float)totalDistance / pairCount;
     }
 
-    public static int DistanceBetweenEnemies(List<Position> enemiesPositions)
+    public static float AverageDistanceBetweenEnemies(List<Position> enemiesPositions)
     {
-        int distance = 0;
+        int totalDistance = 0;
+        int pairCount = 0;
+
         for (int i = 0; i < enemiesPositions.Count; i++)
         {
             Position enemyPosition1 = enemiesPositions[i];
             for (int j = i + 1; j < enemiesPositions.Count; j++)
             {
-                distance += Utils.CalculateDistance(enemyPosition1, enemiesPositions[j]);
+                Position enemyPosition2 = enemiesPositions[j];
+                totalDistance += Utils.CalculateDistance(enemyPosition1, enemyPosition2);
+                pairCount++;
             }
         }
-        return distance;
+        return (float)totalDistance / pairCount;
     }
 
     public static int MinimumDistanceBetweenDoorsAndEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
