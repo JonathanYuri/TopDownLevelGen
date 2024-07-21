@@ -77,10 +77,17 @@ namespace RoomGeneticAlgorithm.Fitness
             float difficulty = GeneticAlgorithmConstants.ROOM.Difficulty;
 
             // Calculate ideal values based on difficulty
+            int i = 0;
             foreach (var fitnessVar in fitnessHandler.fitnessVars)
             {
                 float varValue = -Mathf.Abs(fitnessVar.FitnessVarValue(individual) - fitnessVar.Ideal);
                 vars.Add((int)varValue);
+
+                Debug.Log(i + ": value: " + (int)varValue);
+
+                bool updatedBound = fitnessVar.UpdateExistingBound((int)varValue);
+                if (updatedBound) fitnessHandler.AreBoundsModified = true;
+                i++;
             }
             return vars;
         }

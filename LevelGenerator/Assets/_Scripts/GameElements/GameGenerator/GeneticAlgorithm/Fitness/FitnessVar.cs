@@ -5,7 +5,7 @@ using UnityEngine;
 public class FitnessVar
 {
     public Range<int> CurrentBound { get; set; } = new(int.MaxValue, int.MinValue);
-    public Range<float> Range { get; private set; }
+    public Range<float> IdealRange { get; private set; }
     public float Importance { get; private set; }
     public float Ideal { get; private set; }
     public bool IncreaseWithDifficulty { get; private set; }
@@ -13,7 +13,7 @@ public class FitnessVar
 
     public FitnessVar(Range<float> range, float importance, bool increaseWithDifficulty, Func<RoomIndividual, float> FitnessVarValue)
     {
-        Range = range;
+        IdealRange = range;
         Importance = importance;
         IncreaseWithDifficulty = increaseWithDifficulty;
         this.FitnessVarValue = FitnessVarValue;
@@ -23,27 +23,28 @@ public class FitnessVar
     {
         if (IncreaseWithDifficulty)
         {
-            Ideal = Mathf.Lerp(Range.Min, Range.Max, difficulty);
+            Ideal = Mathf.Lerp(IdealRange.Min, IdealRange.Max, difficulty);
         }
         else
         {
-            Ideal = Mathf.Lerp(Range.Max, Range.Min, difficulty);
+            Ideal = Mathf.Lerp(IdealRange.Max, IdealRange.Min, difficulty);
         }
     }
 
-    public void UpdateExistingBound(Range<int> varBound, ref bool boundsModified)
+    public bool UpdateExistingBound(int value)
     {
-        if (varBound.Max > CurrentBound.Max)
+        if (value > CurrentBound.Max)
         {
             //Debug.LogWarning("UPDATE MAX BOUND");
-            CurrentBound.Max = varBound.Max;
-            boundsModified = true;
+            CurrentBound.Max = value;
+            return true;
         }
-        if (varBound.Min < CurrentBound.Min)
+        if (value < CurrentBound.Min)
         {
             //Debug.LogWarning("UPDATE MIN BOUND");
-            CurrentBound.Min = varBound.Min;
-            boundsModified = true;
+            CurrentBound.Min = value;
+            return true;
         }
+        return false;
     }
 }

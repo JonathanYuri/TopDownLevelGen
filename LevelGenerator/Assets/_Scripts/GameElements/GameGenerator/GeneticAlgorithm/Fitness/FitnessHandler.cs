@@ -15,12 +15,14 @@ namespace RoomGeneticAlgorithm.Fitness
 
         internal List<FitnessVar> fitnessVars = new();
 
+        public bool AreBoundsModified { get => areBoundsModified; set => areBoundsModified = value; }
+
         public FitnessHandler()
         {
-            fitnessVars.Add(FitnessVarsConstants.NUM_ENEMIES_GROUPS);
-            fitnessVars.Add(FitnessVarsConstants.ENEMIES_PER_GROUP_AVERAGE);
+            //fitnessVars.Add(FitnessVarsConstants.NUM_ENEMIES_GROUPS);
+            //fitnessVars.Add(FitnessVarsConstants.ENEMIES_PER_GROUP_AVERAGE);
             fitnessVars.Add(FitnessVarsConstants.ENEMY_DOOR_DISTANCE);
-            fitnessVars.Add(FitnessVarsConstants.BETWEEN_ENEMIES_DISTANCE);
+            //fitnessVars.Add(FitnessVarsConstants.BETWEEN_ENEMIES_DISTANCE);
 
             foreach (var fitnessVar in fitnessVars)
             {
@@ -35,22 +37,6 @@ namespace RoomGeneticAlgorithm.Fitness
         }
 
         /// <summary>
-        /// Determines the bounds of fitness variables based on the current and previous fitness values.
-        /// </summary>
-        void DetermineFitnessVarBounds()
-        {
-            bool boundsModified = false;
-            for (int i = 0; i < fitnessVars.Count; i++) // pra cada variavel do fitness
-            {
-                (int max, int min) = allFitness.MaxAndMin(fitness => fitness.Value[i]);
-                Range<int> varBound = new(min, max);
-
-                fitnessVars[i].UpdateExistingBound(varBound, ref boundsModified);
-            }
-            areBoundsModified = boundsModified;
-        }
-
-        /// <summary>
         /// Determines whether the fitness should be recalculated for a specific individual.
         /// This is based on whether the individual has been modified or if the bounds of fitness variables have been modified.
         /// </summary>
@@ -62,7 +48,7 @@ namespace RoomGeneticAlgorithm.Fitness
             {
                 return true;
             }
-            if (areBoundsModified)
+            if (AreBoundsModified)
             {
                 return true;
             }
@@ -76,6 +62,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// <param name="population">The population of individuals for which to calculate fitness variables.</param>
         void CalculeAllFitnessVarsOfPopulation(RoomIndividual[] population, FitnessHandler fitnessHandler)
         {
+            AreBoundsModified = false;
             for (int i = 0; i < population.Length; i++)
             {
                 if (!ShouldRecalculateFitness(population[i]))
@@ -96,7 +83,6 @@ namespace RoomGeneticAlgorithm.Fitness
         public void EvaluatePopulation(RoomIndividual[] population, FitnessHandler fitnessHandler)
         {
             CalculeAllFitnessVarsOfPopulation(population, fitnessHandler);
-            DetermineFitnessVarBounds();
 
             // avaliar o individual se ele foi modificado
             for (int i = 0; i < population.Length; i++)
