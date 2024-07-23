@@ -39,7 +39,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 float distance = Mathf.Abs(fitnessVarValue - fitnessVar.Ideal);
                 float normalizedVar = fitnessVar.Normalize(distance);
 
-                //Debug.Log("Value: " + fitnessVarValue + " Distance: " + distance + " normalizedVar: " + normalizedVar);
+                Debug.Log("Value: " + fitnessVarValue + " Distance: " + distance + " normalizedVar: " + normalizedVar);
                 value += (int)(normalizedVar * fitnessVar.Importance);
             }
             return value;

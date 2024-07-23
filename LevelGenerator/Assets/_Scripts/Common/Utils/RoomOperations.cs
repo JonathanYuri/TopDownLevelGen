@@ -2,28 +2,51 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using RoomGeneticAlgorithm.Variables;
+using UnityEngine;
 
 /// <summary>
 /// A static class that provides various operations related to room contents.
 /// </summary>
 public static class RoomOperations
 {
-    public static int CountEnemiesNextToObstacles(RoomMatrix roomMatrix)
+    public static float AverageObstaclesNextToEnemies(RoomMatrix roomMatrix)
     {
-        int enemies = 0;
-        foreach (Position obstaclePosition in roomMatrix.ObstaclesPositions)
+        int totalObstaclesNextToEnemies = 0;
+        foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
-                Position adjacentPosition = obstaclePosition.Move(direction);
-                if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y) && roomMatrix.EnemiesPositions.Contains(adjacentPosition))
+                Position adjacentPosition = enemyPosition.Move(direction);
+                if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y) &&
+                    roomMatrix.ObstaclesPositions.Contains(adjacentPosition))
                 {
-                    enemies++;
+                    totalObstaclesNextToEnemies++;
                 }
             }
         }
 
-        return enemies;
+        return (float)totalObstaclesNextToEnemies / (float)roomMatrix.EnemiesPositions.Count;
+    }
+
+    public static float AverageEnemiesWithCover(RoomMatrix roomMatrix)
+    {
+        int totalEnemiesWithCover = 0;
+        foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
+        {
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            {
+                Position adjacentPosition = enemyPosition.Move(direction);
+
+                if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y) &&
+                    roomMatrix.ObstaclesPositions.Contains(adjacentPosition))
+                {
+                    totalEnemiesWithCover++;
+                    break;
+                }
+            }
+        }
+
+        return (float)totalEnemiesWithCover / (float)roomMatrix.EnemiesPositions.Count;
     }
 
     public static float AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)

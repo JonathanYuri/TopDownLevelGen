@@ -18,13 +18,15 @@ namespace RoomGeneticAlgorithm.Fitness
             fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_PER_GROUP);
             fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMY_DOOR_DISTANCE);
             fitnessVars.Add(FitnessVarsConstants.AVERAGE_BETWEEN_ENEMIES_DISTANCE);
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_OBSTACLES_NEXT_TO_ENEMIES);
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_WITH_COVER);
 
             foreach (var fitnessVar in fitnessVars)
             {
                 fitnessVar.SetIdealValue(roomDifficulty);
             }
 
-            //Debug.LogWarning("ideal: " + fitnessVars[0].Ideal);
+            Debug.LogWarning("ideal: " + fitnessVars[0].Ideal);
         }
 
         /// <summary>

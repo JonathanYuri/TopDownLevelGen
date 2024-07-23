@@ -48,6 +48,8 @@ public static class PathFinder
         foreach (Direction direction in Enum.GetValues(typeof(Direction)))
         {
             Position adjacentPosition = currentPosition.Move(direction);
+            if (adjacentPosition.Equals(endPosition)) return true;
+
             if (IsValidMove(adjacentPosition, matrix, visited) && DFS(matrix, adjacentPosition, endPosition, visited))
             {
                 return true;
@@ -76,17 +78,15 @@ public static class PathFinder
         while (queue.Count > 0)
         {
             Position currentPosition = queue.Dequeue();
-
-            if (currentPosition.Equals(endPosition))
-            {
-                return true;
-            }
+            if (currentPosition.Equals(endPosition)) return true;
 
             visited[currentPosition.X, currentPosition.Y] = true;
 
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = currentPosition.Move(direction);
+                if (adjacentPosition.Equals(endPosition)) return true;
+
                 if (IsValidMove(adjacentPosition, matrix, visited))
                 {
                     queue.Enqueue(adjacentPosition);
@@ -102,7 +102,7 @@ public static class PathFinder
     {
         int[,] matrix = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
         return IsAPathBetweenDoors(matrix, roomMatrix.SharedRoomData.DoorPositions) &&
-            IsAPathBetweenDoorAndEnemies(roomMatrix, matrix, roomMatrix.SharedRoomData.DoorPositions);
+            IsAPathBetweenDoorAndEnemies(roomMatrix, matrix);
     }
 
     static bool IsAPathBetweenDoors(int[,] matrix, Position[] doorPositions)
@@ -121,13 +121,15 @@ public static class PathFinder
         return true;
     }
 
-    static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, int[,] matrix, Position[] doorPositions)
+    static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, int[,] matrix)
     {
+        Position doorPosition = roomMatrix.SharedRoomData.DoorPositions[0];
+
         // so preciso ver de uma porta pra todos os inimigos, pq se tiver de uma tem da outra, ja que eu conto os caminhos de uma porta a outra
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
         foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
-            if (!HasPathBetweenPositions(matrix, doorPositions[0], enemyPosition))
+            if (!HasPathBetweenPositions(matrix, doorPosition, enemyPosition))
             {
                 return false;
             }
