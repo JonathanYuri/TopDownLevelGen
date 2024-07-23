@@ -9,11 +9,12 @@ namespace RoomGeneticAlgorithm.GeneticOperations
     public class Mutation
     {
         HashSet<Position> availablePositions;
-        readonly HashSet<Position> changeablePositions;
 
-        public Mutation(RoomSkeleton roomSkeleton)
+        readonly SharedRoomData sharedRoomData;
+
+        public Mutation(SharedRoomData sharedRoomData)
         {
-            changeablePositions = roomSkeleton.ChangeablesPositions;
+            this.sharedRoomData = sharedRoomData;
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <param name="population">The population of room individuals to mutate.</param>
         public void MutatePopulation(RoomIndividual[] population)
         {
-            availablePositions = new(changeablePositions);
+            availablePositions = new(sharedRoomData.ChangeablePositions);
             foreach (RoomIndividual individual in population)
             {
                 if (Random.value < GeneticAlgorithmConstants.MUTATION_PROBABILITY)

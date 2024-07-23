@@ -48,8 +48,10 @@ public class RoomGenerator : MonoBehaviour
 
         RoomData roomData = roomInfoProvider.GetRoomData(roomPosition, map);
         RoomSkeleton roomSkeleton = new(roomData);
+        SharedRoomData sharedRoomData = new(roomSkeleton);
 
         room.Difficulty = roomData.difficulty;
+        RoomContents[,] result = sharedRoomData.Values;
 
         if (generateObjectsInRoom)
         {
@@ -57,10 +59,10 @@ public class RoomGenerator : MonoBehaviour
             room.Obstacles = roomData.obstacles.ToList();
 
             float startTime = Time.realtimeSinceStartup;
-            GeneticRoomGenerator geneticRoomGenerator = new(roomSkeleton);
+            GeneticRoomGenerator geneticRoomGenerator = new(sharedRoomData);
             yield return geneticRoomGenerator.GeneticLooping();
 
-            roomSkeleton.Values = geneticRoomGenerator.Best.RoomMatrix.Values;
+            result = geneticRoomGenerator.Best.RoomMatrix.Values;
 
             float endTime = Time.realtimeSinceStartup;
 
@@ -70,11 +72,11 @@ public class RoomGenerator : MonoBehaviour
 
         if (roomInfoProvider.IsFinalRoom(roomPosition))
         {
-            roomSkeleton.Values[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
+            result[GameConstants.ROOM_MIDDLE.X, GameConstants.ROOM_MIDDLE.Y] = RoomContents.LevelEnd;
         }
 
         GameMapSingleton.Instance.RoomPositions.Add(roomPosition, room);
 
-        yield return roomObjectSpawner.SpawnRoomObjects(roomSkeleton, roomPosition, roomObject);
+        yield return roomObjectSpawner.SpawnRoomObjects(result, roomPosition, roomObject);
     }
 }

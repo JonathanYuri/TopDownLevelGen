@@ -17,15 +17,15 @@ namespace RoomGeneticAlgorithm
         /// Initializes a new instance of the <see cref="RoomIndividual"/> class, optionally generating it randomly.
         /// </summary>
         /// <param name="generateRandomly">Determines whether to generate the room layout randomly.</param>
-        public RoomIndividual(RoomSkeleton roomSkeleton, bool generateRandomly = true)
+        public RoomIndividual(SharedRoomData sharedRoomData, bool generateRandomly = true)
         {
             Value = default;
             Modified = true;
-            RoomMatrix = new RoomMatrix(roomSkeleton);
+            RoomMatrix = new RoomMatrix(sharedRoomData);
 
             if (generateRandomly)
             {
-                GenerateRoomRandomly(roomSkeleton);
+                GenerateRoomRandomly(sharedRoomData);
             }
         }
 
@@ -42,13 +42,12 @@ namespace RoomGeneticAlgorithm
         /// <summary>
         /// Generates a random room layout by placing enemies and obstacles in available positions.
         /// </summary>
-        void GenerateRoomRandomly(RoomSkeleton roomSkeleton)
+        void GenerateRoomRandomly(SharedRoomData sharedRoomData)
         {
-            RoomContents[] enemies = roomSkeleton.Enemies;
-            RoomContents[] obstacles = roomSkeleton.Obstacles;
+            RoomContents[] enemies = sharedRoomData.Enemies;
+            RoomContents[] obstacles = sharedRoomData.Obstacles;
 
-            List<Position> avaliablePositions = new(roomSkeleton.ChangeablesPositions);
-            Position[] chosenPositions = avaliablePositions.GetRandomElements(enemies.Length + obstacles.Length);
+            Position[] chosenPositions = sharedRoomData.ChangeablePositions.GetRandomElements(enemies.Length + obstacles.Length);
 
             int count = 0;
             foreach (RoomContents enemy in enemies)

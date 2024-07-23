@@ -9,12 +9,12 @@ namespace RoomGeneticAlgorithm.GeneticOperations
     public class Reproduction
     {
         readonly ChildContentPlacement childContentPlacement;
-        readonly RoomSkeleton roomSkeleton;
+        readonly SharedRoomData sharedRoomData;
 
-        public Reproduction(RoomSkeleton roomSkeleton)
+        public Reproduction(SharedRoomData sharedRoomData)
         {
             childContentPlacement = new();
-            this.roomSkeleton = roomSkeleton;
+            this.sharedRoomData = sharedRoomData;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// <returns>The child individual resulting from the crossover operation.</returns>
         RoomIndividual Crossover(RoomIndividual parent1, RoomIndividual parent2)
         {
-            RoomIndividual child = new(roomSkeleton, false);
+            RoomIndividual child = new(sharedRoomData, false);
 
             var enemiesPositionsInParent1 = parent1.RoomMatrix.EnemyTypeToPositions;
             var enemiesPositionsInParent2 = parent2.RoomMatrix.EnemyTypeToPositions;
@@ -38,7 +38,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
             if (obstaclesPositionsInParent2.Keys.Count != obstaclesPositionsInParent1.Keys.Count)
                 throw new Exception("Obstaculos diferentes no parent1 e no parent2");
 
-            childContentPlacement.SetAvaliablePositions(roomSkeleton.ChangeablesPositions);
+            childContentPlacement.SetAvaliablePositions(sharedRoomData.ChangeablePositions);
 
             childContentPlacement.PlaceContentsInChild(child, enemiesPositionsInParent1, enemiesPositionsInParent2);
             childContentPlacement.PlaceContentsInChild(child, obstaclesPositionsInParent1, obstaclesPositionsInParent2);
@@ -62,11 +62,11 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         static RoomIndividual[] TournamentSelection(RoomIndividual[] population)
         {
             // para nao selecionar o mesmo individuo que ganhou o torneio
-            List<RoomIndividual> populationCopy = population.ToList();
+            List<RoomIndividual> populationCopy = new(population);
             RoomIndividual[] parents = new RoomIndividual[GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT];
             for (int i = 0; i < GeneticAlgorithmConstants.NUM_PARENTS_TOURNAMENT; i++)
             {
-                List<RoomIndividual> tournament = populationCopy.GetRandomElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE).ToList();
+                RoomIndividual[] tournament = populationCopy.GetRandomElements(GeneticAlgorithmConstants.TOURNAMENT_SIZE);
                 RoomIndividual winner = tournament.GetBestIndividual();
                 parents[i] = winner;
                 populationCopy.Remove(winner);

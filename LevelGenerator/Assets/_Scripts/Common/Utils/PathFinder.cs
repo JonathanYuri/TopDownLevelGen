@@ -98,10 +98,15 @@ public static class PathFinder
         return false;
     }
 
-    public static bool IsAPathBetweenDoors(RoomContents[,] roomMatrix, Position[] doorPositions)
+    public static bool AreAllPathsValid(RoomMatrix roomMatrix)
     {
-        int[,] matrix = TransformRoomForCountPaths(roomMatrix, IsPassable);
-         
+        int[,] matrix = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
+        return IsAPathBetweenDoors(matrix, roomMatrix.SharedRoomData.DoorPositions) &&
+            IsAPathBetweenDoorAndEnemies(roomMatrix, matrix, roomMatrix.SharedRoomData.DoorPositions);
+    }
+
+    static bool IsAPathBetweenDoors(int[,] matrix, Position[] doorPositions)
+    {
         for (int i = 0; i < doorPositions.Length; i++)
         {
             for (int j = i + 1; j < doorPositions.Length; j++)
@@ -116,20 +121,13 @@ public static class PathFinder
         return true;
     }
 
-    public static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, Position[] doorPositions)
+    static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, int[,] matrix, Position[] doorPositions)
     {
-        if (roomMatrix.EnemiesPositions.Count == 0)
-        {
-            return false;
-        }
-
-        int[,] matriz = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
-
         // so preciso ver de uma porta pra todos os inimigos, pq se tiver de uma tem da outra, ja que eu conto os caminhos de uma porta a outra
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
         foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
-            if (!HasPathBetweenPositions(matriz, doorPositions[0], enemyPosition))
+            if (!HasPathBetweenPositions(matrix, doorPositions[0], enemyPosition))
             {
                 return false;
             }

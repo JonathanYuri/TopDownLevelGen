@@ -6,11 +6,11 @@ namespace RoomGeneticAlgorithm.GeneticOperations
 {
     public class ChildContentPlacement
     {
-        List<Position> avaliablePositions = new();
+        HashSet<Position> availablePositions = new();
 
         internal void SetAvaliablePositions(HashSet<Position> changeablesPositions)
         {
-            avaliablePositions = new(changeablesPositions);
+            availablePositions = new(changeablesPositions);
         }
 
         /// <summary>
@@ -24,17 +24,34 @@ namespace RoomGeneticAlgorithm.GeneticOperations
             Dictionary<RoomContents, HashSet<Position>> contentsPositionsInParent1,
             Dictionary<RoomContents, HashSet<Position>> contentsPositionsInParent2)
         {
-            foreach (RoomContents key in contentsPositionsInParent1.Keys)
+            foreach (var kvp in contentsPositionsInParent1)
             {
-                int contentsCount = contentsPositionsInParent1[key].Count;
-                HashSet<Position> allContents = new(contentsPositionsInParent1[key]);
-                allContents.UnionWith(contentsPositionsInParent2[key]);
+                RoomContents key = kvp.Key;
+                int contentsCount = kvp.Value.Count;
 
-                HashSet<Position> combinedPositions = allContents.Intersect(avaliablePositions).ToHashSet(); // pra sempre ser uma posicao valida
-                Position[] chosenPositions = combinedPositions.GetRandomElements(contentsCount);
-
+                Position[] chosenPositions = GetChosenPositions(kvp.Value, contentsPositionsInParent2[key], contentsCount);
                 int totalToPlaceRandomly = contentsCount - chosenPositions.Length;
                 PlaceContentsInChosenPositions(child, chosenPositions, key, totalToPlaceRandomly);
+            }
+        }
+
+        Position[] GetChosenPositions(HashSet<Position> positions1, HashSet<Position> positions2, int qntChoose)
+        {
+            HashSet<Position> chosenPositions = new();
+            GetValidPositions(chosenPositions, positions1);
+            GetValidPositions(chosenPositions, positions2);
+            return chosenPositions.GetRandomElements(qntChoose);
+        }
+
+        void GetValidPositions(HashSet<Position> chosenPositions,
+            HashSet<Position> positions)
+        {
+            foreach (Position pos in positions)
+            {
+                if (availablePositions.Contains(pos) && !chosenPositions.Contains(pos))
+                {
+                    chosenPositions.Add(pos);
+                }
             }
         }
 
@@ -47,7 +64,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
                 return;
             }
 
-            PlaceContentInPositions(child, avaliablePositions.GetRandomElements(totalToPlaceRandomly), content);
+            PlaceContentInPositions(child, availablePositions.GetRandomElements(totalToPlaceRandomly), content);
         }
 
         void PlaceContentInPositions(RoomIndividual child, Position[] positions, RoomContents content)
@@ -55,7 +72,7 @@ namespace RoomGeneticAlgorithm.GeneticOperations
             foreach (Position position in positions)
             {
                 child.RoomMatrix.PutContentInPosition(content, position);
-                avaliablePositions.Remove(position);
+                availablePositions.Remove(position);
             }
         }
     }

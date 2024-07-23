@@ -14,9 +14,9 @@ namespace RoomGeneticAlgorithm.Fitness
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
         /// </summary>
         /// <param name="individual">The individual to evaluate.</param>
-        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler, Position[] doorPositions)
+        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler)
         {
-            if (IsMonstrous(individual, doorPositions))
+            if (IsMonstrous(individual))
             {
                 individual.Value = int.MinValue;
                 return;
@@ -50,33 +50,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual to evaluate.</param>
         /// <returns>True if the individual is monstrous; otherwise, false.</returns>
-        static bool IsMonstrous(RoomIndividual individual, Position[] doorPositions)
-        {
-            if (!PathFinder.IsAPathBetweenDoors(individual.RoomMatrix.Values, doorPositions))
-            {
-                return true;
-            }
-
-            if (!PathFinder.IsAPathBetweenDoorAndEnemies(individual.RoomMatrix, doorPositions))
-            {
-                return true;
-            }
-
-            /*
-            bool hasTheRightAmountOfEnemies = individual.RoomMatrix.EnemiesPositions.Count == GeneticAlgorithmConstants.ROOM.Enemies.Length;
-            if (!hasTheRightAmountOfEnemies)
-            {
-                return true;
-            }
-
-            bool hasTheRightAmountOfObstacles = individual.RoomMatrix.ObstaclesPositions.Count == GeneticAlgorithmConstants.ROOM.Obstacles.Length;
-            if (!hasTheRightAmountOfObstacles)
-            {
-                return true;
-            }
-            */
-
-            return false;
-        }
+        static bool IsMonstrous(RoomIndividual individual) =>
+            !PathFinder.AreAllPathsValid(individual.RoomMatrix);
     }
 }

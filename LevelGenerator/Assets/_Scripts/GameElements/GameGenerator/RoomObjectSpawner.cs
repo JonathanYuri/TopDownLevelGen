@@ -89,7 +89,7 @@ namespace SpawnRoomObjects.SpawnAll
         /// </summary>
         /// <param name="room">The room containing information about the objects to spawn.</param>
         /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
-        public IEnumerator SpawnRoomObjects(RoomSkeleton room, Position roomPosition, GameObject roomObject)
+        public IEnumerator SpawnRoomObjects(RoomContents[,] room, Position roomPosition, GameObject roomObject)
         {
             yield return floorSpawner.SpawnAllFloors(room, roomObject, roomPosition);
 
@@ -98,7 +98,7 @@ namespace SpawnRoomObjects.SpawnAll
                 for (int j = 0; j < GameConstants.ROOM_HEIGHT; j++)
                 {
                     Position positionRoomContent = new() { X = i, Y = j };
-                    GameObject tilePrefab = SelectTheRightObjectsToSpawnInPosition(room.Values[i, j], positionRoomContent);
+                    GameObject tilePrefab = SelectTheRightObjectsToSpawnInPosition(room[i, j], positionRoomContent);
 
                     if (tilePrefab == null)
                     {

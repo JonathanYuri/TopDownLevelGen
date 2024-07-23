@@ -10,8 +10,7 @@ namespace RoomGeneticAlgorithm.Variables
     public class RoomMatrix
     {
         RoomContents[,] values;
-        readonly RoomContents[] enemies;
-        readonly RoomContents[] obstacles;
+        readonly SharedRoomData sharedRoomData;
 
         public Dictionary<RoomContents, HashSet<Position>> EnemyTypeToPositions { get; private set; } = new();
         public Dictionary<RoomContents, HashSet<Position>> ObstacleTypeToPositions { get; private set; } = new();
@@ -19,14 +18,14 @@ namespace RoomGeneticAlgorithm.Variables
         public RoomContents[,] Values { get => values; set => values = value; }
         public HashSet<Position> EnemiesPositions { get; private set; } = new();
         public HashSet<Position> ObstaclesPositions { get; private set; } = new();
+        public SharedRoomData SharedRoomData => sharedRoomData;
 
-        public RoomMatrix(RoomSkeleton roomSkeleton)
+        public RoomMatrix(SharedRoomData sharedRoomData)
         {
-            values = (RoomContents[,])roomSkeleton.Values.Clone();
-            enemies = roomSkeleton.Enemies;
-            obstacles = roomSkeleton.Obstacles;
+            this.sharedRoomData = sharedRoomData;
+            values = (RoomContents[,])sharedRoomData.Values.Clone();
 
-            foreach (RoomContents enemy in enemies)
+            foreach (RoomContents enemy in sharedRoomData.Enemies)
             {
                 if (!EnemyTypeToPositions.ContainsKey(enemy))
                 {
@@ -34,7 +33,7 @@ namespace RoomGeneticAlgorithm.Variables
                 }
             }
 
-            foreach (RoomContents obstacle in obstacles)
+            foreach (RoomContents obstacle in sharedRoomData.Obstacles)
             {
                 if (!ObstacleTypeToPositions.ContainsKey(obstacle))
                 {
@@ -50,12 +49,12 @@ namespace RoomGeneticAlgorithm.Variables
         /// <param name="position">The position where the content should be placed.</param>
         public void PutContentInPosition(RoomContents content, Position position)
         {
-            if (enemies.Contains(content))
+            if (SharedRoomData.Enemies.Contains(content))
             {
                 EnemiesPositions.Add(position);
                 EnemyTypeToPositions[content].Add(position);
             }
-            else if (obstacles.Contains(content))
+            else if (SharedRoomData.Obstacles.Contains(content))
             {
                 ObstaclesPositions.Add(position);
                 ObstacleTypeToPositions[content].Add(position);
@@ -68,12 +67,12 @@ namespace RoomGeneticAlgorithm.Variables
         void RemoveFromPosition(Position position)
         {
             RoomContents content = Values[position.X, position.Y];
-            if (enemies.Contains(content))
+            if (SharedRoomData.Enemies.Contains(content))
             {
                 EnemiesPositions.Remove(position);
                 EnemyTypeToPositions[content].Remove(position);
             }
-            else if (obstacles.Contains(content))
+            else if (SharedRoomData.Obstacles.Contains(content))
             {
                 ObstaclesPositions.Remove(position);
                 ObstacleTypeToPositions[content].Remove(position);

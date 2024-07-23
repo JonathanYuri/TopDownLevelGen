@@ -6,12 +6,10 @@ using UnityEngine;
 /// </summary>
 public class RoomSkeleton
 {
-    RoomContents[,] values;
-
-    public RoomContents[,] Values { get => values; set => values = value; }
+    public RoomContents[,] Values { get; }
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
-    public HashSet<Position> ChangeablesPositions { get; }
+    public HashSet<Position> ChangeablePositions { get; }
     public Position[] DoorPositions { get; }
     public float Difficulty { get; }
 
@@ -20,7 +18,7 @@ public class RoomSkeleton
         Enemies = roomData.enemies;
         Obstacles = roomData.obstacles;
         DoorPositions = roomData.doorPositions;
-        ChangeablesPositions = GameConstants.ALL_POSITIONS_IN_ROOM;
+        ChangeablePositions = GameConstants.ALL_POSITIONS_IN_ROOM;
         Difficulty = Mathf.Clamp(roomData.difficulty, 0f, 1f);
 
         Values = new RoomContents[GameConstants.ROOM_WIDTH, GameConstants.ROOM_HEIGHT];
@@ -119,7 +117,7 @@ public class RoomSkeleton
     void PlaceTheImmutableRoomContentInPosition(RoomContents roomContent, Position position)
     {
         Values[position.X, position.Y] = roomContent;
-        ChangeablesPositions.Remove(position);
+        ChangeablePositions.Remove(position);
     }
 }
 

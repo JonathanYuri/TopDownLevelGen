@@ -45,21 +45,21 @@ namespace RoomGeneticAlgorithm.Run
         readonly FitnessHandler fitnessHandler;
         readonly Reproduction reproduction;
         readonly Mutation mutation;
-        readonly RoomSkeleton roomSkeleton;
+        readonly SharedRoomData sharedRoomData;
 
         public RoomIndividual Best { get; set; }
 
-        public GeneticRoomGenerator(RoomSkeleton roomSkeleton)
+        public GeneticRoomGenerator(SharedRoomData sharedRoomData)
         {
+            this.sharedRoomData = sharedRoomData;
             population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
-            this.roomSkeleton = roomSkeleton;
-            fitnessHandler = new(roomSkeleton);
-            reproduction = new(roomSkeleton);
-            mutation = new(roomSkeleton);
+            fitnessHandler = new(sharedRoomData.Difficulty);
+            reproduction = new(sharedRoomData);
+            mutation = new(sharedRoomData);
 
             for (int i = 0; i < GeneticAlgorithmConstants.POPULATION_SIZE; i++)
             {
-                population[i] = new(roomSkeleton);
+                population[i] = new(sharedRoomData);
             }
 
             fitnessHandler.EvaluatePopulation(population, fitnessHandler);
@@ -77,7 +77,7 @@ namespace RoomGeneticAlgorithm.Run
 
             while (ShouldContinueLooping(iterationsWithoutImprovement))
             {
-                //Debug.LogWarning("NUMERO DE INTERACOES: " +iterations + " MELHOR ATUAL: " + bestInGeneration.Value + " MELHOR: " + Best.Value);
+                //Debug.LogWarning("NUMERO DE INTERACOES: " + iterations +  " MELHOR: " + Best.Value);
                 UpdateBestIndividual(ref iterationsWithoutImprovement);
                 PerformGeneticOperations();
                 iterations++;
@@ -107,7 +107,7 @@ namespace RoomGeneticAlgorithm.Run
             population = reproduction.PerformReproduction(population);
             mutation.MutatePopulation(population);
             fitnessHandler.EvaluatePopulation(population, fitnessHandler);
-            FitnessCalculator.Evaluate(Best, fitnessHandler, roomSkeleton.DoorPositions);
+            FitnessCalculator.Evaluate(Best, fitnessHandler);
         }
 
         /// <summary>

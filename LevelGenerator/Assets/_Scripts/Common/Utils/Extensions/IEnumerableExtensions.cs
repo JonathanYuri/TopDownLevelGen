@@ -47,21 +47,16 @@ public static class IEnumerableExtensions
     /// <returns>An array containing the selected random elements.</returns>
     public static T[] GetRandomElements<T>(this IEnumerable<T> allElements, int numberToSelect)
     {
-        if (numberToSelect >= allElements.Count())
+        T[] allElementsArray = allElements.ToArray();
+        if (numberToSelect >= allElementsArray.Length)
         {
-            return allElements.ToArray();
+            return allElementsArray;
         }
 
-        List<T> allelements = new(allElements);
+        allElementsArray.Shuffle();
+
         T[] selectedElements = new T[numberToSelect];
-
-        for (int i = 0; i < numberToSelect; i++)
-        {
-            int k = Random.Range(0, allelements.Count);
-            selectedElements[i] = allelements[k];
-            allelements.RemoveAt(k);
-        }
-
+        Array.Copy(allElementsArray, selectedElements, numberToSelect);
         return selectedElements;
     }
 
