@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FitnessVar
 {
+    public string Name { get; }
+
     public Range<float> IdealRange { get; }
     public float MaxDeviation { get; }
     public float Importance { get; }
@@ -11,9 +13,10 @@ public class FitnessVar
     public bool IncreaseWithDifficulty { get; private set; }
     public Func<RoomIndividual, float> FitnessVarValue { get; private set; }
 
-    public FitnessVar(Range<float> range, float maxDeviation, float importance,
+    public FitnessVar(string name, Range<float> range, float maxDeviation, float importance,
         bool increaseWithDifficulty, Func<RoomIndividual, float> FitnessVarValue)
     {
+        Name = name;
         IdealRange = range;
         MaxDeviation = maxDeviation;
         Importance = importance;

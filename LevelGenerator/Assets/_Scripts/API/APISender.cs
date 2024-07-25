@@ -77,11 +77,11 @@ public class APISender : MonoBehaviour
     {
         if (!closingTheGame && !SceneChangeManager.Instance.LoadingScene)
         {
-            StartCoroutine(SendPostRequest(time, lostLife));
+            StartCoroutine(SendRoomConclusionPostRequest(time, lostLife));
         }
     }
 
-    IEnumerator SendPostRequest(float time, int lostLife)
+    IEnumerator SendRoomConclusionPostRequest(float time, int lostLife)
     {
         Room room = GameMapSingleton.Instance.RoomPositions[playerLocationManager.PlayerLocation.RoomPosition];
 

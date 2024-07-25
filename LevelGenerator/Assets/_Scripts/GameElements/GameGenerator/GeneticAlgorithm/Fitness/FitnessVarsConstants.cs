@@ -7,22 +7,28 @@ namespace RoomGeneticAlgorithm.Fitness
     public static class FitnessVarsConstants
     {
         public static readonly FitnessVar NUM_ENEMIES_GROUP =
-            new(new(1, 10), 10, 1f, false, GetGroupCount);
+            new("NumEnemiesGroup", new(1, 10), 10, 1f, false, GetGroupCount);
 
         public static readonly FitnessVar AVERAGE_ENEMIES_PER_GROUP =
-            new(new(1f, 5f), 5f, 1f, true, GetAverageEnemiesPerGroup);
+            new("AverageEnemiesPerGroup", new(1f, 5f), 5f, 1f, true, GetAverageEnemiesPerGroup);
 
         public static readonly FitnessVar AVERAGE_ENEMY_DOOR_DISTANCE =
-            new(new(1f, 7f), 10f, 1f, false, GetAverageEnemiesDoorsDistance);
+            new("AverageEnemyDoorDistance", new(1f, 7f), 10f, 1f, false, GetAverageEnemiesDoorsDistance);
 
         public static readonly FitnessVar AVERAGE_BETWEEN_ENEMIES_DISTANCE =
-            new(new(1f, 7f), 10f, 1f, false, GetAverageDistanceBetweenEnemies);
+            new("AverageBetweenEnemiesDistances", new(1f, 7f), 10f, 1f, false, GetAverageDistanceBetweenEnemies);
 
         public static readonly FitnessVar AVERAGE_OBSTACLES_NEXT_TO_ENEMIES =
-            new(new(0f, 3f), 2f, 1f, false, GetAverageObstaclesNextToEnemies);
+            new("AverageObstaclesNextToEnemies", new(0f, 3f), 2f, 1f, false, GetAverageObstaclesNextToEnemies);
 
         public static readonly FitnessVar AVERAGE_ENEMIES_WITH_COVER =
-            new(new(0f, 1f), 0.5f, 1f, true, GetAverageEnemiesWithCover);
+            new("AverageEnemiesWithCover", new(0f, 1f), 0.5f, 1f, true, GetAverageEnemiesWithCover);
+
+        public static readonly FitnessVar[] VARS = new FitnessVar[]
+        {
+            NUM_ENEMIES_GROUP, AVERAGE_ENEMIES_PER_GROUP, AVERAGE_ENEMY_DOOR_DISTANCE,
+            AVERAGE_BETWEEN_ENEMIES_DISTANCE, AVERAGE_OBSTACLES_NEXT_TO_ENEMIES, AVERAGE_ENEMIES_WITH_COVER
+        };
 
         public static float GetGroupCount(RoomIndividual individual)
         {

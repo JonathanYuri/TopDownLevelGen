@@ -7,14 +7,36 @@ namespace RoomGeneticAlgorithm.Fitness
     /// <summary>
     /// Calculate fitness for room individuals.
     /// </summary>
-    public static class FitnessCalculator
+    public class FitnessCalculator
     {
+        readonly List<FitnessVar> fitnessVars = new();
+
+        public FitnessCalculator(float roomDifficulty)
+        {
+            fitnessVars.AddRange(FitnessVarsConstants.VARS.GetRandomElements());
+
+            foreach (var fitnessVar in fitnessVars)
+            {
+                fitnessVar.SetIdealValue(roomDifficulty);
+            }
+        }
+
+        public List<string> GetFitnessVarsNames()
+        {
+            List<string> names = new();
+            foreach (var fitnessVar in fitnessVars)
+            {
+                names.Add(fitnessVar.Name);
+            }
+            return names;
+        }
+
         /// <summary>
         /// Calculates and assigns the fitness value for an individual based on provided fitness variables.
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
         /// </summary>
         /// <param name="individual">The individual to evaluate.</param>
-        public static void Evaluate(RoomIndividual individual, FitnessHandler fitnessHandler)
+        public void Evaluate(RoomIndividual individual)
         {
             if (IsMonstrous(individual))
             {
@@ -22,7 +44,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 return;
             }
 
-            individual.Value = CalculateFitnessValue(individual, fitnessHandler);
+            individual.Value = CalculateFitnessValue(individual);
         }
 
         /// <summary>
@@ -30,10 +52,10 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual for which to calculate fitness variables.</param>
         /// <returns>A array of calculated fitness variables.</returns>
-        internal static int CalculateFitnessValue(RoomIndividual individual, FitnessHandler fitnessHandler)
+        int CalculateFitnessValue(RoomIndividual individual)
         {
             int value = 0;
-            foreach (var fitnessVar in fitnessHandler.fitnessVars)
+            foreach (var fitnessVar in fitnessVars)
             {
                 float fitnessVarValue = fitnessVar.FitnessVarValue(individual);
                 float distance = Mathf.Abs(fitnessVarValue - fitnessVar.Ideal);
@@ -50,7 +72,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual to evaluate.</param>
         /// <returns>True if the individual is monstrous; otherwise, false.</returns>
-        static bool IsMonstrous(RoomIndividual individual) =>
+        bool IsMonstrous(RoomIndividual individual) =>
             !PathFinder.AreAllPathsValid(individual.RoomMatrix);
     }
 }

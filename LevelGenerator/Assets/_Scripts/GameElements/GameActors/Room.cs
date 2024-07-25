@@ -6,6 +6,7 @@ public class Room : MonoBehaviour
 {
     public List<RoomContents> Enemies { get; set; }
     public List<RoomContents> Obstacles { get; set; }
+    public List<string> FitnessVarNames { get; set; }
     public float Difficulty { get; set; }
 
     void Awake()

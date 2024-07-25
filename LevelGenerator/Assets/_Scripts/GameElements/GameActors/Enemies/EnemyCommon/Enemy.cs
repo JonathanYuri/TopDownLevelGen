@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
         targetManager.PlayerLocation = targetLocation;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, string damageName)
     {
         if (life - damage <= 0)
         {

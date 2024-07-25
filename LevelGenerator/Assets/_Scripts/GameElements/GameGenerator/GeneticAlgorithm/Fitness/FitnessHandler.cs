@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using RoomGeneticAlgorithm.Constants;
 
 namespace RoomGeneticAlgorithm.Fitness
 {
@@ -10,23 +8,12 @@ namespace RoomGeneticAlgorithm.Fitness
     /// </summary>
     public class FitnessHandler
     {
-        internal List<FitnessVar> fitnessVars = new();
+        readonly FitnessCalculator fitnessCalculator;
+        public FitnessCalculator FitnessCalculator => fitnessCalculator;
 
         public FitnessHandler(float roomDifficulty)
         {
-            fitnessVars.Add(FitnessVarsConstants.NUM_ENEMIES_GROUP);
-            fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_PER_GROUP);
-            fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMY_DOOR_DISTANCE);
-            fitnessVars.Add(FitnessVarsConstants.AVERAGE_BETWEEN_ENEMIES_DISTANCE);
-            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_OBSTACLES_NEXT_TO_ENEMIES);
-            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_WITH_COVER);
-
-            foreach (var fitnessVar in fitnessVars)
-            {
-                fitnessVar.SetIdealValue(roomDifficulty);
-            }
-
-            Debug.LogWarning("ideal: " + fitnessVars[0].Ideal);
+            fitnessCalculator = new(roomDifficulty);
         }
 
         /// <summary>
@@ -50,7 +37,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// If an individual has been modified or the bounds of fitness variables have changed, their fitness is recalculated.
         /// </summary>
         /// <param name="population">The population of individuals to evaluate.</param>
-        public void EvaluatePopulation(RoomIndividual[] population, FitnessHandler fitnessHandler)
+        public void EvaluatePopulation(RoomIndividual[] population)
         {
             // avaliar o individual se ele foi modificado
             for (int i = 0; i < population.Length; i++)
@@ -60,7 +47,7 @@ namespace RoomGeneticAlgorithm.Fitness
                     continue;
                 }
 
-                FitnessCalculator.Evaluate(population[i], fitnessHandler);
+                FitnessCalculator.Evaluate(population[i]);
                 population[i].Modified = false;
             }
         }

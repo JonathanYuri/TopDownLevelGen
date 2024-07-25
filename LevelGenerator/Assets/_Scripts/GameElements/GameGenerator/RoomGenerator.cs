@@ -55,9 +55,6 @@ public class RoomGenerator : MonoBehaviour
 
         if (generateObjectsInRoom)
         {
-            room.Enemies = roomData.enemies.ToList();
-            room.Obstacles = roomData.obstacles.ToList();
-
             float startTime = Time.realtimeSinceStartup;
             GeneticRoomGenerator geneticRoomGenerator = new(sharedRoomData);
             yield return geneticRoomGenerator.GeneticLooping();
@@ -68,6 +65,10 @@ public class RoomGenerator : MonoBehaviour
 
             Debug.LogError("Tempo de execução da corrotina: " + (endTime - startTime) + " segundos");
             Debug.LogError("Tempo total de execução ate agora: " + endTime + " segundos");
+
+            room.Enemies = roomData.enemies.ToList();
+            room.Obstacles = roomData.obstacles.ToList();
+            room.FitnessVarNames = geneticRoomGenerator.GetFitnessVarsNames();
         }
 
         if (roomInfoProvider.IsFinalRoom(roomPosition))

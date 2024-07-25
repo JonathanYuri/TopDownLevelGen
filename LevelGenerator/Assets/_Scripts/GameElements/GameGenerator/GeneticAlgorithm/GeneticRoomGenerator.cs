@@ -34,6 +34,7 @@ namespace RoomGeneticAlgorithm.Run
     using RoomGeneticAlgorithm.Fitness;
     using RoomGeneticAlgorithm.GeneticOperations;
     using System.Collections;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a class for generating and evolving room configurations using a genetic algorithm.
@@ -45,13 +46,11 @@ namespace RoomGeneticAlgorithm.Run
         readonly FitnessHandler fitnessHandler;
         readonly Reproduction reproduction;
         readonly Mutation mutation;
-        readonly SharedRoomData sharedRoomData;
 
         public RoomIndividual Best { get; set; }
 
         public GeneticRoomGenerator(SharedRoomData sharedRoomData)
         {
-            this.sharedRoomData = sharedRoomData;
             population = new RoomIndividual[GeneticAlgorithmConstants.POPULATION_SIZE];
             fitnessHandler = new(sharedRoomData.Difficulty);
             reproduction = new(sharedRoomData);
@@ -62,9 +61,11 @@ namespace RoomGeneticAlgorithm.Run
                 population[i] = new(sharedRoomData);
             }
 
-            fitnessHandler.EvaluatePopulation(population, fitnessHandler);
+            fitnessHandler.EvaluatePopulation(population);
             Best = new(population.GetBestIndividual());
         }
+
+        public List<string> GetFitnessVarsNames() => fitnessHandler.FitnessCalculator.GetFitnessVarsNames();
 
         /// <summary>
         /// Executes the main loop of the genetic algorithm to evolve a population of individuals.
@@ -106,8 +107,8 @@ namespace RoomGeneticAlgorithm.Run
         {
             population = reproduction.PerformReproduction(population);
             mutation.MutatePopulation(population);
-            fitnessHandler.EvaluatePopulation(population, fitnessHandler);
-            FitnessCalculator.Evaluate(Best, fitnessHandler);
+            fitnessHandler.EvaluatePopulation(population);
+            fitnessHandler.FitnessCalculator.Evaluate(Best);
         }
 
         /// <summary>

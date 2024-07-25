@@ -5,6 +5,15 @@ using UnityEngine;
 public class TriggerDamage : CollisionEffects
 {
     [SerializeField] int damage;
+    [SerializeField] string damageName;
+
+    private void Awake()
+    {
+        if (damageName == null)
+        {
+            Debug.LogError("Damage name null");
+        }
+    }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -28,7 +37,7 @@ public class TriggerDamage : CollisionEffects
 
     protected override void ApplyEffect()
     {
-        objectInCollision.GetComponent<IDamageable>().TakeDamage(damage);
+        objectInCollision.GetComponent<IDamageable>().TakeDamage(damage, damageName);
         InitializeEffectCooldown();
     }
 }

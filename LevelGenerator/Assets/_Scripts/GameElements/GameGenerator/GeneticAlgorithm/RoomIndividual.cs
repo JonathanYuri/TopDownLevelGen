@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using RoomGeneticAlgorithm.Constants;
-using RoomGeneticAlgorithm.Variables;
+﻿using RoomGeneticAlgorithm.Variables;
+using UnityEngine;
 
 namespace RoomGeneticAlgorithm
 {
@@ -48,6 +47,7 @@ namespace RoomGeneticAlgorithm
             RoomContents[] obstacles = sharedRoomData.Obstacles;
 
             Position[] chosenPositions = sharedRoomData.ChangeablePositions.GetRandomElements(enemies.Length + obstacles.Length);
+            Debug.Log(sharedRoomData.ChangeablePositions.Count);
 
             int count = 0;
             foreach (RoomContents enemy in enemies)

@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, string damageName)
     {
         if (damageInvincibilityController.Invincible)
         {
