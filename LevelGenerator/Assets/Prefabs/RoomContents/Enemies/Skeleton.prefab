@@ -756,3 +756,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectCooldown: {fileID: 7192114014552698122}
   damage: 5
+  damageName: Enemy2

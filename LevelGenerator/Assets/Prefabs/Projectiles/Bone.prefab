@@ -245,6 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectCooldown: {fileID: 4364914818704876143}
   damage: 10
+  damageName: Enemy2
 --- !u!61 &4162451229491581072
 BoxCollider2D:
   m_ObjectHideFlags: 0

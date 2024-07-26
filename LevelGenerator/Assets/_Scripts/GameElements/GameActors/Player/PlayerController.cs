@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class PlayerDamagedEventArgs : EventArgs
+{
+    public int damage;
+    public string damageName;
+}
+
 /// <summary>
 /// Controls the player's movement and interactions in the game.
 /// </summary>
@@ -19,6 +25,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     [SerializeField] int life = 100;
 
     public EventHandler<DoorEventArgs> PassedThroughTheDoorEvent;
+    public EventHandler<PlayerDamagedEventArgs> PlayerDamaged;
 
     public event Action OnLevelComplete;
     public event Action OnDied;
@@ -80,11 +87,12 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
         }
 
         damageInvincibilityController.MakeInvincible();
-        HandleDamageReceived(damage);
+        HandleDamageReceived(damage, damageName);
     }
 
-    void HandleDamageReceived(int damage)
+    void HandleDamageReceived(int damage, string damageName)
     {
+        PlayerDamaged?.Invoke(this, new() { damage = damage, damageName = damageName });
         if (Life - damage <= 0)
         {
             playerHealthBarController.UpdateLife(0);

@@ -7,14 +7,6 @@ public class TriggerDamage : CollisionEffects
     [SerializeField] int damage;
     [SerializeField] string damageName;
 
-    private void Awake()
-    {
-        if (damageName == null)
-        {
-            Debug.LogError("Damage name null");
-        }
-    }
-
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<IDamageable>(out var _) && canApplyEffect)

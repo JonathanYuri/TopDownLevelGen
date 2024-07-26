@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(TimeRecorder))]
+[RequireComponent(typeof(PlayerDamageRecorder))]
 public class APISender : MonoBehaviour
 {
     const string baseUrl = "http://game-runs.glitch.me";
@@ -16,8 +17,12 @@ public class APISender : MonoBehaviour
         public string username;
         public int level;
         public float difficulty;
-        public List<string> enemies;
-        public List<string> obstacles;
+        public List<string> enemyNames;
+        public List<int> enemyQuantities;
+        public List<int> enemyDamageValues;
+        public List<string> obstacleNames;
+        public List<int> obstacleQuantities;
+        public List<int> obstacleDamageValues;
         public float time;
         public int lostLife;
         public string version;
@@ -28,6 +33,7 @@ public class APISender : MonoBehaviour
     RoomConclusionManager roomConclusionManager;
     PlayerController playerController;
     TimeRecorder timeRecorder;
+    PlayerDamageRecorder playerDamageRecorder;
     PlayerInfo playerInfo;
 
     bool closingTheGame = false;
@@ -39,6 +45,7 @@ public class APISender : MonoBehaviour
     {
         CompletedRooms = new();
         timeRecorder = GetComponent<TimeRecorder>();
+        playerDamageRecorder = GetComponent<PlayerDamageRecorder>();
     }
 
     void Start()
@@ -81,30 +88,65 @@ public class APISender : MonoBehaviour
         }
     }
 
+    (List<string>, List<int>, List<int>) GetObjectsInfo(List<RoomContents> items)
+    {
+        Dictionary<string, int> objectNameToQuantity = new();
+
+        List<string> objectNames = new();
+        List<int> quantities = new();
+        List<int> damage = new();
+        items.ForEach(item =>
+        {
+            string itemName = item.ToString();
+            if (objectNameToQuantity.ContainsKey(itemName))
+            {
+                objectNameToQuantity[itemName]++;
+            }
+            else
+            {
+                objectNameToQuantity.Add(itemName, 1);
+            }
+        });
+
+        var objectPairs = objectNameToQuantity.ToList();
+        objectNames = objectPairs.Select(pair => pair.Key).ToList();
+        quantities = objectPairs.Select(pair => pair.Value).ToList();
+
+        Dictionary<string, int> damageRecord = playerDamageRecorder.DamageRecord;
+
+        foreach (string objectName in objectNames)
+        {
+            if (damageRecord.ContainsKey(objectName))
+            {
+                damage.Add(damageRecord[objectName]);
+            }
+            else
+            {
+                damage.Add(0);
+            }
+        }
+
+        return (objectNames, quantities, damage);
+    }
+
     IEnumerator SendRoomConclusionPostRequest(float time, int lostLife)
     {
         Room room = GameMapSingleton.Instance.RoomPositions[playerLocationManager.PlayerLocation.RoomPosition];
 
-        List<string> enemiesName = new();
-        List<string> obstaclesName = new();
-
-        if (room.Enemies != null && room.Enemies.Count != 0)
-        {
-            enemiesName = room.Enemies.Select(enemy => enemy.ToString()).ToList();
-        }
-
-        if (room.Obstacles != null && room.Obstacles.Count != 0)
-        {
-            obstaclesName = room.Obstacles.Select(obstacle => obstacle.ToString()).ToList();
-        }
+        (List<string> enemyNames, List<int> enemyQuantities, List<int> enemyDamageValues) = GetObjectsInfo(room.Enemies);
+        (List<string> obstacleNames, List<int> obstacleQuantities, List<int> obstacleDamageValues) = GetObjectsInfo(room.Obstacles);
 
         UserData userData = new()
         {
             username = playerInfo.Username,
             level = levelDataManager.IndexCurrentLevel,
             difficulty = room.Difficulty,
-            enemies = enemiesName,
-            obstacles = obstaclesName,
+            enemyNames = enemyNames,
+            enemyQuantities = enemyQuantities,
+            enemyDamageValues = enemyDamageValues,
+            obstacleNames = obstacleNames,
+            obstacleQuantities = obstacleQuantities,
+            obstacleDamageValues = obstacleDamageValues,
             time = time,
             lostLife = lostLife,
             version = "1.0.0"
@@ -122,6 +164,8 @@ public class APISender : MonoBehaviour
         };
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("admin_key", adminKey);
+
+        CleanVariables();
 
         yield return request.SendWebRequest();
 
@@ -169,11 +213,14 @@ public class APISender : MonoBehaviour
             Debug.LogWarning("SendRoomConclusionData (0): " + timeRecorder.Time);
             CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
             SendRoomConclusionData(timeRecorder.Time, PreviousLife - playerController.Life);
-
-            timeRecorder.EnemiesInRoom = false;
-            timeRecorder.Time = 0;
-
-            PreviousLife = playerController.Life;
         }
+    }
+
+    void CleanVariables()
+    {
+        timeRecorder.EnemiesInRoom = false;
+        timeRecorder.Time = 0;
+        PreviousLife = playerController.Life;
+        playerDamageRecorder.DamageRecord.Clear();
     }
 }
