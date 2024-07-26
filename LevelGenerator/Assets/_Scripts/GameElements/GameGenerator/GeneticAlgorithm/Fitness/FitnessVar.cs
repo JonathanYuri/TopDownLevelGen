@@ -10,30 +10,20 @@ public class FitnessVar
     public float MaxDeviation { get; }
     public float Importance { get; }
     public float Ideal { get; private set; }
-    public bool IncreaseWithDifficulty { get; private set; }
     public Func<RoomIndividual, float> FitnessVarValue { get; private set; }
 
-    public FitnessVar(string name, Range<float> range, float maxDeviation, float importance,
-        bool increaseWithDifficulty, Func<RoomIndividual, float> FitnessVarValue)
+    public FitnessVar(string name, Range<float> range, float maxDeviation, float importance, Func<RoomIndividual, float> FitnessVarValue)
     {
         Name = name;
         IdealRange = range;
         MaxDeviation = maxDeviation;
         Importance = importance;
-        IncreaseWithDifficulty = increaseWithDifficulty;
         this.FitnessVarValue = FitnessVarValue;
     }
 
     public void SetIdealValue(float difficulty)
     {
-        if (IncreaseWithDifficulty)
-        {
-            Ideal = Mathf.Lerp(IdealRange.Min, IdealRange.Max, difficulty);
-        }
-        else
-        {
-            Ideal = Mathf.Lerp(IdealRange.Max, IdealRange.Min, difficulty);
-        }
+        Ideal = Mathf.Lerp(IdealRange.Min, IdealRange.Max, difficulty);
     }
 
     public float Normalize(float distance)
