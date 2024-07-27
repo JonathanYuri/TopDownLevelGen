@@ -12,11 +12,13 @@ public class RoomGenerator : MonoBehaviour
     LevelGenerator levelGenerator;
     RoomObjectSpawner roomObjectSpawner;
     RoomInfoProvider roomInfoProvider;
+    APISender apiSender;
 
     [SerializeField] GameObject roomPrefab;
 
     void Awake()
     {
+        apiSender = FindObjectOfType<APISender>();
         levelGenerator = GetComponent<LevelGenerator>();
         roomObjectSpawner = GetComponent<RoomObjectSpawner>();
         roomInfoProvider = GetComponent<RoomInfoProvider>();
@@ -69,6 +71,8 @@ public class RoomGenerator : MonoBehaviour
             room.Enemies = roomData.enemies.ToList();
             room.Obstacles = roomData.obstacles.ToList();
             room.FitnessVarNames = geneticRoomGenerator.GetFitnessVarsNames();
+
+            StartCoroutine(apiSender.SendRoomGeneratedPostRequest(endTime - startTime, room.FitnessVarNames));
         }
 
         if (roomInfoProvider.IsFinalRoom(roomPosition))

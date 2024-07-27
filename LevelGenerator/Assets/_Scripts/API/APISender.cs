@@ -5,28 +5,35 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
+public class UserData
+{
+    public string username;
+    public int level;
+    public float difficulty;
+    public List<string> enemyNames;
+    public List<int> enemyQuantities;
+    public List<int> enemyDamageValues;
+    public List<string> obstacleNames;
+    public List<int> obstacleQuantities;
+    public List<int> obstacleDamageValues;
+    public List<string> fitnessVars;
+    public float time;
+    public int lostLife;
+    public string version;
+}
+
+public class RoomGeneratedData
+{
+    public float time;
+    public List<string> fitnessVars;
+}
+
 [RequireComponent(typeof(TimeRecorder))]
 [RequireComponent(typeof(PlayerDamageRecorder))]
 public class APISender : MonoBehaviour
 {
     const string baseUrl = "http://game-runs.glitch.me";
     const string adminKey = "123456";
-
-    public class UserData
-    {
-        public string username;
-        public int level;
-        public float difficulty;
-        public List<string> enemyNames;
-        public List<int> enemyQuantities;
-        public List<int> enemyDamageValues;
-        public List<string> obstacleNames;
-        public List<int> obstacleQuantities;
-        public List<int> obstacleDamageValues;
-        public float time;
-        public int lostLife;
-        public string version;
-    }
 
     LevelDataManager levelDataManager;
     PlayerLocationManager playerLocationManager;
@@ -77,6 +84,37 @@ public class APISender : MonoBehaviour
         if (playerController != null)
         {
             playerController.PassedThroughTheDoorEvent -= PlayerPassedThroughTheDoor;
+        }
+    }
+
+    public IEnumerator SendRoomGeneratedPostRequest(float time, List<string> fitnessVars)
+    {
+        RoomGeneratedData roomGeneratedData = new()
+        {
+            time = time,
+            fitnessVars = fitnessVars,
+        };
+
+        string jsonData = JsonUtility.ToJson(roomGeneratedData);
+        byte[] postData = System.Text.Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new($"{baseUrl}/generated-room", "POST")
+        {
+            uploadHandler = new UploadHandlerRaw(postData),
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        request.SetRequestHeader("Content-Type", "application/json");
+        request.SetRequestHeader("admin_key", adminKey);
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError("Erro na requisição: " + request.error);
+        }
+        else
+        {
+            Debug.Log("Resposta: " + request.downloadHandler.text);
         }
     }
 
@@ -147,6 +185,7 @@ public class APISender : MonoBehaviour
             obstacleNames = obstacleNames,
             obstacleQuantities = obstacleQuantities,
             obstacleDamageValues = obstacleDamageValues,
+            fitnessVars = room.FitnessVarNames,
             time = time,
             lostLife = lostLife,
             version = "1.0.0"

@@ -42,6 +42,7 @@ public class LevelGenerator : MonoBehaviour
     {
         DestroyAllPastObjects();
         map = GenerateMap();
+
         yield return GenerateInitialAndFinalRoom();
         yield return GenerateRemainingRooms();
     }
