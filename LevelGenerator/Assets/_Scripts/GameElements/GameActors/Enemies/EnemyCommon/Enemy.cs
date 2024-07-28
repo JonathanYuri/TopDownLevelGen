@@ -15,19 +15,12 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
     [SerializeField] int life;
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] EnemyLocation location;
-    [SerializeField] SoundsNameEnum characterSoundName;
 
     public event Action OnDamageTaken;
     public EventHandler<EnemyDefeatedEventArgs> OnDefeated;
 
-    void Start()
-    {
-        AudioManager.Instance.AddCharacterSoundInstance(characterSoundName, gameObject.GetInstanceID());
-    }
-
     void OnDestroy()
     {
-        AudioManager.Instance.RemoveCharacterSoundInstance(gameObject.GetInstanceID());
         EnemyDefeatedEventArgs e = new()
         {
             enemy = this,

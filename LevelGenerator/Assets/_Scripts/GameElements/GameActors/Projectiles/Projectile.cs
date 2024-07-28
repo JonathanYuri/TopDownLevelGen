@@ -6,8 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
-    int shooterId;
-
     Rigidbody2D rb;
     [SerializeField] List<CollisionEffects> triggerEffects;
 
@@ -18,6 +16,8 @@ public class Projectile : MonoBehaviour
     [SerializeField] float movimentVelocity = 2.0f;
     [SerializeField] Timer autoDestroyTimer;
     Vector2 movementDirection;
+
+    SoundController soundController;
 
     void Awake()
     {
@@ -35,7 +35,6 @@ public class Projectile : MonoBehaviour
 
     void Start()
     {
-        AudioManager.Instance.PlayCharacterSound("flight", shooterId);
         autoDestroyTimer.StartTimer();
     }
 
@@ -54,11 +53,13 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public void InitializeProjectile(Vector2 movementDirection, int shooterId)
+    public void InitializeProjectile(SoundController soundController, Vector2 movementDirection)
     {
+        this.soundController = soundController;
         this.movementDirection = movementDirection;
-        this.shooterId = shooterId;
         rotateObject.StartRotation(movementDirection);
+
+        soundController.PlaySound(SoundsName.ProjectileFlight);
     }
 
     void OnAutoDestroyTimerExpired()
@@ -71,8 +72,7 @@ public class Projectile : MonoBehaviour
 
     void PlayCollisionSound()
     {
-        AudioManager.Instance.PlayCharacterSound("collision", shooterId);
-        AudioManager.Instance.StopCharacterSound("flight", shooterId);
+        soundController.PlaySound(SoundsName.ProjectileCollision);
         //StartCoroutine(WaitCollisionSoundToDestroy());
         Destroy(gameObject);
     }

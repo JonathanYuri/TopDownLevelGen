@@ -27,6 +27,8 @@ public class PlayerAttackController : MonoBehaviour
     [SerializeField] GameObject attackSpawnRight;
     [SerializeField] GameObject attackSpawnLeft;
 
+    [SerializeField] SoundController soundController;
+
     Dictionary<Vector2, GameObject> directionToAttackObject;
 
     bool canAttack = true;
@@ -104,7 +106,7 @@ public class PlayerAttackController : MonoBehaviour
         GameObject attackSpawn = directionToAttackObject[directionToThrowKnife];
         GameObject thrownKnife = Instantiate(knife, attackSpawn.transform.position, Quaternion.identity);
         Projectile thrownKnifeScript = thrownKnife.GetComponent<Projectile>();
-        thrownKnifeScript.InitializeProjectile(directionToThrowKnife, gameObject.GetInstanceID());
+        thrownKnifeScript.InitializeProjectile(soundController, directionToThrowKnife);
     }
 
     void OnAttackTimerExpired()

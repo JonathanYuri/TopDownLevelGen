@@ -10,6 +10,7 @@ public class SlimeAttackController : MonoBehaviour
     [SerializeField] AIVision aiVision;
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] GameObject slimeBall;
+    [SerializeField] SoundController soundController;
 
     Timer attackTimer;
     bool canAttack = true;
@@ -76,8 +77,9 @@ public class SlimeAttackController : MonoBehaviour
         Vector2 positionToSpawnProjectile = this.transform.position + (directionToThrow / 2);
         GameObject thrownSlimeBall = Instantiate(slimeBall, positionToSpawnProjectile, Quaternion.identity);
         Projectile thrownSlimeBallScript = thrownSlimeBall.GetComponent<Projectile>();
-        thrownSlimeBallScript.InitializeProjectile(directionToThrow, enemy.gameObject.GetInstanceID());
-        AudioManager.Instance.PlayCharacterSound("attack", enemy.gameObject.GetInstanceID());
+        thrownSlimeBallScript.InitializeProjectile(soundController, directionToThrow);
+
+        soundController.PlaySound(SoundsName.Attack);
     }
 
     void OnAttackTimerExpired()

@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Manages the game

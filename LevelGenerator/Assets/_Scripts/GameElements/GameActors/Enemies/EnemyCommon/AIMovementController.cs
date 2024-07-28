@@ -7,8 +7,7 @@ public class AIMovementController : MonoBehaviour
     [SerializeField] MovementDirectionHandler movementDirectionHandler;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] SpriteRenderer spriteRenderer;
-
-    Enemy enemy;
+    [SerializeField] SoundController soundController;
 
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
@@ -36,11 +35,6 @@ public class AIMovementController : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        enemy = GetComponentInParent<Enemy>();
-    }
-
     void FixedUpdate()
     {
         if (!ArrivedAtDestination)
@@ -57,7 +51,7 @@ public class AIMovementController : MonoBehaviour
         if (distanceToTarget <= threshold)
         {
             ArrivedAtDestination = true;
-            AudioManager.Instance.StopCharacterSound("footstep", enemy.gameObject.GetInstanceID());
+            soundController.StopSound(SoundsName.Footsteps);
         }
         else
         {
@@ -77,7 +71,7 @@ public class AIMovementController : MonoBehaviour
         this.destination = destination;
 
         ArrivedAtDestination = false;
-        AudioManager.Instance.PlayCharacterSound("footstep", enemy.gameObject.GetInstanceID());
+        soundController.PlaySound(SoundsName.Footsteps);
 
         Vector2 direction = destination - (Vector2)transform.position;
         movementDirectionHandler.SetRotationBasedOnMovementDirection(direction);
