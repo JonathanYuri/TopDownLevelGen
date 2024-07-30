@@ -573,8 +573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca50e9b09323d6944ab156dc31f9f3a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioClips: []
-  audioNames: 
+  audioSettings: []
 --- !u!1 &3901554914058653275
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,6 +724,7 @@ Transform:
   - {fileID: 6159626077964202999}
   - {fileID: 2480869868853808476}
   - {fileID: 3563437831470155619}
+  - {fileID: 4189791284106057803}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -832,6 +832,8 @@ MonoBehaviour:
   life: 30
   targetManager: {fileID: 8743796044381433544}
   location: {fileID: 4600576350118075242}
+  damageBlinkEffect: {fileID: 5242673199264973469}
+  damageBlinkEffectDuration: 0.5
   dashController: {fileID: 3677121069923688478}
   aiVision: {fileID: 7141659908848299429}
 --- !u!114 &5883983589104860115
@@ -935,6 +937,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerDuration: 1.5
+--- !u!1 &7848093576123543642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4189791284106057803}
+  - component: {fileID: 5242673199264973469}
+  m_Layer: 9
+  m_Name: DamageEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4189791284106057803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7848093576123543642}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5506338303680429713}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5242673199264973469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7848093576123543642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a268c0786b5b03458bb4c6b7e7e531d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 6675631255662904958}
+  effectCount: 1
+  colors:
+  - {r: 1, g: 0.47058824, b: 0.47058824, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  lerp: 1
 --- !u!1 &7931556948646538496
 GameObject:
   m_ObjectHideFlags: 0

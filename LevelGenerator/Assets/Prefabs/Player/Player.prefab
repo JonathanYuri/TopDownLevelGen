@@ -429,7 +429,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0, g: 0.043819427, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.043137312, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -716,7 +716,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3666383236105902909}
   - component: {fileID: 6262863380047391078}
-  - component: {fileID: 3398817983157843306}
+  - component: {fileID: 7955478432530045383}
   m_Layer: 7
   m_Name: DamageInvincibilty
   m_TagString: Untagged
@@ -753,7 +753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invincibilityTimer: {fileID: 5085128431619872220}
---- !u!114 &3398817983157843306
+--- !u!114 &7955478432530045383
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -762,8 +762,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9174308542382580345}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: febb003a3a450704e8749faebbfb6efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a268c0786b5b03458bb4c6b7e7e531d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 4251871560305804623}
-  delayBetweenEffects: 0.5
+  effectCount: 1
+  colors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  lerp: 0

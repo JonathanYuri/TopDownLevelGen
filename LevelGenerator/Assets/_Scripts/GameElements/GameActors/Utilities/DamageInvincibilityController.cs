@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(DamageInvincibilityEffect))]
+[RequireComponent(typeof(BlinkEffect))]
 public class DamageInvincibilityController : MonoBehaviour
 {
-    DamageInvincibilityEffect damageInvincibilityEffect;
+    BlinkEffect damageInvincibilityEffect;
     [SerializeField] Timer invincibilityTimer;
 
     public bool Invincible { get; set; }
 
     void Awake()
     {
-        damageInvincibilityEffect = GetComponent<DamageInvincibilityEffect>();
+        damageInvincibilityEffect = GetComponent<BlinkEffect>();
     }
 
     void Start()

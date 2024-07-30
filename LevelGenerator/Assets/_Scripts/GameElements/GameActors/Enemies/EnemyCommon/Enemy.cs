@@ -16,6 +16,10 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
     [SerializeField] EnemyTargetManager targetManager;
     [SerializeField] EnemyLocation location;
 
+    [Header("Damage")]
+    [SerializeField] BlinkEffect damageBlinkEffect;
+    [SerializeField] float damageBlinkEffectDuration;
+
     public event Action OnDamageTaken;
     public EventHandler<EnemyDefeatedEventArgs> OnDefeated;
 
@@ -45,6 +49,7 @@ public class Enemy : MonoBehaviour, IDamageable, IMortal
         {
             life -= damage;
             OnDamageTaken?.Invoke();
+            damageBlinkEffect.StartEffect(damageBlinkEffectDuration);
         }
     }
 
