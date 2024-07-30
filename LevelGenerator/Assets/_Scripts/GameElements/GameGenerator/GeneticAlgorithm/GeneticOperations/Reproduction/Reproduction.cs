@@ -1,8 +1,7 @@
+using RoomGeneticAlgorithm.Constants;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Random = UnityEngine.Random;
-using RoomGeneticAlgorithm.Constants;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {

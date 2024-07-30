@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AIMovementController : MonoBehaviour
@@ -11,7 +9,7 @@ public class AIMovementController : MonoBehaviour
 
     [SerializeField] float velocity;
     [SerializeField] float threshold = 0.1f;
-    
+
     Vector3 destination;
 
     public float Velocity { get => velocity; set => velocity = value; }
@@ -31,7 +29,7 @@ public class AIMovementController : MonoBehaviour
 
         if (movementDirectionHandler == null)
         {
-            Debug.LogError("Movement Direction Handler not assign");    
+            Debug.LogError("Movement Direction Handler not assign");
         }
     }
 

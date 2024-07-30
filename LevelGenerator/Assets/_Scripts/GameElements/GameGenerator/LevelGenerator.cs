@@ -89,7 +89,6 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
-
         return map;
     }
 
@@ -128,7 +127,7 @@ public class LevelGenerator : MonoBehaviour
     /// </summary>
     IEnumerator GenerateRemainingRooms()
     {
-        Position[] selectedRooms = {InitialRoomPosition, FinalRoomPosition};
+        Position[] selectedRooms = { InitialRoomPosition, FinalRoomPosition };
         var remainingRooms = map.Except(selectedRooms);
 
         foreach (Position roomPosition in remainingRooms)

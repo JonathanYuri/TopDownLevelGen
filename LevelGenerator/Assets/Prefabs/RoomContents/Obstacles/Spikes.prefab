@@ -74,7 +74,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effectCooldown: {fileID: 785540414748231763}
   damage: 5
-  damageName: Spike
+  damageName: Obstacle2
 --- !u!1 &3346008440819624135
 GameObject:
   m_ObjectHideFlags: 0

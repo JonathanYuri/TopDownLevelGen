@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TimeRecorder : MonoBehaviour
@@ -29,8 +27,6 @@ public class TimeRecorder : MonoBehaviour
 
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-
-        Debug.Log("time: " + Time);
 
         if (horizontal != 0f || vertical != 0f)
         {

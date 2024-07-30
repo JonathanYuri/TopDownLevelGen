@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System;
-using Random = UnityEngine.Random;
+using System.Collections.Generic;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// Provides extension methods for working with enums.

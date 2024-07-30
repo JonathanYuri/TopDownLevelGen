@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -72,6 +71,7 @@ public class Projectile : MonoBehaviour
 
     void PlayCollisionSound()
     {
+        soundController.StopSound(SoundsName.ProjectileFlight);
         soundController.PlaySound(SoundsName.ProjectileCollision);
         //StartCoroutine(WaitCollisionSoundToDestroy());
         Destroy(gameObject);

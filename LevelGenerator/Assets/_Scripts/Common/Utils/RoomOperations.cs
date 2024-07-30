@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System;
-using System.Linq;
 using RoomGeneticAlgorithm.Variables;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// A static class that provides various operations related to room contents.

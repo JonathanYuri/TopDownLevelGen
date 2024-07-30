@@ -47,7 +47,6 @@ namespace RoomGeneticAlgorithm
             RoomContents[] obstacles = sharedRoomData.Obstacles;
 
             Position[] chosenPositions = sharedRoomData.ChangeablePositions.GetRandomElements(enemies.Length + obstacles.Length);
-            Debug.Log(sharedRoomData.ChangeablePositions.Count);
 
             int count = 0;
             foreach (RoomContents enemy in enemies)

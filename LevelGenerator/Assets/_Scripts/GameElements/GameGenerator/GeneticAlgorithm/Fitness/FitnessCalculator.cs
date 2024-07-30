@@ -1,4 +1,3 @@
-using RoomGeneticAlgorithm.Constants;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -60,8 +59,6 @@ namespace RoomGeneticAlgorithm.Fitness
                 float fitnessVarValue = fitnessVar.FitnessVarValue(individual);
                 float distance = Mathf.Abs(fitnessVarValue - fitnessVar.Ideal);
                 float normalizedVar = fitnessVar.Normalize(distance);
-
-                Debug.Log("Value: " + fitnessVarValue + " Distance: " + distance + " normalizedVar: " + normalizedVar);
                 value += (int)(normalizedVar * fitnessVar.Importance);
             }
             return value;

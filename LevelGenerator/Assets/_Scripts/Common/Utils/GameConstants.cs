@@ -12,7 +12,7 @@ public static class GameConstants
 
     public static int NOTHING_RANGE_BEFORE_DOORS = 3;
 
-    public static Position ROOM_MIDDLE = new () { X = (int)(ROOM_WIDTH / 2), Y = (int)(ROOM_HEIGHT / 2) };
+    public static Position ROOM_MIDDLE = new() { X = (int)(ROOM_WIDTH / 2), Y = (int)(ROOM_HEIGHT / 2) };
 
     public static readonly Dictionary<Direction, Position> NEIGHBOR_DIRECTION_TO_DOOR_POSITION = new()
     {

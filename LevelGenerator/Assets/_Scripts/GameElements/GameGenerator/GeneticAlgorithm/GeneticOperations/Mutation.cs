@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using RoomGeneticAlgorithm.Constants;
-using System.Text;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace RoomGeneticAlgorithm.GeneticOperations
 {

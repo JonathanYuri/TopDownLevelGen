@@ -22,7 +22,7 @@ namespace Assets.SimpleSpinner
 
         [Header("Options")]
         public bool RandomPeriod = true;
-        
+
         private Image _image;
         private float _period;
 

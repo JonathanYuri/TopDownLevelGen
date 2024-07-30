@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BlinkEffect : MonoBehaviour
@@ -12,6 +11,13 @@ public class BlinkEffect : MonoBehaviour
 
     Coroutine effectCoroutine;
 
+    Color initialColor;
+
+    void Awake()
+    {
+        initialColor = spriteRenderer.color;
+    }
+
     public void StartEffect(float effectDuraction)
     {
         if (effectCoroutine != null)
@@ -23,7 +29,6 @@ public class BlinkEffect : MonoBehaviour
 
     IEnumerator PlayColorEffectCoroutine(float effectDuraction)
     {
-        Color initialColor = spriteRenderer.color;
         float delayBetweenEffects = effectDuraction / effectCount;
 
         for (int i = 0; i < effectCount; i++)

@@ -1,9 +1,9 @@
-using System.Collections;
-using UnityEngine;
 using RoomGeneticAlgorithm.Run;
 using SpawnRoomObjects.SpawnAll;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 [RequireComponent(typeof(LevelGenerator))]
 [RequireComponent(typeof(RoomObjectSpawner))]

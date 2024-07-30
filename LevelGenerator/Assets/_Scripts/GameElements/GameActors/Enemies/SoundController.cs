@@ -15,6 +15,8 @@ public class SoundController : MonoBehaviour
 
     Dictionary<SoundsName, AudioSource> audioNameToAudioSource = new();
 
+    bool destroying;
+
     void Awake()
     {
         foreach (var audio in audioSettings)
@@ -23,12 +25,23 @@ public class SoundController : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        destroying = true;
+    }
+
     public void PlaySound(SoundsName soundsName)
     {
         if (!audioNameToAudioSource.TryGetValue(soundsName, out var audioSource))
         {
             return;
         }
+
+        if (destroying)
+        {
+            return;
+        }
+
         //Debug.Log("PLAY AUDIO: " + soundsName);
         if (!audioSource.isPlaying)
         {
@@ -39,6 +52,11 @@ public class SoundController : MonoBehaviour
     public void StopSound(SoundsName soundsName)
     {
         if (!audioNameToAudioSource.TryGetValue(soundsName, out var audioSource))
+        {
+            return;
+        }
+
+        if (destroying)
         {
             return;
         }
