@@ -42,7 +42,6 @@ public class SoundController : MonoBehaviour
             return;
         }
 
-        //Debug.Log("PLAY AUDIO: " + soundsName);
         if (!audioSource.isPlaying)
         {
             audioSource.Play();

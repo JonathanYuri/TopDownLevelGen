@@ -3,10 +3,10 @@ using UnityEngine;
 
 public static class AttackButtonsConstants
 {
-    public static KeyCode UP_ATTACK = KeyCode.I;
-    public static KeyCode DOWN_ATTACK = KeyCode.K;
-    public static KeyCode LEFT_ATTACK = KeyCode.J;
-    public static KeyCode RIGHT_ATTACK = KeyCode.L;
+    public static KeyCode UP_ATTACK = KeyCode.UpArrow;
+    public static KeyCode DOWN_ATTACK = KeyCode.DownArrow;
+    public static KeyCode LEFT_ATTACK = KeyCode.LeftArrow;
+    public static KeyCode RIGHT_ATTACK = KeyCode.RightArrow;
 
     public static bool IsUpAttackPressed() => Input.GetKey(UP_ATTACK);
     public static bool IsDownAttackPressed() => Input.GetKey(DOWN_ATTACK);

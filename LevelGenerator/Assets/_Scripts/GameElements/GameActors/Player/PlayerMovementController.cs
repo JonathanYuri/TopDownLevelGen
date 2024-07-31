@@ -35,12 +35,15 @@ public class PlayerMovementController : MonoBehaviour
             return;
         }
 
-        float horizontalMovement = Input.GetAxis("Horizontal");
-        float verticalMovement = Input.GetAxis("Vertical");
+        Vector2 movement = Vector2.zero;
 
-        spriteRenderer.flipX = horizontalMovement < 0;
+        if (Input.GetKey(KeyCode.W)) movement.y = 1;
+        if (Input.GetKey(KeyCode.S)) movement.y = -1;
+        if (Input.GetKey(KeyCode.A)) movement.x = -1;
+        if (Input.GetKey(KeyCode.D)) movement.x = 1;
 
-        Vector3 movement = Velocity * Time.fixedDeltaTime * new Vector3(horizontalMovement, verticalMovement);
-        rb.MovePosition(this.transform.position + movement);
+        spriteRenderer.flipX = movement.x < 0;
+        Vector3 finalMovement = Velocity * Time.fixedDeltaTime * movement;
+        rb.MovePosition(this.transform.position + finalMovement);
     }
 }

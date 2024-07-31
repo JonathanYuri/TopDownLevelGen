@@ -70,9 +70,10 @@ public class RoomGenerator : MonoBehaviour
 
             room.Enemies = roomData.enemies.ToList();
             room.Obstacles = roomData.obstacles.ToList();
-            room.FitnessVarNames = geneticRoomGenerator.GetFitnessVarsNames();
 
-            StartCoroutine(apiSender.SendRoomGeneratedPostRequest(endTime - startTime, room.FitnessVarNames));
+            StartCoroutine(apiSender.SendRoomGeneratedPostRequest(room, endTime - startTime,
+                geneticRoomGenerator.GetFitnessVarsNames(), geneticRoomGenerator.GetFitnessVarsValues(),
+                geneticRoomGenerator.Iterations, geneticRoomGenerator.Best.Value));
         }
 
         if (roomInfoProvider.IsFinalRoom(roomPosition))

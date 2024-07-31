@@ -92,6 +92,11 @@ namespace RoomGeneticAlgorithm.Variables
 
         public void SwapPositions(Position position1, Position position2)
         {
+            if (position1.Equals(position2))
+            {
+                return;
+            }
+
             RoomContents content1 = Values[position1.X, position1.Y];
             RoomContents content2 = Values[position2.X, position2.Y];
 

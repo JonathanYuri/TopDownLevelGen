@@ -48,11 +48,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSettings:
-  - audioName: 2
+  - audioName: 0
     audioSource: {fileID: 1334259496526518835}
   - audioName: 3
     audioSource: {fileID: 5886109888974731735}
-  - audioName: 0
+  - audioName: 2
     audioSource: {fileID: 5038145858190017736}
 --- !u!1 &3382720161642433171
 GameObject:

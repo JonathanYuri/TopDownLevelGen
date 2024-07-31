@@ -13,6 +13,12 @@ namespace RoomGeneticAlgorithm.Fitness
         public FitnessCalculator(float roomDifficulty)
         {
             fitnessVars.AddRange(FitnessVarsConstants.VARS.GetRandomElements());
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_BETWEEN_ENEMIES_DISTANCE);
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_PER_GROUP);
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMIES_WITH_COVER);
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_ENEMY_DOOR_DISTANCE);
+            //fitnessVars.Add(FitnessVarsConstants.AVERAGE_OBSTACLES_NEXT_TO_ENEMIES);
+            //fitnessVars.Add(FitnessVarsConstants.NUM_ENEMIES_GROUP);
 
             foreach (var fitnessVar in fitnessVars)
             {
@@ -28,6 +34,23 @@ namespace RoomGeneticAlgorithm.Fitness
                 names.Add(fitnessVar.Name);
             }
             return names;
+        }
+
+        public (List<int> max, List<float> mean, List<float> stdDev, List<int> min) GetFitnessVarsValues()
+        {
+            List<int> max = new();
+            List<float> mean = new();
+            List<float> stdDev = new();
+            List<int> min = new();
+            foreach (var fitnessVar in fitnessVars)
+            {
+                var statistics = fitnessVar.GetFitnessStatistics();
+                max.Add(statistics.max);
+                mean.Add(statistics.mean);
+                stdDev.Add(statistics.stdDev);
+                min.Add(statistics.min);
+            }
+            return (max, mean, stdDev, min);
         }
 
         /// <summary>
@@ -59,7 +82,10 @@ namespace RoomGeneticAlgorithm.Fitness
                 float fitnessVarValue = fitnessVar.FitnessVarValue(individual);
                 float distance = Mathf.Abs(fitnessVarValue - fitnessVar.Ideal);
                 float normalizedVar = fitnessVar.Normalize(distance);
-                value += (int)(normalizedVar * fitnessVar.Importance);
+                int weightedFitnessValue = (int)(normalizedVar * fitnessVar.Importance);
+
+                fitnessVar.Values.Add(weightedFitnessValue);
+                value += weightedFitnessValue;
             }
             return value;
         }

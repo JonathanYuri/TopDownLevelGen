@@ -16,7 +16,7 @@ public static class RoomOperations
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 Position adjacentPosition = enemyPosition.Move(direction);
-                if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition.X, adjacentPosition.Y) &&
+                if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition) &&
                     roomMatrix.ObstaclesPositions.Contains(adjacentPosition))
                 {
                     totalObstaclesNextToEnemies++;

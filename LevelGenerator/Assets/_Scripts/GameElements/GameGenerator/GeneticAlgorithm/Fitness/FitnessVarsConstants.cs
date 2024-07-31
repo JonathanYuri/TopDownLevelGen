@@ -18,10 +18,10 @@ namespace RoomGeneticAlgorithm.Fitness
             new("AverageBetweenEnemiesDistances", new(7f, 1f), 10f, 1f, GetAverageDistanceBetweenEnemies);
 
         public static readonly FitnessVar AVERAGE_OBSTACLES_NEXT_TO_ENEMIES =
-            new("AverageObstaclesNextToEnemies", new(0f, 3f), 2f, 1f, GetAverageObstaclesNextToEnemies);
+            new("AverageObstaclesNextToEnemies", new(0f, 3f), 3f, 1f, GetAverageObstaclesNextToEnemies);
 
         public static readonly FitnessVar AVERAGE_ENEMIES_WITH_COVER =
-            new("AverageEnemiesWithCover", new(0f, 1f), 0.5f, 1f, GetAverageEnemiesWithCover);
+            new("AverageEnemiesWithCover", new(0f, 1f), 1f, 1f, GetAverageEnemiesWithCover);
 
         public static readonly FitnessVar[] VARS = new FitnessVar[]
         {

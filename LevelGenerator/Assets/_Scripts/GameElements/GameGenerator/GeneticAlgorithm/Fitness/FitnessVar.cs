@@ -1,10 +1,14 @@
+using Codice.Client.BaseCommands;
 using RoomGeneticAlgorithm;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FitnessVar
 {
     public string Name { get; }
+    public List<int> Values { get; set; } = new();
 
     public Range<float> IdealRange { get; }
     public float MaxDeviation { get; }
@@ -39,5 +43,16 @@ public class FitnessVar
             float normalizedDistance = Mathf.Lerp(100f, 0f, distance / MaxDeviation);
             return normalizedDistance;
         }
+    }
+
+    public (int max, float mean, float stdDev, int min) GetFitnessStatistics()
+    {
+        var mean = Values.Average();
+        return (
+            Values.Max(),
+            (float)mean,
+            (float)Math.Sqrt(Values.Select(val => (val - mean) * (val - mean)).Average()),
+            Values.Min()
+       );
     }
 }

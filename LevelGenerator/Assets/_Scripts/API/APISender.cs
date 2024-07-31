@@ -15,7 +15,7 @@ public class UserData
     public List<string> obstacleNames;
     public List<int> obstacleQuantities;
     public List<int> obstacleDamageValues;
-    public List<string> fitnessVars;
+    public int fitnessVarsId;
     public float time;
     public int lostLife;
     public string version;
@@ -24,7 +24,19 @@ public class UserData
 public class RoomGeneratedData
 {
     public float time;
-    public List<string> fitnessVars;
+    public List<string> fitnessVarsNames;
+    public List<int> max;
+    public List<float> mean;
+    public List<float> stdDev;
+    public List<int> min;
+    public int iterations;
+    public int bestValue;
+}
+
+[System.Serializable]
+public class RoomResponse
+{
+    public int id;
 }
 
 [RequireComponent(typeof(TimeRecorder))]
@@ -86,12 +98,20 @@ public class APISender : MonoBehaviour
         }
     }
 
-    public IEnumerator SendRoomGeneratedPostRequest(float time, List<string> fitnessVars)
+    public IEnumerator SendRoomGeneratedPostRequest(Room room, float time,
+        List<string> fitnessVarNames,
+        (List<int> max, List<float> mean, List<float> stdDev, List<int> min) fitnessVarValues, int iterations, int bestValue)
     {
         RoomGeneratedData roomGeneratedData = new()
         {
             time = time,
-            fitnessVars = fitnessVars,
+            fitnessVarsNames = fitnessVarNames,
+            max = fitnessVarValues.max,
+            mean = fitnessVarValues.mean,
+            stdDev = fitnessVarValues.stdDev,
+            min = fitnessVarValues.min,
+            iterations = iterations,
+            bestValue = bestValue,
         };
 
         string jsonData = JsonUtility.ToJson(roomGeneratedData);
@@ -113,7 +133,9 @@ public class APISender : MonoBehaviour
         }
         else
         {
-            Debug.Log("Resposta: " + request.downloadHandler.text);
+            RoomResponse roomResponse = JsonUtility.FromJson<RoomResponse>(request.downloadHandler.text);
+            room.Id = roomResponse.id;
+            //Debug.Log("Resposta: " + request.downloadHandler.text);
         }
     }
 
@@ -184,7 +206,7 @@ public class APISender : MonoBehaviour
             obstacleNames = obstacleNames,
             obstacleQuantities = obstacleQuantities,
             obstacleDamageValues = obstacleDamageValues,
-            fitnessVars = room.FitnessVarNames,
+            fitnessVarsId = room.Id,
             time = time,
             lostLife = lostLife,
             version = "1.0.0"
