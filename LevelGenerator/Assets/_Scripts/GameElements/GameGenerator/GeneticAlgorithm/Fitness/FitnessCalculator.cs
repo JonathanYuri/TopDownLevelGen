@@ -1,3 +1,4 @@
+using RoomGeneticAlgorithm.Variables;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -115,7 +116,7 @@ namespace RoomGeneticAlgorithm.Fitness
         bool IsMonstrous(RoomIndividual individual)
         {
             //float startTime = Time.realtimeSinceStartup;
-            bool result = !PathFinder.AreAllPathsValid(individual.RoomMatrix);
+            bool result = !PathFinder.AreAllDoorsAndEnemiesReachable(individual.RoomMatrix);
             //float endTime = Time.realtimeSinceStartup;
             //totalTimeInPathFinder += endTime - startTime;
 

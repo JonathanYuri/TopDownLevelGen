@@ -6,7 +6,7 @@ public class SharedRoomData
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
     public HashSet<Position> ChangeablePositions { get; }
-    public Position[] DoorPositions { get; }
+    public HashSet<Position> DoorPositions { get; }
     public float Difficulty { get; }
 
     public SharedRoomData(RoomSkeleton roomSkeleton)

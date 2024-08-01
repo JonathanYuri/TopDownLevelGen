@@ -125,9 +125,9 @@ public static class MapUtility
     /// </summary>
     /// <param name="roomPosition">The position of the room for which to find door positions.</param>
     /// <returns>An array of positions representing door locations.</returns>
-    public static Position[] GetDoorPositionsFromRoomPosition(Position roomPosition, HashSet<Position> allPositions)
+    public static HashSet<Position> GetDoorPositionsFromRoomPosition(Position roomPosition, HashSet<Position> allPositions)
     {
-        List<Position> doorsPositions = new();
+        HashSet<Position> doorsPositions = new();
         foreach (Direction direction in Enum.GetValues(typeof(Direction)).Cast<Direction>())
         {
             Position adjacentPosition = roomPosition.Move(direction);
@@ -136,6 +136,6 @@ public static class MapUtility
                 doorsPositions.Add(GameConstants.NEIGHBOR_DIRECTION_TO_DOOR_POSITION[direction]);
             }
         }
-        return doorsPositions.ToArray();
+        return doorsPositions;
     }
 }

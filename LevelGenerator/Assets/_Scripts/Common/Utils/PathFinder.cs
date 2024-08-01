@@ -27,7 +27,7 @@ public static class PathFinder
     static bool IsValidMove(Position position, RoomContents[,] roomContents, bool[,] visited)
     {
         return roomContents.IsPositionWithinBounds(position.X, position.Y)
-            && IsPassable(roomContents[position.X, position.Y])
+            && RoomContentsInfo.IsTransversable(roomContents[position.X, position.Y])
             && !visited[position.X, position.Y];
     }
 
@@ -102,13 +102,15 @@ public static class PathFinder
         return false;
     }
 
-    public static bool AreAllDoorsAndEnemiesReachable(RoomContents[,] roomContents, HashSet<Position> doorPositions, HashSet<Position> enemyPositions)
+    public static bool AreAllDoorsAndEnemiesReachable(RoomMatrix roomMatrix)
     {
+        RoomContents[,] roomContents = roomMatrix.Values;
+        HashSet<Position> doorPositions = roomMatrix.SharedRoomData.DoorPositions;
+        HashSet<Position> enemyPositions = roomMatrix.EnemiesPositions;
+
         int totalObjects = doorPositions.Count + enemyPositions.Count;
 
-        int rows = roomContents.GetLength(0);
-        int cols = roomContents.GetLength(1);
-        bool[,] visited = new bool[rows, cols];
+        bool[,] visited = new bool[roomContents.GetLength(0), roomContents.GetLength(1)];
         Queue<Position> queue = new();
 
         // Comecar pela primeira porta
@@ -143,82 +145,5 @@ public static class PathFinder
         }
 
         return false;
-    }
-
-    public static bool AreAllPathsValid(RoomMatrix roomMatrix)
-    {
-        //int[,] matrix = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
-        return AreAllDoorsAndEnemiesReachable(roomMatrix.Values,
-            roomMatrix.SharedRoomData.DoorPositions.ToHashSet(), roomMatrix.EnemiesPositions);
-
-        //return IsAPathBetweenDoors(roomMatrix.Values, roomMatrix.SharedRoomData.DoorPositions) &&
-        //    IsAPathBetweenDoorAndEnemies(roomMatrix, roomMatrix.Values);
-    }
-
-    static bool IsAPathBetweenDoors(RoomContents[,] roomContents, Position[] doorPositions)
-    {
-        //return AreAllDoorsConnected(matrix, doorPositions);
-        for (int i = 0; i < doorPositions.Length; i++)
-        {
-            for (int j = i + 1; j < doorPositions.Length; j++)
-            {
-                if (!HasPathBetweenPositions(roomContents, doorPositions[i], doorPositions[j]))
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, RoomContents[,] roomContents)
-    {
-        Position doorPosition = roomMatrix.SharedRoomData.DoorPositions[0];
-
-        // so preciso ver de uma porta pra todos os inimigos, pq se tiver de uma tem da outra, ja que eu conto os caminhos de uma porta a outra
-        // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
-        foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
-        {
-            if (!HasPathBetweenPositions(roomContents, doorPosition, enemyPosition))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    static bool IsPassable(RoomContents roomContent) => RoomContentsInfo.IsTransversable(roomContent);
-
-    /// <summary>
-    /// Transforms a room matrix into an integer matrix with 0s and 1s based on a given criteria.
-    /// </summary>
-    /// <param name="roomMatrix">The room matrix to transform.</param>
-    /// <param name="criteria">The criteria function for transformation.</param>
-    /// <returns>An integer matrix where 1s represent passable cells based on the criteria.</returns>
-    static int[,] TransformRoomForCountPaths(RoomContents[,] roomMatrix, Func<RoomContents, bool> criteria)
-    {
-        int rows = roomMatrix.GetLength(0);
-        int cols = roomMatrix.GetLength(1);
-        int[,] matrix = new int[rows, cols];
-
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                matrix[i, j] = criteria(roomMatrix[i, j]) ? 1 : 0;
-            }
-        }
-        /*
-        Parallel.For(0, rows, i =>
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                matrix[i, j] = criteria(roomMatrix[i, j]) ? 1 : 0;
-            }
-        });
-        */
-        return matrix;
     }
 }

@@ -48,7 +48,7 @@ public static class RoomOperations
         return (float)totalEnemiesWithCover / (float)roomMatrix.EnemiesPositions.Count;
     }
 
-    public static float AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, Position[] doorPositions)
+    public static float AverageDistanceFromDoorsToEnemies(HashSet<Position> enemiesPositions, HashSet<Position> doorPositions)
     {
         int totalDistance = 0;
         int pairCount = 0;

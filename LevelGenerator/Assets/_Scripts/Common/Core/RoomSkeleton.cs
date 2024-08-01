@@ -10,7 +10,7 @@ public class RoomSkeleton
     public RoomContents[] Enemies { get; }
     public RoomContents[] Obstacles { get; }
     public HashSet<Position> ChangeablePositions { get; }
-    public Position[] DoorPositions { get; }
+    public HashSet<Position> DoorPositions { get; }
     public float Difficulty { get; }
 
     public RoomSkeleton(RoomData roomData)
@@ -123,12 +123,12 @@ public class RoomSkeleton
 
 public struct RoomData
 {
-    public Position[] doorPositions;
+    public HashSet<Position> doorPositions;
     public RoomContents[] enemies;
     public RoomContents[] obstacles;
     public float difficulty;
 
-    public RoomData(Position[] doorPositions, RoomContents[] enemies, RoomContents[] obstacles, float difficulty)
+    public RoomData(HashSet<Position> doorPositions, RoomContents[] enemies, RoomContents[] obstacles, float difficulty)
     {
         this.doorPositions = doorPositions;
         this.enemies = enemies;
