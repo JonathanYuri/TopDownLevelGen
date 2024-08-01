@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   memoryTimer: {fileID: 5996988955309681333}
-  range: 5
+  range: 4.5
   angle: 360
 --- !u!114 &960051703032710505
 MonoBehaviour:
@@ -772,7 +772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50288b2ce547f4d4aabf5956aa66a959, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 60
+  life: 50
   targetManager: {fileID: 7324877665200866385}
   location: {fileID: 3970811768209648529}
   damageBlinkEffect: {fileID: 7456951761542777986}

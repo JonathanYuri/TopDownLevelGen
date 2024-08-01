@@ -100,7 +100,7 @@ public class APISender : MonoBehaviour
 
     public IEnumerator SendRoomGeneratedPostRequest(Room room, float time,
         List<string> fitnessVarNames,
-        (List<int> max, List<float> mean, List<float> stdDev, List<int> min) fitnessVarValues, int iterations, int bestValue)
+        FitnessStatistics fitnessVarValues, int iterations, int bestValue)
     {
         RoomGeneratedData roomGeneratedData = new()
         {

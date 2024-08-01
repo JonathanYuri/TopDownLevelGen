@@ -16,6 +16,7 @@ namespace RoomGeneticAlgorithm.Variables
         public Dictionary<RoomContents, HashSet<Position>> ObstacleTypeToPositions { get; private set; } = new();
 
         public RoomContents[,] Values { get => values; set => values = value; }
+        public HashSet<Position> ObjectPositions { get; private set; } = new();
         public HashSet<Position> EnemiesPositions { get; private set; } = new();
         public HashSet<Position> ObstaclesPositions { get; private set; } = new();
         public SharedRoomData SharedRoomData => sharedRoomData;
@@ -53,11 +54,15 @@ namespace RoomGeneticAlgorithm.Variables
             {
                 EnemiesPositions.Add(position);
                 EnemyTypeToPositions[content].Add(position);
+
+                ObjectPositions.Add(position);
             }
             else if (SharedRoomData.Obstacles.Contains(content))
             {
                 ObstaclesPositions.Add(position);
                 ObstacleTypeToPositions[content].Add(position);
+
+                ObjectPositions.Add(position);
             }
 
             Values[position.X, position.Y] = content;
@@ -71,11 +76,15 @@ namespace RoomGeneticAlgorithm.Variables
             {
                 EnemiesPositions.Remove(position);
                 EnemyTypeToPositions[content].Remove(position);
+
+                ObjectPositions.Remove(position);
             }
             else if (SharedRoomData.Obstacles.Contains(content))
             {
                 ObstaclesPositions.Remove(position);
                 ObstacleTypeToPositions[content].Remove(position);
+
+                ObjectPositions.Remove(position);
             }
         }
 

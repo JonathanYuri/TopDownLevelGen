@@ -1,6 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct FitnessStatistics
+{
+    public List<int> max;
+    public List<float> mean;
+    public List<float> stdDev;
+    public List<int> min;
+
+    public FitnessStatistics(List<int> max, List<float> mean, List<float> stdDev, List<int> min)
+    {
+        this.max = max;
+        this.mean = mean;
+        this.stdDev = stdDev;
+        this.min = min;
+    }
+}
+
 namespace RoomGeneticAlgorithm.Fitness
 {
     /// <summary>
@@ -9,6 +25,8 @@ namespace RoomGeneticAlgorithm.Fitness
     public class FitnessCalculator
     {
         readonly List<FitnessVar> fitnessVars = new();
+
+        public float totalTimeInPathFinder = 0f;
 
         public FitnessCalculator(float roomDifficulty)
         {
@@ -36,7 +54,7 @@ namespace RoomGeneticAlgorithm.Fitness
             return names;
         }
 
-        public (List<int> max, List<float> mean, List<float> stdDev, List<int> min) GetFitnessVarsValues()
+        public FitnessStatistics GetFitnessVarsValues()
         {
             List<int> max = new();
             List<float> mean = new();
@@ -44,15 +62,14 @@ namespace RoomGeneticAlgorithm.Fitness
             List<int> min = new();
             foreach (var fitnessVar in fitnessVars)
             {
-                var statistics = fitnessVar.GetFitnessStatistics();
-                max.Add(statistics.max);
-                mean.Add(statistics.mean);
-                stdDev.Add(statistics.stdDev);
-                min.Add(statistics.min);
+                max.Add(fitnessVar.MaxValue);
+                mean.Add((float)fitnessVar.Mean);
+                stdDev.Add((float)fitnessVar.StdDev);
+                min.Add(fitnessVar.MinValue);
             }
-            return (max, mean, stdDev, min);
+            return new(max, mean, stdDev, min);
         }
-
+        
         /// <summary>
         /// Calculates and assigns the fitness value for an individual based on provided fitness variables.
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.
@@ -84,7 +101,7 @@ namespace RoomGeneticAlgorithm.Fitness
                 float normalizedVar = fitnessVar.Normalize(distance);
                 int weightedFitnessValue = (int)(normalizedVar * fitnessVar.Importance);
 
-                fitnessVar.Values.Add(weightedFitnessValue);
+                fitnessVar.AddValue(weightedFitnessValue);
                 value += weightedFitnessValue;
             }
             return value;
@@ -95,7 +112,14 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual to evaluate.</param>
         /// <returns>True if the individual is monstrous; otherwise, false.</returns>
-        bool IsMonstrous(RoomIndividual individual) =>
-            !PathFinder.AreAllPathsValid(individual.RoomMatrix);
+        bool IsMonstrous(RoomIndividual individual)
+        {
+            //float startTime = Time.realtimeSinceStartup;
+            bool result = !PathFinder.AreAllPathsValid(individual.RoomMatrix);
+            //float endTime = Time.realtimeSinceStartup;
+            //totalTimeInPathFinder += endTime - startTime;
+
+            return result;
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using RoomGeneticAlgorithm.Variables;
-using UnityEngine;
 
 namespace RoomGeneticAlgorithm
 {

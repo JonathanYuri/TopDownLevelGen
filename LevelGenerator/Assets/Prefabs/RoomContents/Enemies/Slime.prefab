@@ -680,7 +680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d37035c79ce1c459228c2f8563e3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 50
+  life: 40
   targetManager: {fileID: 7014183382443654903}
   location: {fileID: 1752701515999892145}
   damageBlinkEffect: {fileID: 1398216561869708062}

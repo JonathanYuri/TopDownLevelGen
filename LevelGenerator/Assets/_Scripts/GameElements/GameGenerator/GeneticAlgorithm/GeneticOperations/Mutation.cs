@@ -29,8 +29,9 @@ namespace RoomGeneticAlgorithm.GeneticOperations
         /// </summary>
         /// <param name="individual">The room individual to mutate.</param>
         /// <param name="positionsToMutate">The set of positions in which room contents should be mutated.</param>
-        void Mutate(RoomIndividual individual, HashSet<Position> positionsToMutate)
+        void Mutate(RoomIndividual individual)
         {
+            HashSet<Position> positionsToMutate = individual.RoomMatrix.ObjectPositions;
             float minPercentMutations = GeneticAlgorithmConstants.MIN_MUTATIONS_PERCENT * positionsToMutate.Count;
             int numMutations = Random.Range((int)minPercentMutations, positionsToMutate.Count + 1);
 
@@ -39,17 +40,6 @@ namespace RoomGeneticAlgorithm.GeneticOperations
             {
                 SwapRoomPositionsRandomly(individual, position);
             }
-        }
-
-        /// <summary>
-        /// Mutates an individual's room matrix by randomly changing the positions of either enemies or obstacles.
-        /// </summary>
-        /// <param name="individual">The room individual to mutate.</param>
-        void Mutate(RoomIndividual individual)
-        {
-            HashSet<Position> positionsToMutate = new(individual.RoomMatrix.EnemiesPositions);
-            positionsToMutate.UnionWith(individual.RoomMatrix.ObstaclesPositions);
-            Mutate(individual, positionsToMutate);
         }
 
         /// <summary>

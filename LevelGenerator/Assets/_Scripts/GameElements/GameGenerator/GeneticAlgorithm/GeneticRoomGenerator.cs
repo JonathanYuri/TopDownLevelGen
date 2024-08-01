@@ -67,7 +67,7 @@ namespace RoomGeneticAlgorithm.Run
             Best = new(population.GetBestIndividual());
         }
 
-        public (List<int> max, List<float> mean, List<float> stdDev, List<int> min) GetFitnessVarsValues() =>
+        public FitnessStatistics GetFitnessVarsValues() =>
             fitnessHandler.FitnessCalculator.GetFitnessVarsValues();
         public List<string> GetFitnessVarsNames() => fitnessHandler.FitnessCalculator.GetFitnessVarsNames();
 
@@ -91,6 +91,7 @@ namespace RoomGeneticAlgorithm.Run
 
             UpdateBestIndividual(ref iterationsWithoutImprovement);
             Debug.LogError("Melhor individual: " + Best.Value + " interacoes: " + Iterations);
+            //Debug.LogError("TimeInPathFindeR:" + fitnessHandler.FitnessCalculator.totalTimeInPathFinder);
         }
 
         void UpdateBestIndividual(ref int iterationsWithoutImprovement)

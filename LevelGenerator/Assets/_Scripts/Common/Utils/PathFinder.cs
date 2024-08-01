@@ -1,6 +1,7 @@
 using RoomGeneticAlgorithm.Variables;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 /// <summary>
 /// A static class that provides methods for pathfinding and determining connectivity in a room matrix.
@@ -148,15 +149,26 @@ public static class PathFinder
     /// <returns>An integer matrix where 1s represent passable cells based on the criteria.</returns>
     static int[,] TransformRoomForCountPaths(RoomContents[,] roomMatrix, Func<RoomContents, bool> criteria)
     {
-        int[,] matrix = new int[roomMatrix.GetLength(0), roomMatrix.GetLength(1)];
+        int rows = roomMatrix.GetLength(0);
+        int cols = roomMatrix.GetLength(1);
+        int[,] matrix = new int[rows, cols];
 
-        for (int i = 0; i < matrix.GetLength(0); i++)
+        for (int i = 0; i < rows; i++)
         {
-            for (int j = 0; j < matrix.GetLength(1); j++)
+            for (int j = 0; j < cols; j++)
             {
                 matrix[i, j] = criteria(roomMatrix[i, j]) ? 1 : 0;
             }
         }
+        /*
+        Parallel.For(0, rows, i =>
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                matrix[i, j] = criteria(roomMatrix[i, j]) ? 1 : 0;
+            }
+        });
+        */
         return matrix;
     }
 }

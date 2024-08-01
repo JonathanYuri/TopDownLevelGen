@@ -1,4 +1,3 @@
-using Codice.Client.BaseCommands;
 using RoomGeneticAlgorithm;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,16 @@ using UnityEngine;
 public class FitnessVar
 {
     public string Name { get; }
-    public List<int> Values { get; set; } = new();
+
+    int count = 0;
+    double sumOfSquares = 0.0;
+    public int MaxValue { get; private set; } = int.MinValue;
+    public int MinValue { get; private set; } = int.MaxValue;
+    public double Mean { get; private set; } = 0.0;
+    public double StdDev
+    {
+        get { return count > 1 ? Math.Sqrt(sumOfSquares / (count - 1)) : 0.0; }
+    }
 
     public Range<float> IdealRange { get; }
     public float MaxDeviation { get; }
@@ -45,14 +53,14 @@ public class FitnessVar
         }
     }
 
-    public (int max, float mean, float stdDev, int min) GetFitnessStatistics()
+    public void AddValue(int value)
     {
-        var mean = Values.Average();
-        return (
-            Values.Max(),
-            (float)mean,
-            (float)Math.Sqrt(Values.Select(val => (val - mean) * (val - mean)).Average()),
-            Values.Min()
-       );
+        count++;
+        double delta = value - Mean;
+        Mean += delta / count;
+        sumOfSquares += delta * (value - Mean);
+
+        MaxValue = Mathf.Max(value, MaxValue);
+        MinValue = Mathf.Min(value, MinValue);
     }
 }

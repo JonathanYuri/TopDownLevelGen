@@ -1,3 +1,6 @@
+using System.Threading.Tasks;
+using UnityEngine;
+
 namespace RoomGeneticAlgorithm.Fitness
 {
     /// <summary>
@@ -36,16 +39,24 @@ namespace RoomGeneticAlgorithm.Fitness
         /// <param name="population">The population of individuals to evaluate.</param>
         public void EvaluatePopulation(RoomIndividual[] population)
         {
+            /*
+            Parallel.For(0, population.Length, i =>
+            {
+                if (ShouldRecalculateFitness(population[i]))
+                {
+                    FitnessCalculator.Evaluate(population[i]);
+                    population[i].Modified = false;
+                }
+            });
+            */
             // avaliar o individual se ele foi modificado
             for (int i = 0; i < population.Length; i++)
             {
-                if (!ShouldRecalculateFitness(population[i]))
+                if (ShouldRecalculateFitness(population[i]))
                 {
-                    continue;
+                    FitnessCalculator.Evaluate(population[i]);
+                    population[i].Modified = false;
                 }
-
-                FitnessCalculator.Evaluate(population[i]);
-                population[i].Modified = false;
             }
         }
     }
