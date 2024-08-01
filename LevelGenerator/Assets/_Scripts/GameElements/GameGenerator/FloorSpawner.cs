@@ -73,8 +73,8 @@ namespace SpawnRoomObjects.SpawnFloor
                         floorPlaced.name = "Nothing";
                     }
                     allFloorsPlaced.Add(new Position() { X = i, Y = j }, floorPlaced);
-                    yield return null;
                 }
+                yield return null;
             }
         }
     }

@@ -10,6 +10,8 @@ using UnityEngine;
 /// </summary>
 public static class PathFinder
 {
+    readonly static Direction[] directions = DirectionUtilities.allDirections;
+
     /// <summary>
     /// Checks if a path exists between two positions in a given matrix using Breadth-First Search.
     /// </summary>
@@ -48,7 +50,7 @@ public static class PathFinder
 
         visited[currentPosition.X, currentPosition.Y] = true;
 
-        foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+        foreach (Direction direction in directions)
         {
             Position adjacentPosition = currentPosition.Move(direction);
             if (adjacentPosition.Equals(endPosition)) return true;
@@ -86,7 +88,7 @@ public static class PathFinder
 
             visited[currentPosition.X, currentPosition.Y] = true;
 
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            foreach (Direction direction in directions)
             {
                 Position adjacentPosition = currentPosition.Move(direction);
                 if (adjacentPosition.Equals(endPosition)) return true;
@@ -124,7 +126,7 @@ public static class PathFinder
         {
             Position currentPosition = queue.Dequeue();
 
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            foreach (Direction direction in directions)
             {
                 Position adjacent = currentPosition.Move(direction);
 

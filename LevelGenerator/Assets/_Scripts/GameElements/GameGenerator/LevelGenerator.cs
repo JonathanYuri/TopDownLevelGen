@@ -1,3 +1,4 @@
+using Codice.Client.BaseCommands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ public class LevelGenerator : MonoBehaviour
     HashSet<Position> map;
 
     public event Action OnLevelGenerated;
+    float startTime = 0f;
 
     public Position InitialRoomPosition { get; private set; }
     public Position FinalRoomPosition { get; private set; }
@@ -42,6 +44,8 @@ public class LevelGenerator : MonoBehaviour
     {
         DestroyAllPastObjects();
         map = GenerateMap();
+
+        startTime = Time.realtimeSinceStartup;
 
         yield return GenerateInitialAndFinalRoom();
         yield return GenerateRemainingRooms();
@@ -78,7 +82,8 @@ public class LevelGenerator : MonoBehaviour
             Position position = queue.Dequeue();
             map.Add(position);
 
-            Direction[] shuffledDirections = Enum.GetValues(typeof(Direction)).Cast<Direction>().Shuffle();
+            Direction[] shuffledDirections = (Direction[])DirectionUtilities.allDirections.Clone();
+            shuffledDirections.Shuffle();
             foreach (Direction direction in shuffledDirections)
             {
                 Position adjacentPosition = position.Move(direction);
@@ -135,6 +140,8 @@ public class LevelGenerator : MonoBehaviour
             //Debug.LogWarning("Position No Mapa: " + position.X + " x " + position.Y);
             yield return roomGenerator.GenerateRoom(roomPosition, map);
         }
+
+        Debug.LogError("Tempo para geracao de tudo: " + (Time.realtimeSinceStartup - startTime));
 
         OnLevelGenerated?.Invoke();
     }

@@ -14,6 +14,11 @@ public enum Direction
     Right
 }
 
+public static class DirectionUtilities
+{
+    public static Direction[] allDirections = (Direction[])Enum.GetValues(typeof(Direction));
+}
+
 public class Range<T>
 {
     public T Min { get; set; }
@@ -128,7 +133,7 @@ public static class MapUtility
     public static HashSet<Position> GetDoorPositionsFromRoomPosition(Position roomPosition, HashSet<Position> allPositions)
     {
         HashSet<Position> doorsPositions = new();
-        foreach (Direction direction in Enum.GetValues(typeof(Direction)).Cast<Direction>())
+        foreach (Direction direction in DirectionUtilities.allDirections)
         {
             Position adjacentPosition = roomPosition.Move(direction);
             if (allPositions.Contains(adjacentPosition))

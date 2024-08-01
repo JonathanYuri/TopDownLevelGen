@@ -13,7 +13,7 @@ public static class RoomOperations
         int totalObstaclesNextToEnemies = 0;
         foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            foreach (Direction direction in DirectionUtilities.allDirections)
             {
                 Position adjacentPosition = enemyPosition.Move(direction);
                 if (roomMatrix.Values.IsPositionWithinBounds(adjacentPosition) &&
@@ -32,7 +32,7 @@ public static class RoomOperations
         int totalEnemiesWithCover = 0;
         foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
-            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            foreach (Direction direction in DirectionUtilities.allDirections)
             {
                 Position adjacentPosition = enemyPosition.Move(direction);
 

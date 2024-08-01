@@ -91,7 +91,7 @@ namespace SpawnRoomObjects.SpawnAll
         /// <param name="roomObject">The GameObject representing the room where objects should be spawned.</param>
         public IEnumerator SpawnRoomObjects(RoomContents[,] room, Position roomPosition, GameObject roomObject)
         {
-            yield return floorSpawner.SpawnAllFloors(room, roomObject, roomPosition);
+            StartCoroutine(floorSpawner.SpawnAllFloors(room, roomObject, roomPosition));
 
             for (int i = 0; i < GameConstants.ROOM_WIDTH; i++)
             {
@@ -108,8 +108,8 @@ namespace SpawnRoomObjects.SpawnAll
                     InstantiateRoomContentObject(tilePrefab, roomObject, positionRoomContent, roomPosition);
                     // se chegou a instanciar o objeto nao eh um chao
                     floorSpawner.allFloorsPlaced.Remove(positionRoomContent);
-                    yield return null;
                 }
+                yield return null;
             }
 
             GameMapSingleton.Instance.EachRoomFloors.Add(roomPosition, floorSpawner.allFloorsPlaced.Values.ToList());
