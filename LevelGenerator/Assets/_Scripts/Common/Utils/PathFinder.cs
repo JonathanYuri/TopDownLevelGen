@@ -1,7 +1,9 @@
 using RoomGeneticAlgorithm.Variables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine;
 
 /// <summary>
 /// A static class that provides methods for pathfinding and determining connectivity in a room matrix.
@@ -15,17 +17,17 @@ public static class PathFinder
     /// <param name="startPosition">The starting position for the path.</param>
     /// <param name="endPosition">The ending position for the path.</param>
     /// <returns>True if a path exists between the start and end positions; otherwise, false.</returns>
-    static bool HasPathBetweenPositions(int[,] matrix, Position startPosition, Position endPosition)
+    static bool HasPathBetweenPositions(RoomContents[,] roomContents, Position startPosition, Position endPosition)
     {
         //bool[,] visited = new bool[matrix.GetLength(0), matrix.GetLength(1)];
-        return BFS(matrix, startPosition, endPosition);
+        return BFS(roomContents, startPosition, endPosition);
     }
 
 
-    static bool IsValidMove(Position position, int[,] matrix, bool[,] visited)
+    static bool IsValidMove(Position position, RoomContents[,] roomContents, bool[,] visited)
     {
-        return matrix.IsPositionWithinBounds(position.X, position.Y)
-            && matrix[position.X, position.Y] == 1
+        return roomContents.IsPositionWithinBounds(position.X, position.Y)
+            && IsPassable(roomContents[position.X, position.Y])
             && !visited[position.X, position.Y];
     }
 
@@ -37,7 +39,7 @@ public static class PathFinder
     /// <param name="endPosition">The ending position for the path.</param>
     /// <param name="visited">A matrix to track visited positions.</param>
     /// <returns>True if a path exists between the current and end positions; otherwise, false.</returns>
-    static bool DFS(int[,] matrix, Position currentPosition, Position endPosition, bool[,] visited)
+    static bool DFS(RoomContents[,] roomContents, Position currentPosition, Position endPosition, bool[,] visited)
     {
         if (currentPosition.Equals(endPosition))
         {
@@ -51,7 +53,8 @@ public static class PathFinder
             Position adjacentPosition = currentPosition.Move(direction);
             if (adjacentPosition.Equals(endPosition)) return true;
 
-            if (IsValidMove(adjacentPosition, matrix, visited) && DFS(matrix, adjacentPosition, endPosition, visited))
+            if (IsValidMove(adjacentPosition, roomContents, visited) &&
+                DFS(roomContents, adjacentPosition, endPosition, visited))
             {
                 return true;
             }
@@ -67,10 +70,10 @@ public static class PathFinder
     /// <param name="startPosition">The starting position for the search.</param>
     /// <param name="endPosition">The ending position for the path.</param>
     /// <returns>True if a path exists between the start and end positions; otherwise, false.</returns>
-    static bool BFS(int[,] matrix, Position startPosition, Position endPosition)
+    static bool BFS(RoomContents[,] roomContents, Position startPosition, Position endPosition)
     {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
+        int rows = roomContents.GetLength(0);
+        int cols = roomContents.GetLength(1);
         bool[,] visited = new bool[rows, cols];
 
         Queue<Position> queue = new();
@@ -88,7 +91,7 @@ public static class PathFinder
                 Position adjacentPosition = currentPosition.Move(direction);
                 if (adjacentPosition.Equals(endPosition)) return true;
 
-                if (IsValidMove(adjacentPosition, matrix, visited))
+                if (IsValidMove(adjacentPosition, roomContents, visited))
                 {
                     queue.Enqueue(adjacentPosition);
                     visited[adjacentPosition.X, adjacentPosition.Y] = true;
@@ -99,20 +102,67 @@ public static class PathFinder
         return false;
     }
 
-    public static bool AreAllPathsValid(RoomMatrix roomMatrix)
+    public static bool AreAllDoorsAndEnemiesReachable(RoomContents[,] roomContents, HashSet<Position> doorPositions, HashSet<Position> enemyPositions)
     {
-        int[,] matrix = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
-        return IsAPathBetweenDoors(matrix, roomMatrix.SharedRoomData.DoorPositions) &&
-            IsAPathBetweenDoorAndEnemies(roomMatrix, matrix);
+        int totalObjects = doorPositions.Count + enemyPositions.Count;
+
+        int rows = roomContents.GetLength(0);
+        int cols = roomContents.GetLength(1);
+        bool[,] visited = new bool[rows, cols];
+        Queue<Position> queue = new();
+
+        // Comecar pela primeira porta
+        Position firstDoor = doorPositions.First();
+        queue.Enqueue(firstDoor);
+        visited[firstDoor.X, firstDoor.Y] = true;
+
+        int found = 1;
+
+        while (queue.Count > 0)
+        {
+            Position currentPosition = queue.Dequeue();
+
+            foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+            {
+                Position adjacent = currentPosition.Move(direction);
+
+                if (IsValidMove(adjacent, roomContents, visited))
+                {
+                    if (doorPositions.Contains(adjacent) || enemyPositions.Contains(adjacent))
+                    {
+                        found++;
+                        if (found == totalObjects)
+                        {
+                            return true;
+                        }
+                    }
+                    queue.Enqueue(adjacent);
+                    visited[adjacent.X, adjacent.Y] = true;
+                }
+            }
+        }
+
+        return false;
     }
 
-    static bool IsAPathBetweenDoors(int[,] matrix, Position[] doorPositions)
+    public static bool AreAllPathsValid(RoomMatrix roomMatrix)
     {
+        //int[,] matrix = TransformRoomForCountPaths(roomMatrix.Values, IsPassable);
+        return AreAllDoorsAndEnemiesReachable(roomMatrix.Values,
+            roomMatrix.SharedRoomData.DoorPositions.ToHashSet(), roomMatrix.EnemiesPositions);
+
+        //return IsAPathBetweenDoors(roomMatrix.Values, roomMatrix.SharedRoomData.DoorPositions) &&
+        //    IsAPathBetweenDoorAndEnemies(roomMatrix, roomMatrix.Values);
+    }
+
+    static bool IsAPathBetweenDoors(RoomContents[,] roomContents, Position[] doorPositions)
+    {
+        //return AreAllDoorsConnected(matrix, doorPositions);
         for (int i = 0; i < doorPositions.Length; i++)
         {
             for (int j = i + 1; j < doorPositions.Length; j++)
             {
-                if (!HasPathBetweenPositions(matrix, doorPositions[i], doorPositions[j]))
+                if (!HasPathBetweenPositions(roomContents, doorPositions[i], doorPositions[j]))
                 {
                     return false;
                 }
@@ -122,7 +172,7 @@ public static class PathFinder
         return true;
     }
 
-    static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, int[,] matrix)
+    static bool IsAPathBetweenDoorAndEnemies(RoomMatrix roomMatrix, RoomContents[,] roomContents)
     {
         Position doorPosition = roomMatrix.SharedRoomData.DoorPositions[0];
 
@@ -130,7 +180,7 @@ public static class PathFinder
         // TODO: if inimigo nao for voador, se for voador nao precisa verificar se tem caminho pra ele eu acho
         foreach (Position enemyPosition in roomMatrix.EnemiesPositions)
         {
-            if (!HasPathBetweenPositions(matrix, doorPosition, enemyPosition))
+            if (!HasPathBetweenPositions(roomContents, doorPosition, enemyPosition))
             {
                 return false;
             }
@@ -139,7 +189,7 @@ public static class PathFinder
         return true;
     }
 
-    static bool IsPassable(RoomContents roomContent) => roomContent.GetAttribute<TraversableAttribute>().IsTraversable;
+    static bool IsPassable(RoomContents roomContent) => RoomContentsInfo.IsTransversable(roomContent);
 
     /// <summary>
     /// Transforms a room matrix into an integer matrix with 0s and 1s based on a given criteria.

@@ -49,7 +49,6 @@ namespace RoomGeneticAlgorithm.Fitness
                 }
             });
             */
-            // avaliar o individual se ele foi modificado
             for (int i = 0; i < population.Length; i++)
             {
                 if (ShouldRecalculateFitness(population[i]))
