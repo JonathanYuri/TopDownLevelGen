@@ -12,13 +12,13 @@ public static class PathFinder
 {
     static readonly HashSet<RoomContents> transversableContents = new()
     {
-        { RoomContents.Ground },
-        { RoomContents.Enemy1 },
-        { RoomContents.Enemy2 },
-        { RoomContents.Enemy3 },
-        { RoomContents.Nothing },
-        { RoomContents.Door },
-        { RoomContents.LevelEnd },
+        RoomContents.Ground,
+        RoomContents.Enemy1,
+        RoomContents.Enemy2,
+        RoomContents.Enemy3,
+        RoomContents.Nothing,
+        RoomContents.Door,
+        RoomContents.LevelEnd,
     };
 
     readonly static Direction[] directions = DirectionUtilities.allDirections;

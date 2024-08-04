@@ -17,3 +17,23 @@ public enum RoomContents
     Wall,
     LevelEnd,
 }
+
+public static class RoomContentsInfo
+{
+    readonly static HashSet<RoomContents> enemies = new()
+    {
+        RoomContents.Enemy1,
+        RoomContents.Enemy2,
+        RoomContents.Enemy3,
+    };
+
+    readonly static HashSet<RoomContents> obstacles = new()
+    {
+        RoomContents.Obstacle1,
+        RoomContents.Obstacle2,
+        RoomContents.Obstacle3,
+    };
+
+    public static bool IsEnemy(RoomContents content) => enemies.Contains(content);
+    public static bool IsObstacle(RoomContents content) => obstacles.Contains(content);
+}

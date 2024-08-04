@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 namespace RoomGeneticAlgorithm.Variables
 {
@@ -50,14 +50,14 @@ namespace RoomGeneticAlgorithm.Variables
         /// <param name="position">The position where the content should be placed.</param>
         public void PutContentInPosition(RoomContents content, Position position)
         {
-            if (SharedRoomData.Enemies.Contains(content))
+            if (RoomContentsInfo.IsEnemy(content))
             {
                 EnemiesPositions.Add(position);
                 EnemyTypeToPositions[content].Add(position);
 
                 ObjectPositions.Add(position);
             }
-            else if (SharedRoomData.Obstacles.Contains(content))
+            else if (RoomContentsInfo.IsObstacle(content))
             {
                 ObstaclesPositions.Add(position);
                 ObstacleTypeToPositions[content].Add(position);
@@ -72,14 +72,14 @@ namespace RoomGeneticAlgorithm.Variables
         void RemoveFromPosition(Position position)
         {
             RoomContents content = Values[position.X, position.Y];
-            if (SharedRoomData.Enemies.Contains(content))
+            if (RoomContentsInfo.IsEnemy(content))
             {
                 EnemiesPositions.Remove(position);
                 EnemyTypeToPositions[content].Remove(position);
 
                 ObjectPositions.Remove(position);
             }
-            else if (SharedRoomData.Obstacles.Contains(content))
+            else if (RoomContentsInfo.IsObstacle(content))
             {
                 ObstaclesPositions.Remove(position);
                 ObstacleTypeToPositions[content].Remove(position);
