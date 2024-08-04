@@ -10,98 +10,24 @@ using UnityEngine;
 /// </summary>
 public static class PathFinder
 {
-    readonly static Direction[] directions = DirectionUtilities.allDirections;
-
-    /// <summary>
-    /// Checks if a path exists between two positions in a given matrix using Breadth-First Search.
-    /// </summary>
-    /// <param name="matrix">The matrix representing the room layout.</param>
-    /// <param name="startPosition">The starting position for the path.</param>
-    /// <param name="endPosition">The ending position for the path.</param>
-    /// <returns>True if a path exists between the start and end positions; otherwise, false.</returns>
-    static bool HasPathBetweenPositions(RoomContents[,] roomContents, Position startPosition, Position endPosition)
+    static readonly HashSet<RoomContents> transversableContents = new()
     {
-        //bool[,] visited = new bool[matrix.GetLength(0), matrix.GetLength(1)];
-        return BFS(roomContents, startPosition, endPosition);
-    }
+        { RoomContents.Ground },
+        { RoomContents.Enemy1 },
+        { RoomContents.Enemy2 },
+        { RoomContents.Enemy3 },
+        { RoomContents.Nothing },
+        { RoomContents.Door },
+        { RoomContents.LevelEnd },
+    };
 
+    readonly static Direction[] directions = DirectionUtilities.allDirections;
 
     static bool IsValidMove(Position position, RoomContents[,] roomContents, bool[,] visited)
     {
-        return roomContents.IsPositionWithinBounds(position.X, position.Y)
-            && RoomContentsInfo.IsTransversable(roomContents[position.X, position.Y])
+        return roomContents.IsPositionWithinBounds(position)
+            && transversableContents.Contains(roomContents[position.X, position.Y])
             && !visited[position.X, position.Y];
-    }
-
-    /// <summary>
-    /// Implements Depth-First Search to check for a path between positions in the matrix.
-    /// </summary>
-    /// <param name="matrix">The matrix representing the room layout.</param>
-    /// <param name="currentPosition">The current position in the search.</param>
-    /// <param name="endPosition">The ending position for the path.</param>
-    /// <param name="visited">A matrix to track visited positions.</param>
-    /// <returns>True if a path exists between the current and end positions; otherwise, false.</returns>
-    static bool DFS(RoomContents[,] roomContents, Position currentPosition, Position endPosition, bool[,] visited)
-    {
-        if (currentPosition.Equals(endPosition))
-        {
-            return true;
-        }
-
-        visited[currentPosition.X, currentPosition.Y] = true;
-
-        foreach (Direction direction in directions)
-        {
-            Position adjacentPosition = currentPosition.Move(direction);
-            if (adjacentPosition.Equals(endPosition)) return true;
-
-            if (IsValidMove(adjacentPosition, roomContents, visited) &&
-                DFS(roomContents, adjacentPosition, endPosition, visited))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Implements Breadth-First Search to check for a path between positions in the matrix.
-    /// </summary>
-    /// <param name="matrix">The matrix representing the room layout.</param>
-    /// <param name="startPosition">The starting position for the search.</param>
-    /// <param name="endPosition">The ending position for the path.</param>
-    /// <returns>True if a path exists between the start and end positions; otherwise, false.</returns>
-    static bool BFS(RoomContents[,] roomContents, Position startPosition, Position endPosition)
-    {
-        int rows = roomContents.GetLength(0);
-        int cols = roomContents.GetLength(1);
-        bool[,] visited = new bool[rows, cols];
-
-        Queue<Position> queue = new();
-        queue.Enqueue(startPosition);
-
-        while (queue.Count > 0)
-        {
-            Position currentPosition = queue.Dequeue();
-            if (currentPosition.Equals(endPosition)) return true;
-
-            visited[currentPosition.X, currentPosition.Y] = true;
-
-            foreach (Direction direction in directions)
-            {
-                Position adjacentPosition = currentPosition.Move(direction);
-                if (adjacentPosition.Equals(endPosition)) return true;
-
-                if (IsValidMove(adjacentPosition, roomContents, visited))
-                {
-                    queue.Enqueue(adjacentPosition);
-                    visited[adjacentPosition.X, adjacentPosition.Y] = true;
-                }
-            }
-        }
-
-        return false;
     }
 
     public static bool AreAllDoorsAndEnemiesReachable(RoomMatrix roomMatrix)

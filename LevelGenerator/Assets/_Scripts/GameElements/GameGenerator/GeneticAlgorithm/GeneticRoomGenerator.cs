@@ -91,7 +91,6 @@ namespace RoomGeneticAlgorithm.Run
 
             UpdateBestIndividual(ref iterationsWithoutImprovement);
             Debug.LogError("Melhor individual: " + Best.Value + " interacoes: " + Iterations);
-            Debug.LogError("TimeInPathFinder:" + fitnessHandler.FitnessCalculator.totalTimeInPathFinder);
         }
 
         void UpdateBestIndividual(ref int iterationsWithoutImprovement)

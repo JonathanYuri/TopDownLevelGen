@@ -27,8 +27,6 @@ namespace RoomGeneticAlgorithm.Fitness
     {
         readonly List<FitnessVar> fitnessVars = new();
 
-        public float totalTimeInPathFinder = 0f;
-
         public FitnessCalculator(float roomDifficulty)
         {
             fitnessVars.AddRange(FitnessVarsConstants.VARS.GetRandomElements());
@@ -113,14 +111,7 @@ namespace RoomGeneticAlgorithm.Fitness
         /// </summary>
         /// <param name="individual">The room individual to evaluate.</param>
         /// <returns>True if the individual is monstrous; otherwise, false.</returns>
-        bool IsMonstrous(RoomIndividual individual)
-        {
-            //float startTime = Time.realtimeSinceStartup;
-            bool result = !PathFinder.AreAllDoorsAndEnemiesReachable(individual.RoomMatrix);
-            //float endTime = Time.realtimeSinceStartup;
-            //totalTimeInPathFinder += endTime - startTime;
-
-            return result;
-        }
+        bool IsMonstrous(RoomIndividual individual) =>
+            !PathFinder.AreAllDoorsAndEnemiesReachable(individual.RoomMatrix);
     }
 }
