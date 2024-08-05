@@ -1,4 +1,3 @@
-using RoomGeneticAlgorithm.Variables;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -68,7 +67,7 @@ namespace RoomGeneticAlgorithm.Fitness
             }
             return new(max, mean, stdDev, min);
         }
-        
+
         /// <summary>
         /// Calculates and assigns the fitness value for an individual based on provided fitness variables.
         /// If the individual is considered "monstrous," their fitness value is set to the minimum possible integer value.

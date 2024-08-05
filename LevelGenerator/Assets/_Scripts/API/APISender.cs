@@ -34,9 +34,16 @@ public class RoomGeneratedData
 }
 
 [System.Serializable]
-public class RoomResponse
+public class Data
 {
     public int id;
+}
+
+[System.Serializable]
+public class RoomResponse
+{
+    public string status;
+    public Data data;
 }
 
 [RequireComponent(typeof(TimeRecorder))]
@@ -134,7 +141,7 @@ public class APISender : MonoBehaviour
         else
         {
             RoomResponse roomResponse = JsonUtility.FromJson<RoomResponse>(request.downloadHandler.text);
-            room.Id = roomResponse.id;
+            room.Id = roomResponse.data.id;
             //Debug.Log("Resposta: " + request.downloadHandler.text);
         }
     }
