@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 651d15eb93d73e04aa7db44266d0d727
+guid: a7cc2bffe2cdb54478b21cd6b3dc9056
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -101,41 +101,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ground 1_0
+      name: walls_0
       rect:
         serializedVersion: 2
-        x: 16
+        x: 192
         y: 224
-        width: 16
-        height: 16
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -143,20 +119,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fc3f962365bc25e41b60390f14dde81b
-      internalID: -1613365855
+      spriteID: 15446c455428df44184a605c51d5dab3
+      internalID: 640947632
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground 1_1
+      name: walls_1
       rect:
         serializedVersion: 2
-        x: 32
-        y: 224
-        width: 16
-        height: 16
+        x: 192
+        y: 192
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -164,20 +140,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f276f3132d374744690a4f4467b3d1bc
-      internalID: 111476633
+      spriteID: 1e7b4ab0a14920d48aa17bcb8ed8fff2
+      internalID: 291968303
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground 1_2
+      name: walls_2
       rect:
         serializedVersion: 2
-        x: 48
-        y: 224
-        width: 16
-        height: 16
+        x: 192
+        y: 160
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -185,8 +161,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 28283f3e4d337ca4eb076eb1a6a43383
-      internalID: -1905373758
+      spriteID: d986a4eb5cda230478a6176b60abe0e9
+      internalID: 1942616585
       vertices: []
       indices: 
       edges: []
@@ -202,9 +178,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      ground 1_0: -1613365855
-      ground 1_1: 111476633
-      ground 1_2: -1905373758
+      walls_0: 640947632
+      walls_1: 291968303
+      walls_2: 1942616585
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

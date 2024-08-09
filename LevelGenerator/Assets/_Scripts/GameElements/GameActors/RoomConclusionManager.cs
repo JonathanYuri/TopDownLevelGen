@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class RoomConclusionManager : MonoBehaviour
 {
@@ -26,7 +27,8 @@ public class RoomConclusionManager : MonoBehaviour
 
     void OnLevelGenerated()
     {
-        OpenInitialRoomDoors();
+        OpenAllDoorsOfRoom(GameMapSingleton.Instance.InitialRoomPosition);
+        OpenAllDoorsOfRoom(GameMapSingleton.Instance.FinalRoomPosition);
 
         foreach (var enemies in GameMapSingleton.Instance.EachRoomEnemies.Values)
         {
@@ -56,11 +58,6 @@ public class RoomConclusionManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    void OpenInitialRoomDoors()
-    {
-        OpenAllDoorsOfRoom(GameMapSingleton.Instance.RoomPositions.Keys.ElementAt(0));
     }
 
     void OnEnemyDefeated(object sender, EnemyDefeatedEventArgs e)
