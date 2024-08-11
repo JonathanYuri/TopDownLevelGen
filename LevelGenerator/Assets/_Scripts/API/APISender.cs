@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class UserData
 {
@@ -54,6 +55,7 @@ public class APISender : MonoBehaviour
     const string adminKey = "123456";
 
     LevelDataManager levelDataManager;
+    InputManager inputManager;
     PlayerLocationManager playerLocationManager;
     RoomConclusionManager roomConclusionManager;
     PlayerController playerController;
@@ -63,14 +65,22 @@ public class APISender : MonoBehaviour
 
     bool closingTheGame = false;
 
+    float time;
+    int life;
+
+    [SerializeField] GameObject roomConclusionPanel;
+    ToggleGroup toggleGroup;
+
     public List<Position> CompletedRooms { get; set; }
     public int PreviousLife { get; set; }
 
     void Awake()
     {
         CompletedRooms = new();
+        toggleGroup = roomConclusionPanel.GetComponentInChildren<ToggleGroup>();
         timeRecorder = GetComponent<TimeRecorder>();
         playerDamageRecorder = GetComponent<PlayerDamageRecorder>();
+        inputManager = FindObjectOfType<InputManager>();
     }
 
     void Start()
@@ -277,10 +287,35 @@ public class APISender : MonoBehaviour
     {
         if (CountTimeCondition())
         {
-            Debug.LogWarning("SendRoomConclusionData (0): " + timeRecorder.Time);
+            time = timeRecorder.Time;
+            life = PreviousLife - playerController.Life;
             CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
-            SendRoomConclusionData(timeRecorder.Time, PreviousLife - playerController.Life);
+
+            inputManager.DisableInput();
+            roomConclusionPanel.SetActive(true);
         }
+    }
+
+    public void SendToggleInfo()
+    {
+        Debug.LogWarning("SendRoomConclusionData (0): " + time);
+        SendRoomConclusionData(time, life);
+        Toggle activeToggle = GetActiveToggle(toggleGroup);
+        Debug.Log("activeToggle: " + activeToggle.name);
+        roomConclusionPanel.SetActive(false);
+        inputManager.EnableInput();
+    }
+
+    Toggle GetActiveToggle(ToggleGroup group)
+    {
+        foreach (var toggle in group.ActiveToggles())
+        {
+            if (toggle.isOn)
+            {
+                return toggle;
+            }
+        }
+        return null;
     }
 
     void CleanVariables()

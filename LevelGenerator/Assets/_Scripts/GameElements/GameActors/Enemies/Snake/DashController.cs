@@ -5,6 +5,7 @@ public class DashController : MonoBehaviour
     [SerializeField] AIMovementController movementController;
     [SerializeField] Timer dashDuration;
     [SerializeField] Timer dashCooldown;
+    [SerializeField] SoundController soundController;
 
     bool dashReady = true;
     bool isDashing = false;
@@ -75,6 +76,7 @@ public class DashController : MonoBehaviour
 
     void StartDash()
     {
+        soundController.PlaySound(SoundsName.Attack);
         movementController.Velocity = dashVelocity;
         dashReady = false;
         isDashing = true;
