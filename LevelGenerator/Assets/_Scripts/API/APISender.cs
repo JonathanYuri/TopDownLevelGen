@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,10 @@ public class UserData
 {
     public string username;
     public int level;
+    public bool isCompleted;
     public float difficulty;
+    public float previousDifficulty;
+    public string playerFeedback;
     public List<string> enemyNames;
     public List<int> enemyQuantities;
     public List<int> enemyDamageValues;
@@ -54,6 +58,7 @@ public class APISender : MonoBehaviour
     const string baseUrl = "http://game-runs.glitch.me";
     const string adminKey = "123456";
 
+    GameManager gameManager;
     LevelDataManager levelDataManager;
     InputManager inputManager;
     PlayerLocationManager playerLocationManager;
@@ -66,7 +71,8 @@ public class APISender : MonoBehaviour
     bool closingTheGame = false;
 
     float time;
-    int life;
+    int lostLife;
+    float previousDifficulty = 0f;
 
     [SerializeField] GameObject roomConclusionPanel;
     ToggleGroup toggleGroup;
@@ -80,7 +86,6 @@ public class APISender : MonoBehaviour
         toggleGroup = roomConclusionPanel.GetComponentInChildren<ToggleGroup>();
         timeRecorder = GetComponent<TimeRecorder>();
         playerDamageRecorder = GetComponent<PlayerDamageRecorder>();
-        inputManager = FindObjectOfType<InputManager>();
     }
 
     void Start()
@@ -88,6 +93,8 @@ public class APISender : MonoBehaviour
         playerInfo = FindObjectOfType<PlayerInfo>();
         levelDataManager = FindObjectOfType<LevelDataManager>();
         playerLocationManager = FindObjectOfType<PlayerLocationManager>();
+        inputManager = FindObjectOfType<InputManager>();
+        gameManager = FindObjectOfType<GameManager>();
 
         roomConclusionManager = FindObjectOfType<RoomConclusionManager>();
         roomConclusionManager.OnRoomDoorsOpened += OnRoomDoorsOpened;
@@ -95,6 +102,7 @@ public class APISender : MonoBehaviour
         playerController = FindObjectOfType<PlayerController>();
         PreviousLife = playerController.Life;
         playerController.PassedThroughTheDoorEvent += PlayerPassedThroughTheDoor;
+        playerController.OnDied += OnPlayerDied;
     }
 
     void OnApplicationQuit()
@@ -112,6 +120,7 @@ public class APISender : MonoBehaviour
         if (playerController != null)
         {
             playerController.PassedThroughTheDoorEvent -= PlayerPassedThroughTheDoor;
+            playerController.OnDied -= OnPlayerDied;
         }
     }
 
@@ -156,11 +165,11 @@ public class APISender : MonoBehaviour
         }
     }
 
-    public void SendRoomConclusionData(float time, int lostLife)
+    public void SendRoomConclusionData(float time, int lostLife, string toggleName = "", bool isCompleted = true, Action action = null)
     {
         if (!closingTheGame && !SceneChangeManager.Instance.LoadingScene)
         {
-            StartCoroutine(SendRoomConclusionPostRequest(time, lostLife));
+            StartCoroutine(SendRoomConclusionPostRequest(time, lostLife, toggleName, isCompleted, action));
         }
     }
 
@@ -205,7 +214,7 @@ public class APISender : MonoBehaviour
         return (objectNames, quantities, damage);
     }
 
-    IEnumerator SendRoomConclusionPostRequest(float time, int lostLife)
+    IEnumerator SendRoomConclusionPostRequest(float time, int lostLife, string toggleName = "", bool isCompleted = true, Action action = null)
     {
         Room room = GameMapSingleton.Instance.RoomPositions[playerLocationManager.PlayerLocation.RoomPosition];
 
@@ -216,7 +225,10 @@ public class APISender : MonoBehaviour
         {
             username = playerInfo.Username,
             level = levelDataManager.IndexCurrentLevel,
+            isCompleted = isCompleted,
             difficulty = room.Difficulty,
+            previousDifficulty = previousDifficulty,
+            playerFeedback = toggleName,
             enemyNames = enemyNames,
             enemyQuantities = enemyQuantities,
             enemyDamageValues = enemyDamageValues,
@@ -228,6 +240,8 @@ public class APISender : MonoBehaviour
             lostLife = lostLife,
             version = "1.0.0"
         };
+
+        previousDifficulty = room.Difficulty;
 
         Debug.LogWarning("SendRoomConclusionData (1): " + userData.time);
 
@@ -254,6 +268,8 @@ public class APISender : MonoBehaviour
         {
             Debug.Log("Resposta: " + request.downloadHandler.text);
         }
+
+        action?.Invoke();
     }
 
     bool CountTimeCondition()
@@ -288,22 +304,27 @@ public class APISender : MonoBehaviour
         if (CountTimeCondition())
         {
             time = timeRecorder.Time;
-            life = PreviousLife - playerController.Life;
+            lostLife = PreviousLife - playerController.Life;
             CompletedRooms.Add(playerLocationManager.PlayerLocation.RoomPosition);
 
+            playerController.CanTakeDamage = false;
             inputManager.DisableInput();
             roomConclusionPanel.SetActive(true);
         }
     }
 
+    void OnPlayerDied()
+    {
+        SendRoomConclusionData(timeRecorder.Time, PreviousLife, "", false, gameManager.RestartGame);
+    }
+
     public void SendToggleInfo()
     {
         Debug.LogWarning("SendRoomConclusionData (0): " + time);
-        SendRoomConclusionData(time, life);
-        Toggle activeToggle = GetActiveToggle(toggleGroup);
-        Debug.Log("activeToggle: " + activeToggle.name);
+        SendRoomConclusionData(time, lostLife, GetActiveToggle(toggleGroup).name);
         roomConclusionPanel.SetActive(false);
         inputManager.EnableInput();
+        playerController.CanTakeDamage = true;
     }
 
     Toggle GetActiveToggle(ToggleGroup group)

@@ -28,9 +28,9 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
     public event Action OnLevelComplete;
     public event Action OnDied;
 
-    public bool OnLevelLoad { get; set; }
     public int Life { get => life; set => life = value; }
     public int MaxLife { get; private set; }
+    public bool CanTakeDamage { get; set; } = true;
 
     void Awake()
     {
@@ -67,19 +67,19 @@ public class PlayerController : MonoBehaviour, IDamageable, IMortal, ISlowable
         }
         else if (collision.CompareTag("LevelPortal"))
         {
-            OnLevelLoad = true;
+            CanTakeDamage = false;
             OnLevelComplete?.Invoke();
         }
     }
 
     public void TakeDamage(int damage, string damageName)
     {
-        if (damageInvincibilityController.Invincible)
+        if (!CanTakeDamage)
         {
             return;
         }
 
-        if (OnLevelLoad)
+        if (damageInvincibilityController.Invincible)
         {
             return;
         }

@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
 
         LevelDataManager.NextLevel();
         yield return GenerateGame();
-        playerManager.Player.OnLevelLoad = false;
+        playerManager.Player.CanTakeDamage = true;
     }
 
     public void RestartGame()
