@@ -8,6 +8,8 @@ O projeto é organizado nas seguintes pastas:
 
 - **`/game-code`**: Contém o código-fonte do jogo, incluindo scripts, assets e lógica do jogo. Esta é a implementação principal do projeto, responsável pela geração procedural dos níveis e pela interação com o jogador.
 
+  - **Algoritmos Genéticos**: A implementação dos algoritmos genéticos pode ser encontrada em [GameGenerator/GeneticAlgorithm](https://github.com/JonathanYuri/TopDownLevelGen/tree/main/game-code/Assets/_Scripts/GameElements/GameGenerator/GeneticAlgorithm). Essa parte é crucial para entender como a dificuldade é controlada e adaptada no jogo.
+
 - **API**: O código da API usada para armazenar e gerenciar os dados de análise do jogo está disponível no [Glitch](https://glitch.com/edit/#!/game-runs). A API centraliza as informações de desempenho e dificuldade coletadas durante o jogo.
 
 - **`/analysis-results`**: Contém os scripts e as imagens geradas pelas análises de dados realizadas com Python. Essas análises examinam, de forma geral, o desempenho dos jogadores e a distribuição de dificuldade nos níveis gerados. As imagens ilustrativas estão organizadas em `/analysis-results/figs` para facilitar o acesso.
