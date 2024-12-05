@@ -15,7 +15,7 @@ MonoBehaviour:
   roomCount: 9
   enemies: 040000000600000005000000
   enemiesDifficult: 010000000200000003000000
-  enemiesCapacity: 12
+  enemiesDifficultyBudget: 12
   obstacles: 0100000002000000
   obstaclesDifficult: 0100000003000000
-  obstaclesCapacity: 12
+  obstaclesDifficultyBudget: 12
