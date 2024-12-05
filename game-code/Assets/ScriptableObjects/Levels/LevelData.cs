@@ -13,11 +13,11 @@ public class LevelData : ScriptableObject
 
     public List<RoomContents> enemies;
     public List<int> enemiesDifficult;
-    [Range(0, 30)] public int enemiesCapacity = 30;
+    [Range(0, 30)] public int enemiesDifficultyBudget = 30;
 
     [Header("Obstacles")]
 
     public List<RoomContents> obstacles;
     public List<int> obstaclesDifficult;
-    [Range(0, 30)] public int obstaclesCapacity = 30;
+    [Range(0, 30)] public int obstaclesDifficultyBudget = 30;
 }

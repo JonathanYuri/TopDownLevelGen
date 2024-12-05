@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
-public struct KnapsackSelectionResult
+public struct SubsetSumSelectionResult
 {
     public List<RoomContents> ChosenEnemies { get; private set; }
     public List<int> ChosenEnemiesDifficulty { get; private set; }
     public List<RoomContents> ChosenObstacles { get; private set; }
     public List<int> ChosenObstaclesDifficulty { get; private set; }
 
-    public KnapsackSelectionResult(
-        List<RoomContents> chosenEnemies, List<int> chosenEnemiesDifficulty,
+    public SubsetSumSelectionResult(List<RoomContents> chosenEnemies, List<int> chosenEnemiesDifficulty,
         List<RoomContents> chosenObstacles, List<int> chosenObstaclesDifficulty)
     {
         ChosenEnemies = chosenEnemies;
@@ -20,12 +19,12 @@ public struct KnapsackSelectionResult
     }
 }
 
-public struct KnapsackParams
+public struct SubsetSumParams
 {
     public List<RoomContents> Contents { get; private set; }
     public List<int> ContentsValues { get; private set; }
     public int ContentsCapacity { get; private set; }
-    public KnapsackParams(List<RoomContents> contents, List<int> contentsValues, int contentsCapacity)
+    public SubsetSumParams(List<RoomContents> contents, List<int> contentsValues, int contentsCapacity)
     {
         Contents = contents;
         ContentsValues = contentsValues;
@@ -33,18 +32,11 @@ public struct KnapsackParams
     }
 }
 
-public static class KnapsackCriteriaSet
+public static class SubsetSumCriteriaSet
 {
-    public static Func<int, int, List<int>, List<int>, bool> BestCriteria { get; }
-    public static Func<int, int, List<int>, List<int>, bool> BestAndSmallerCriteria { get; }
-    public static Func<int, int, List<int>, List<int>, bool> BestAndRandomCriteria { get; }
-
-    static KnapsackCriteriaSet()
-    {
-        BestCriteria = BestCriteriaFunction;
-        BestAndSmallerCriteria = BestAndSmallerCriteriaFunction;
-        BestAndRandomCriteria = BestAndRandomCriteriaFunction;
-    }
+    public static Func<int, int, List<int>, List<int>, bool> BestCriteria { get; } = BestCriteriaFunction;
+    public static Func<int, int, List<int>, List<int>, bool> BestAndSmallerCriteria { get; } = BestAndSmallerCriteriaFunction;
+    public static Func<int, int, List<int>, List<int>, bool> BestAndRandomCriteria { get; } = BestAndRandomCriteriaFunction;
 
     static bool BestAndSmallerCriteriaFunction(int newValue, int maxValue, List<int> chosenItemsWithRemainingCapacity, List<int> chosenItems)
     {

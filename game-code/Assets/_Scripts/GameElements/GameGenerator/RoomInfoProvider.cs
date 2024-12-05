@@ -19,18 +19,18 @@ public class RoomInfoProvider : MonoBehaviour
         int distanceToInitialRoom = Utils.CalculateDistance(levelGenerator.InitialRoomPosition, roomPosition);
         float difficulty = (float)distanceToInitialRoom / (float)levelGenerator.DistanceFromInitialToFinalRoom;
 
-        KnapsackSelectionResult knapsackSelectionResult = Knapsack.ChooseEnemiesAndObstaclesToKnapsack(
+        SubsetSumSelectionResult subsetSumSelectionResult = SubsetSumSolver.ChooseEnemiesAndObstaclesToKnapsack(
             levelDataManager.Enemies, levelDataManager.EnemiesDifficulty,
             levelDataManager.Obstacles, levelDataManager.ObstaclesDifficulty
         );
 
-        KnapsackParams enemyKnapsackParams = new(knapsackSelectionResult.ChosenEnemies, knapsackSelectionResult.ChosenEnemiesDifficulty, levelDataManager.EnemiesCapacity);
-        KnapsackParams obstacleKnapsackParams = new(knapsackSelectionResult.ChosenObstacles, knapsackSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesCapacity);
+        SubsetSumParams enemySubsetParams = new(subsetSumSelectionResult.ChosenEnemies, subsetSumSelectionResult.ChosenEnemiesDifficulty, levelDataManager.EnemiesDifficultyBudget);
+        SubsetSumParams obstacleSubsetParams = new(subsetSumSelectionResult.ChosenObstacles, subsetSumSelectionResult.ChosenObstaclesDifficulty, levelDataManager.ObstaclesDifficultyBudget);
 
         return new(
             MapUtility.GetDoorPositionsFromRoomPosition(roomPosition, map),
-            Knapsack.ResolveKnapsack(enemyKnapsackParams),
-            Knapsack.ResolveKnapsack(obstacleKnapsackParams),
+            SubsetSumSolver.ResolveSubsetSum(enemySubsetParams),
+            SubsetSumSolver.ResolveSubsetSum(obstacleSubsetParams),
             difficulty
         );
     }

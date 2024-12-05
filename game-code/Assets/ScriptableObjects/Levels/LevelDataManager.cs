@@ -11,10 +11,10 @@ public class LevelDataManager : MonoBehaviour
     public int RoomCount { get { return levels[IndexCurrentLevel].roomCount; } }
     public List<RoomContents> Enemies { get { return levels[IndexCurrentLevel].enemies; } }
     public List<int> EnemiesDifficulty { get { return levels[IndexCurrentLevel].enemiesDifficult; } }
-    public int EnemiesCapacity { get { return levels[IndexCurrentLevel].enemiesCapacity; } }
+    public int EnemiesDifficultyBudget { get { return levels[IndexCurrentLevel].enemiesDifficultyBudget; } }
     public List<RoomContents> Obstacles { get { return levels[IndexCurrentLevel].obstacles; } }
     public List<int> ObstaclesDifficulty { get { return levels[IndexCurrentLevel].obstaclesDifficult; } }
-    public int ObstaclesCapacity { get { return levels[IndexCurrentLevel].obstaclesCapacity; } }
+    public int ObstaclesDifficultyBudget { get { return levels[IndexCurrentLevel].obstaclesDifficultyBudget; } }
     public int IndexCurrentLevel { get; private set; }
     public int MaxIndexLevel { get; private set; }
 
